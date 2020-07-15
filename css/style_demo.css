@@ -1,0 +1,218 @@
+*{
+  margin:0;
+  padding:0;
+}
+body
+{
+/*	margin: 0px;
+	padding: 0px;
+	font-family: Verdana, Arial, Verdana;
+  	font-size:13px;
+	background-color:#FFFFFF
+	text-align: center;
+	color: #002f76;
+	 line-height:15px; */
+	 
+}
+
+
+a{
+	text-decoration: none;
+	color: #0072ff; 
+}
+
+a:hover{
+	text-decoration: none;
+	color: #01700c;
+}
+
+#bodyfull{
+	width:100%;
+}
+
+#bodyfull2{
+	width:100%;
+	float:left;
+}
+#center{
+	width:980px;
+/*	margin:0 auto;*/
+}
+
+/* From Start Here */
+
+
+.form_box {
+    /*background-color: #fdfdfd;
+    border: 1px solid #CBCBCB;
+    border-radius: 5px;
+    margin: 10px auto;
+    box-shadow: 0 2px 5px rgba(50, 50, 50, 0.1);
+    display: block; */
+    margin: 10px 0px 10px 130px;
+    color: black;
+   padding-left: 2px;
+    padding-right: 3px;
+    padding-bottom: 20px;
+    width: 480px;
+    clear: both;
+    font-family: Verdana, Arial, Verdana;
+}
+
+.form_box label {
+    clear: both;
+    display: inline-block;
+    float: left;
+    color: #333;
+   font-family: Trebuchet MS, Arial, Verdana;
+    font-size: 13px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    line-height: 1em;
+    margin: 5px 0;
+    padding: 12px 0 0 0;
+    width: 145px;
+}
+.form_box input[type=text]:focus {
+	border: 1px solid #900;
+	}
+	
+.form_box input[type=text], input[type=password], input[type=email],input[type=tel], .form_box textarea, .form_box select {
+    background: none repeat scroll 0 0 #F5F5F5;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(81, 203, 238, 0);
+    color: #666666;
+ font-family: Trebuchet MS, Arial, Verdana;
+    font-size: 13px;
+    margin: 10px 0;
+    padding: 6px;
+    vertical-align: middle;
+    width: 250px;
+    
+}
+
+.form_box input[type=radio]{
+    margin: 8px 0;
+    padding: 8px;
+    vertical-align: top;
+    width: 30px
+}
+
+.form_box input.submit {
+    background: -moz-linear-gradient(center bottom , #0391fe 12%, #4ea0ee 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1px solid #0080e5;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px 16px;
+    text-decoration: none;
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+    width: auto;
+    letter-spacing: 1px;
+}
+
+.form_box input.submit:hover {
+    background: -moz-linear-gradient(center bottom , #4ea0ee 12%,#0391fe  100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #d7e3ee;
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.otherinputs{
+	width: 250px;
+	margin: 8px 0;
+		color: #002f76;
+    font-family: TitilliumText22LBold,ArtifikaMedium,Arial,Helvetica,sans-serif;
+    font-size: 13px;
+}
+.otherinputs span{
+	 line-height: 30px;
+    margin: 0 20px 0 0;
+}
+
+.inputcaptcha{
+	width: 150px !important;
+	
+}
+
+.imgcaptcha{
+	border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    margin: 6px 10px;
+  
+    
+}
+
+.refresh{
+
+	margin: 14px 5px;
+	cursor: pointer;
+}
+
+#button1{
+text-align:center;
+font-family:Arial, Helvetica, sans-serif;
+border-style:solid;
+border-width:thin;
+border-color:#00CCFF;
+padding:7px;
+background-color:#00CCFF;
+height: 34px;
+  background-color: #ee432e;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ee432c), color-stop(50%, #c63929), color-stop(50%, #c51700), color-stop(100%, #791100));
+  
+ border: 1px solid #951100;box-shadow: 0 2px 3px #951100;-moz-box-shadow: 0 2px 3px #951100;-webkit-box-shadow: 0 2px 3px #951100;
+  -webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;
+  border-radius: 5px;
+ 
+  color: #fff;
+  font-family:Verdana, Geneva, sans-serif;
+  font-size:14px;
+  padding: 3px;
+width: 95px;
+  text-decoration:none;
+
+}
+
+.imgHolder2{margin-top:5px;visibility:hidden;padding-left:10px;}
+#imgHolder2{background-color:#fff;padding-left:10px;margin-left:10px;}
+/*     */
+
+@media print /*--This is for Print--*/
+
+{
+
+    .btn-info
+
+    {
+
+        display: none;
+
+    }
+
+    .tble
+
+    {
+width: 900px;
+        background-color: #CD853F;
+
+        border:1px solid green;
+
+        -webkit-print-color-adjust: exact
+
+ 
+
+/*above line of codes will set the table background-color and change the border color when we give the print and preview (print preview only when we see on print preview via browser) command*/
+
+    }
+    #rown{
+	height: 30px;
+	border: 1px solid #98C1D1;
+	-webkit-print-color-adjust: exact
+	  }
+	.entry a:after {
+	content: " [" attr(href) "] ";
+}
+	}

@@ -1,0 +1,18 @@
+/* CSS Document */
+#pwtbl{margin:25px;}
+#c_header{font-weight:bold;font-size:14px;border-bottom:1px solid #003366;padding:3px;}
+.c_header1{font-weight:bold;font-size:14px;border-bottom:1px solid #003366;padding:3px;width:200px;padding-left:12px;}
+#p_cont{border:1px solid #003366;margin-top:25px;}
+.cpbtn{background:#003366;color:#fff;font-weight:bold;font-size:14px;;border:1px solid #036;cursor:pointer;}
+.o_table{margin:10px 0 0 20px;}
+#bot_brdr{border-bottom:1px solid #003366;padding-bottom:12px;margin-bottom:10px;}
+.bot_space{margin-bottom:10px;}
+.c_header{font-weight:bold;font-size:14px;border-bottom:1px solid #003366;padding:3px;}
+#changes{margin:10px 0 0 25px;cursor:pointer;}
+#a_header{border-bottom:1px solid #003366;}
+.imp{color:#FF0000;}
+.bbottom{border-bottom:1px solid #036;}
+.c_space,#c_space{margin:12px 0 0 15px;}
+#course_info{margin-left:0px;;}
+.imgHolder{margin-top:8px;;visibility:hidden;padding-left:12px;}
+#heading{font-weight:bold;font-size:14px;}
