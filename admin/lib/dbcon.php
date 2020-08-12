@@ -59,13 +59,16 @@ function authorize($module) {
     return $module == "1" ? 1 : 0;
 }
 
-define('SITE_URL', "https://".$_SERVER['HTTP_HOST']."/");
-
+//function host(){
+	//$h = "https://".$_SERVER['HTTP_HOST']."/";
+	//return $h;
+//}
 function host(){
-	$h = "https://".$_SERVER['HTTP_HOST']."/";
-	return $h;
+    $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $h = $protocol.$_SERVER['HTTP_HOST'].ROOTNO;
+    return $h;
 }
-
+define('SITE_URL', host().$_SERVER['HTTP_HOST']."/");
 function hRoot(){
 	$url = $_SERVER['DOCUMENT_ROOT']."/";
 	return $url;
