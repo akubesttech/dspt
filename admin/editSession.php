@@ -29,7 +29,7 @@ mysqli_query($condb,"update session_tb set session_name='".safee($condb,$session
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Default Session Titled $session was Updated')")or die(mysqli_error($condb)); 
  ob_start();
  message("Default Session $session has Updated successfully!", "success");
-			redirect('add_Yearofstudy.php');
+			redirect('./');
 }
 }else{
 mysqli_query($condb,"update session_tb set session_name='$session',action='$status' where session_id ='$get_RegNo'")or die(mysqli_error($condb));
@@ -37,7 +37,7 @@ mysqli_query($condb,"update session_tb set session_name='$session',action='$stat
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Session Titled $session was Updated')")or die(mysqli_error($condb)); 
 // ob_start();
 message("$session has Updated successfully!", "success");
-			redirect('add_Yearofstudy.php');
+			redirect('./');
 
 }
 }
