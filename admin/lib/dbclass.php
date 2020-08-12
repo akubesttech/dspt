@@ -1,9 +1,9 @@
 <?php
 define('DB_DRIVER', 'mysql');
-define('SERVER', '216.198.69.150');
-define('USERNAME', 'dspogharasmart');
+define('SERVER', 'localhost');
+define('USERNAME', 'smartdel_dspogharasmart');
 define('PASSWORD', 'ogharasmart_2019l#');
-define('DATABASE', 'dspogharasmartdb');
+define('DATABASE', 'smartdel_dspogharasmartdb');
 define('t_gate', 'sk_test_375b86dbef946eaf1fa3fa26c5c30503c5355f21');
 //define('t_gate', 'sk_test_5a19822c308f7d12f9f64f19cecac63796ec6816');
 class Database
