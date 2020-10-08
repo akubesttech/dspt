@@ -15,14 +15,15 @@ if(isset($_POST['modename'])){
 $modename = ucfirst($_POST['modename']);
 $mdesc = ucfirst($_POST['mdesc']);
 $entrylevel = $_POST['elevel'];
+$mcode = $_POST['mcode'];
 $query_f = mysqli_query($condb,"select * from mode_tb where entrymode = '".safee($condb,$modename)."'")or die(mysqli_error($condb));
 $row_fee = mysqli_num_rows($query_f); 
 if ($row_fee>0){
-message("The Mode Entered  Already Exist please Try Again".$modename, "error");
+message("The Mode Entered  Already Exist please Try Again ".$modename, "error");
 			redirect('add_Courses.php?view=addMode');
 				}else{
 
-mysqli_query($condb,"insert into mode_tb (entrymode,mdesc,entrylevel) values('".safee($condb,$modename)."','".safee($condb,$mdesc)."','".safee($condb,$entrylevel)."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into mode_tb (entrymode,mdesc,mcode,entrylevel) values('".safee($condb,$modename)."','".safee($condb,$mdesc)."','".safee($condb,$mcode)."','".safee($condb,$entrylevel)."')")or die(mysqli_error($condb));
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','entry mode Titled $modename was Added')")or die(mysqli_error($condb)); 
 // ob_start();
  message("New Mode [$modename] was Successfully Added", "success");
@@ -35,14 +36,17 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                 <div class="row">
   <span class="section">Add Entry Mode </span>
 
-<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard">Mode Name </label>
                   <input type="text" class="form-control " name='modename' id="modename"  value=""  required="required"> </div>
                   <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 					  <label for="heard">Mode Description </label>
                   <input type="text" class="form-control " name='mdesc' id="mdesc"  value=""  required="required"> </div>
-                   <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-<label for="heard">Entry Level</label> <input type="text" class="form-control " name='elevel' id="elevel"  value="" maxlength="3" placeholder="example : 100,200 ..." onkeypress="return isNumber(event);"  required="required">  </div>
+                             <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+<label for="heard">Mode Code</label> <input type="text" class="form-control " name='mcode' id="mcode"  value="" maxlength="3" placeholder="eg :Regular 1 = R1"   >  </div>
+        
+                   <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
+<label for="heard">Entry Level</label> <input type="text" class="form-control " name='elevel' id="elevel"  value="" maxlength="3" placeholder="eg : 100,200 ..." onkeypress="return isNumber(event);"  required="required">  </div>
                   
 			<?php   if (authorize($_SESSION["access3"]["sConfig"]["aem"]["create"])){ ?>	 <button  name="savemode"  id="savemode"  class="btn btn-primary col-md-4" title="Click Here to Save " ><i class="fa fa-plus"></i> Save</button><?php } ?>
 				</div></form> </div></div>
@@ -80,7 +84,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 										<?php include('modal_delete.php'); ?> </div><div	id="ccc2"></div>
 										<div id="print_content">
 										<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" border="1">
-										<?php 	if ($i%2) {$class = 'row1';} 
+										<?php $i = 0;	if ($i%2) {$class = 'row1';} 
 	else {$class = 'row2';}
 	$i += 1; 
 
@@ -96,13 +100,16 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                            <th>S/N</th>
                           <th>Mode</th>
 						  <th>mode description</th>
+                          <th>mode code</th>
 						  <th>Entry Level</th>
                           
                         </tr>
                       </thead>
 					    <tbody> 
 						<?php while($row = mysqli_fetch_array($result) ){
-                    $id = $row['id']; $emode = $row['entrymode']; $mdesc1 = $row['mdesc']; $elevel = $row['entrylevel']; ?>              
+                    $id = $row['id']; $emode = $row['entrymode']; $mdesc1 = $row['mdesc']; $mcoden = $row['mcode']; $elevel = $row['entrylevel'];
+                    if(empty($mcoden)){$mcoden = "0";}else{ $mcoden = $row['mcode'];}
+                     ?>              
 					    <tr class="<?php echo $class; ?>">
 <td width="30"><input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>"></td>
 <td width="30"> <?php echo $count; ?></td>
@@ -110,6 +117,10 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                             <input type='text' class='txtedit' value='<?php echo $emode; ?>' id='entrymode_<?php echo $id; ?>' ></td>
  <td><div class='edit' ><?php echo $mdesc1; ?> </div> 
                             <input type='text' class='txtedit' value='<?php echo $mdesc1; ?>' id='mdesc_<?php echo $id; ?>' ></td>
+                            
+                            <td><div class='edit' ><?php echo $mcoden; ?> </div> 
+                            <input type='text' class='txtedit' value='<?php  echo $mcoden;?>' id='mcode_<?php echo $id; ?>' ></td>
+                            
                             <td><div class='edit' ><?php echo $elevel; ?> </div> 
                             <input type='text' class='txtedit' value='<?php echo $elevel; ?>' id='entrylevel_<?php echo $id; ?>' maxlength='3' ></td>
                         </tr><?php  $count ++; } ?></tbody></div></form>

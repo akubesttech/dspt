@@ -103,8 +103,8 @@ $num_ph2 = mysqli_num_rows($result_ph2);
 				//}elseif($num_ph > 0){
 //message("Another Candidate Has initiated payment with This Email '$semail' Before.", "error");
 		        //redirect('apply_b.php?view=p_sh&main='.$getmain);
-				}elseif($num_ph2 > 0){ message("Another Candidate Has initiated payment with This Phone Number '$phone1' Before.", "error");
-		        redirect('apply_b.php?view=p_sh&main='.$getmain);
+				//}elseif($num_ph2 > 0){ message("Another Candidate Has initiated payment with This Phone Number '$phone1' Before.", "error");
+		        //redirect('apply_b.php?view=p_sh&main='.$getmain);
 		       // Candidate with Name: Nweke Ebuka; ,Phone Number: 07083853189 Email Address: ifennalue2018@gmail.com already exist
 			  }else{
 	$s=14;

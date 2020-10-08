@@ -213,14 +213,14 @@ echo getdeptc($rsprint['Second_Choice']);
  ?><?php echo "</strong> in <strong> $row[SchoolName] </strong> to Pursue Your Studies and you are required to report to School Adminstrative Block to continue with Other Admission Processes ,Come with a Copy of This Result slip and your Other Credentials.<br> Note That This Admission will be withdrawn if you Violate The Terms and Condition of your Admission. <br><br>
 		Thank your Admin.";
 		}elseif($rsprint['adminstatus']=='2'){
-		echo "Admission Pending! <br>Your Admission Request into <strong> $row[SchoolName] </strong> is still pending and The result is not yet Verified, Please Check Back Late. <br>
+		echo "Admission Pending! <br>Your Admission Request into <strong> $row[SchoolName] </strong> is still pending and The result is not yet Verified, Please Check Back Later. <br>
 		Thank your.";
 		
 	}elseif($rsprint['adminstatus']=='3'){
 echo "Sorry Dear! <br>Your Admission Request into <strong> $row[SchoolName] </strong> was not Successful because your Peformance  in our Entrance Exam was poor and we was unable to Admit you into our school. <br>
 		Thank your.";
 }else{
-	echo "Admission Pending! <br>Your Admission Request into <strong> $row[SchoolName] </strong> is still pending  and The result is not yet Verified, Please Check Back Late. <br>
+	echo "Admission Pending! <br>Your Admission Request into <strong> $row[SchoolName] </strong> is still pending  and The result is not yet Verified, Please Check Back Later. <br>
 		Thank your.";
 
 }

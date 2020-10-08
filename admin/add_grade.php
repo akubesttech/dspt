@@ -23,27 +23,42 @@ message("You don't have the permission to access this page", "error");
  window.onload = function (){
  if($('#ggroup').val() === '01')   
    {   
-   $('#grade').show(); 
+    $('#grade').show(); 
       $('#gpoint').show();
 	   $('#ggroup').select(); 
 	   $('#gmark').show(); 
       $('#gstatus').hide(); 
+	  $('#gpmin').show(); 
+      $('#gpmax').show();
+      $('#smin').show();
+      $('#smax').show();
+       $('#gastatus').hide();   
+   }else if($('#ggroup').val() === '03'){
+    $('#grade').hide(); 
+      $('#gpoint').hide();
+	   $('#ggroup').select(); 
+	   $('#gmark').hide(); 
+      $('#gstatus').hide();
+      $('#gastatus').show();
+      $('#smin').hide();
+      $('#smax').hide();
 	   $('#gpmin').show(); 
-      $('#gpmax').show();   
-   }   
-else 
-   {   
-   $('#grade').hide(); 
+      $('#gpmax').show();
+}else{   
+    $('#grade').hide(); 
       $('#gpoint').hide();
 	   $('#ggroup').select(); 
 	   $('#gmark').hide(); 
       $('#gstatus').show();
-	  $('#gpmin').hide(); 
-      $('#gpmax').hide();     
-   }
+	   $('#gpmin').hide(); 
+      $('#gpmax').hide();
+      $('#smin').show();
+      $('#smax').show();
+       $('#gastatus').hide();      
+   }   
  }
     
-$(document).ready(function() {   
+/* $(document).ready(function() {   
 $('#ggroup').change(function(){   
 if($('#ggroup').val() === '01')   
    {   
@@ -64,6 +79,46 @@ else
       $('#gstatus').show();
 	   $('#gpmin').hide(); 
       $('#gpmax').hide();      
+   }   
+});   
+}); */
+
+ $(document).ready(function() {   
+$('#ggroup').change(function(){   
+if($('#ggroup').val() === '01')   
+   {   
+    $('#grade').show(); 
+      $('#gpoint').show();
+	   $('#ggroup').select(); 
+	   $('#gmark').show(); 
+      $('#gstatus').hide(); 
+	  $('#gpmin').show(); 
+      $('#gpmax').show();
+      $('#smin').show();
+      $('#smax').show();
+       $('#gastatus').hide();   
+   }else if($('#ggroup').val() === '03'){
+    $('#grade').hide(); 
+      $('#gpoint').hide();
+	   $('#ggroup').select(); 
+	   $('#gmark').hide(); 
+      $('#gstatus').hide();
+      $('#gastatus').show();
+      $('#smin').hide();
+      $('#smax').hide();
+	   $('#gpmin').show(); 
+      $('#gpmax').show();
+}else{   
+    $('#grade').hide(); 
+      $('#gpoint').hide();
+	   $('#ggroup').select(); 
+	   $('#gmark').hide(); 
+      $('#gstatus').show();
+	   $('#gpmin').hide(); 
+      $('#gpmax').hide();
+      $('#smin').show();
+      $('#smax').show();
+       $('#gastatus').hide();      
    }   
 });   
 });   
@@ -166,7 +221,7 @@ else
                           <td><?php echo getprog($row_s['prog']); ?></td>
                           <td><?php echo getggroup($row_s['grade_group']); ?></td>
                           <td><?php echo $row_s['grade']; ?></td>
-                          <td><?php echo $row_s['gradename']; ?></td>
+                          <td><?php if($row_s['grade_group'] =="03"){ echo getAcastatus($row_s['gradename']);}else{ echo $row_s['gradename'];} ?></td>
                           <td><?php echo $row_s['gp']; ?></td>
                           <td><?php echo $row_s['b_min']; ?></td>
                         <td><?php echo $row_s['b_max'];  ?></td>

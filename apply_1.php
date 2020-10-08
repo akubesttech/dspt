@@ -83,10 +83,10 @@ if (!isset($_SESSION['temppin']) ||(trim ($_SESSION['temppin']) == '')) {
     exit();
 }
 $sql_pinf=mysqli_query($condb,"SELECT * FROM fshop_tb WHERE pin='".safee($condb,$_SESSION['temppin'])."'");
-$find_old = mysqli_fetch_array($sql_pinf); $modeofentry = $find_old['moe']; $entryl = getelevel($modeofentry);
+$find_old = mysqli_fetch_array($sql_pinf); $modeofentry = $find_old['moe']; $entryl = getelevel($modeofentry); $appsession = $find_old['session'];
 if($entryl <= 100){  $alart = " * " ; $req = 'required="required"';   }else{  $alart = "" ; $req = '';    }
 //session_start();
-	$s=10;
+	$s=10; $AppNo = 0;
 	while($s>0){ $AppNo .= rand(0,9); $s-=1; }
 	  $sql_pin1="SELECT * FROM new_apply1 WHERE Pin='".safee($condb,$_SESSION['temppin'])."'";
 $result_pin1 = mysqli_query($condb,$sql_pin1);
@@ -111,11 +111,19 @@ $sql_oresult10=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".sa
 $sql_oresult20=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$find_record['appNo'])."' AND oNo_re = '2' limit 1");
 $countnosub = mysqli_num_rows($sql_oresult20);
 
+$school_form = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM schoolsetuptd "));
+						$schoolinitial =$school_form['initial'];
+$existspn = imgExists("./Student/".$find_record['images']);
+
 if(isset($_POST['Continue'])){
  $Pin = $_POST["pin"];
 $serial = $_POST["serial"];
 $j_reg = $_POST['j_reg'];
 $phone_no = $_POST["phone_no"];
+$name4     = $_FILES['image_name']['name'];
+$tmpName  = $_FILES['image_name']['tmp_name'];
+ $ext = strtolower(pathinfo($name4, PATHINFO_EXTENSION));
+$maxsize = 300000;
 //$mm = trim(strip_tags($_POST['mm']));
 	//$dd = trim(strip_tags($_POST['dd']));
 	//$yy = trim(strip_tags($_POST['yy']));
@@ -128,9 +136,9 @@ $pass = $_POST["pword"]; $pass2 = $_POST["pword2"];
 if($prayn == $pass ){ $pass1 = $pass; }else{ $pass1 = substr(md5($pass.SUDO_M),14); }
 	$sql_pin=mysqli_query($condb,"SELECT JambNo FROM new_apply1 WHERE JambNo='".safee($condb,$j_reg)."'");
 $num_pin = mysqli_num_rows($sql_pin);
-$sql_ph=mysqli_query($condb,"SELECT * FROM new_apply1 WHERE phone='".safee($condb,$phone_no)."'");
+$sql_ph=mysqli_query($condb,"SELECT * FROM new_apply1 WHERE phone='".safee($condb,$phone_no)."' and application_r = '1'");
 $num_ph = mysqli_num_rows($sql_ph);
-$sql_email=mysqli_query($condb,"SELECT * FROM new_apply1 WHERE e_address='".safee($condb,$_POST['gemail'])."'");
+$sql_email=mysqli_query($condb,"SELECT * FROM new_apply1 WHERE e_address='".safee($condb,$_POST['gemail'])."' and application_r = '1'");
 $num_email = mysqli_num_rows($sql_email);
 
 	if($Pin == "" AND $serial == "" ){
@@ -149,7 +157,9 @@ redirect("apply_b.php");
 				}elseif($pass != $pass2){
 	message("Please! Password  Did not Match.", "error");
 		        redirect('apply_b.php?view=N_1');
+                
 				    }else{
+				        
 				if($num_pin1 > 0){
 				if(($num_pin > 1) && ($entryl <= 100)){
 		message("This Jamb Registration Number '$j_reg' Has Applied Before2", "error");
@@ -163,11 +173,47 @@ redirect("apply_b.php");
 				   //}elseif($num_email > 1){
         //message("Another Applicant Has Applied with This email '$_POST[gemail]' Before", "error");
 				   //redirect('apply_b.php?view=N_1');
-				   }else{
-				
+				   }else{ $name4n     = $_FILES['image_name']['name'];
+				    $extn = strtolower(pathinfo($name4n, PATHINFO_EXTENSION));
+                    $maxsize1 = 300000;
+				if($_FILES['image_name']['error'] == UPLOAD_ERR_NO_FILE){
 				$sql_ME=mysqli_query($condb,"UPDATE new_apply1 SET FirstName='".safee($condb,$_POST['sname'])."',SecondName='".safee($condb,$_POST['sname'])."',Othername='".safee($condb,$_POST['mname'])."',Gender='".safee($condb,$_POST['gender'])."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$_POST['hobbies'])."',state='".safee($condb,$_POST['state'])."',lga='".safee($condb,$_POST['lga'])."',lgidno='".safee($condb,$_POST['lgidno'])."',nation='".safee($condb,$_POST['nation'])."',religion='".safee($condb,$_POST['studentreligion'])."',address='".safee($condb,$_POST['contactaddress'])."',e_address='".safee($condb,$_POST['gemail'])."',phone='".safee($condb,$_POST['phone_no'])."',postal_address='".safee($condb,$_POST['p_add'])."',any_fchalenge='".safee($condb,$_POST['f_chalenge'])."',State_chalenge='".safee($condb,$_POST['s_chalenge'])."',first_Choice='".safee($condb,$_POST['dept1'])."',Second_Choice='".safee($condb,$_POST['dept_2'])."',fact_1='".safee($condb,$_POST['fac_01'])."',fact_2='".safee($condb,$_POST['fac_02'])."',Age='".safee($condb,$age)."',bloodgroup='".safee($condb,$_POST['bloodgroup'])."',gtype='".safee($condb,$_POST['gtype'])."',Pin='".safee($condb,$Pin)."',SerialNo='".safee($condb,$serial)."',JambNo='".safee($condb,$j_reg)."',J_score='".safee($condb,$_POST['j_score'])."',app_type='".safee($condb,$_POST['prog'])."',moe = '".safee($condb,$modeofentry)."', Asession='".safee($condb,$_POST['session'])."',password = '".safee($condb,$pass1)."' WHERE Pin= '".safee($condb,$Pin)."'");
-				message("Record Successfully Add Goto Step 2", "success");
+				 message("Step One Successfully Add Go to Step Two", "success");
 		redirect("apply_b.php?view=N_1");
+                }else{
+				    if(!in_array($extn, array('jpg','jpeg','png','gif')) ){
+ 	message("Invalid file type. Only  JPG, GIF and PNG types are accepted", "error");
+				   redirect('apply_b.php?view=N_1');
+			//}elseif($_FILES["image_name"]["size"] > $maxsize)  {
+			}elseif(getimagesize($_FILES['image_name']['tmp_name']) < $maxsize1){
+	message("File size should be more than 300kb", "error");
+				   redirect('apply_b.php?view=N_1');}else{
+ $sql_ME=mysqli_query($condb,"UPDATE new_apply1 SET FirstName='".safee($condb,$_POST['sname'])."',SecondName='".safee($condb,$_POST['sname'])."',Othername='".safee($condb,$_POST['mname'])."',Gender='".safee($condb,$_POST['gender'])."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$_POST['hobbies'])."',state='".safee($condb,$_POST['state'])."',lga='".safee($condb,$_POST['lga'])."',lgidno='".safee($condb,$_POST['lgidno'])."',nation='".safee($condb,$_POST['nation'])."',religion='".safee($condb,$_POST['studentreligion'])."',address='".safee($condb,$_POST['contactaddress'])."',e_address='".safee($condb,$_POST['gemail'])."',phone='".safee($condb,$_POST['phone_no'])."',postal_address='".safee($condb,$_POST['p_add'])."',any_fchalenge='".safee($condb,$_POST['f_chalenge'])."',State_chalenge='".safee($condb,$_POST['s_chalenge'])."',first_Choice='".safee($condb,$_POST['dept1'])."',Second_Choice='".safee($condb,$_POST['dept_2'])."',fact_1='".safee($condb,$_POST['fac_01'])."',fact_2='".safee($condb,$_POST['fac_02'])."',Age='".safee($condb,$age)."',bloodgroup='".safee($condb,$_POST['bloodgroup'])."',gtype='".safee($condb,$_POST['gtype'])."',Pin='".safee($condb,$Pin)."',SerialNo='".safee($condb,$serial)."',JambNo='".safee($condb,$j_reg)."',J_score='".safee($condb,$_POST['j_score'])."',app_type='".safee($condb,$_POST['prog'])."',moe = '".safee($condb,$modeofentry)."', Asession='".safee($condb,$_POST['session'])."',password = '".safee($condb,$pass1)."' WHERE Pin= '".safee($condb,$Pin)."'");
+//if ($_FILES['image_name']['size'] !== 0){
+    $r = 0;$dig = 0;
+                                while($r < 6){ $dig .=rand(3,9);
+                                    $r+=1;}$newname=$dig . ".gif";
+                                  $watermark = $schoolinitial; $uploadfile = $newname;
+$image = addslashes(file_get_contents($_FILES['image_name']['tmp_name']));
+                                $image_name = addslashes($_FILES['image_name']['name']);
+                                $image_size = getimagesize($_FILES['image_name']['tmp_name']);
+                              $waterup = "Student/uploads/".$newname;
+                               $recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "Student/uploads/$uploadfile");
+                               $adminthumbnails = "uploads/" .$newname;
+                                textwatermark($waterup, $watermark, $waterup);
+mysqli_query($condb,"update new_apply1 set images = '".safee($condb,$adminthumbnails)."' where Pin= '".safee($condb,$Pin)."'");
+unset($dig);
+//$r=0;
+unlink("Student/$find_record[images]");
+//}
+
+message("Step one Successfully Add Go to Step Two", "success");
+		redirect("apply_b.php?view=N_1");
+ }
+ 
+}
+                
+               
 				}
 
 				}else{
@@ -183,17 +229,36 @@ redirect("apply_b.php");
 				     }elseif($num_email > 0){
         message("Another Applicant Has Applied with This email '$_POST[gemail]' Before", "error");
 				   redirect('apply_b.php?view=N_1');
-				   }else{
-                 
-				$sql = mysqli_query($condb,"INSERT INTO new_apply1 (appNo,FirstName,SecondName,Othername,Gender,dob,hobbies,state,lga,lgidno,nation,religion,address,e_address,phone,postal_address,any_fchalenge,State_chalenge,first_Choice,Second_Choice,fact_1,fact_2,Age,bloodgroup,gtype,moe,Pin,SerialNo,JambNo,J_score,app_type,Asession,course_choice,verify_apply,adminstatus,password)
-VALUES('".safee($condb,$_POST['appNo'])."','".safee($condb,$_POST['sname'])."','".safee($condb,$_POST['mname'])."','".safee($condb,$_POST['oname'])."','".safee($condb,$_POST['gender'])."','".safee($condb,$dob)."','".safee($condb,$_POST['hobbies'])."','".safee($condb,$_POST['state'])."','".safee($condb,$_POST['lga'])."','".safee($condb,$_POST['lgidno'])."','".safee($condb,$_POST['nation'])."','".safee($condb,$_POST['studentreligion'])."','".safee($condb,$_POST['contactaddress'])."','".safee($condb,$_POST['gemail'])."','".safee($condb,$_POST['phone_no'])."','".safee($condb,$_POST['p_add'])."','".safee($condb,$_POST['f_chalenge'])."','".safee($condb,$_POST['s_chalenge'])."','".safee($condb,$_POST['dept1'])."','".safee($condb,$_POST['dept_2'])."','".safee($condb,$_POST['fac_01'])."','".safee($condb,$_POST['fac_02'])."','".safee($condb,$age)."','".safee($condb,$_POST['bloodgroup'])."','".safee($condb,$_POST['gtype'])."','".safee($condb,$modeofentry)."','".safee($condb,$Pin)."','".safee($condb,$serial)."','".safee($condb,$j_reg)."','".safee($condb,$_POST['j_score'])."','".safee($condb,$_POST['prog'])."','".safee($condb,$_POST['session'])."','1','FALSE','0','".safee($condb,$pass1)."')");
+                   }elseif($_FILES['image_name']['size'] == Null)  {
+	message("Please Select an Image Before You Submit Your Application", "error");
+				   redirect('apply_b.php?view=N_1');
+                   }elseif(!in_array($ext, array('jpg','jpeg','png','gif')) ){
+ 	message("Invalid file type. Only  JPG, GIF and PNG types are accepted", "error");
+				   redirect('apply_b.php?view=N_1');
+			//}elseif($_FILES["image_name"]["size"] > $maxsize)  {
+			}elseif(getimagesize($_FILES['image_name']['tmp_name']) < $maxsize){
+	message("File size should be less than 300kb", "error");
+				   redirect('apply_b.php?view=N_1');
+				   }else{ $r = 0;$dig = 0; while($r < 6){ $dig .=rand(3,9);
+                                    $r+=1;}$newname=$dig . ".gif";
+                                  $watermark = $schoolinitial; $uploadfile = $newname;
+$image = addslashes(file_get_contents($_FILES['image_name']['tmp_name']));
+                                $image_name = addslashes($_FILES['image_name']['name']);
+                                $image_size = getimagesize($_FILES['image_name']['tmp_name']);
+                              $waterup = "Student/uploads/".$newname;
+                               $recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "Student/uploads/$uploadfile");
+                               $adminthumbnails = "uploads/" .$newname;
+                                textwatermark($waterup, $watermark, $waterup);
+$sql = mysqli_query($condb,"INSERT INTO new_apply1 (appNo,FirstName,SecondName,Othername,Gender,dob,hobbies,state,lga,lgidno,nation,religion,address,e_address,phone,postal_address,any_fchalenge,State_chalenge,first_Choice,Second_Choice,fact_1,fact_2,Age,bloodgroup,gtype,moe,Pin,SerialNo,JambNo,J_score,app_type,Asession,course_choice,verify_apply,adminstatus,images,password)
+VALUES('".safee($condb,$_POST['appNo'])."','".safee($condb,$_POST['sname'])."','".safee($condb,$_POST['mname'])."','".safee($condb,$_POST['oname'])."','".safee($condb,$_POST['gender'])."','".safee($condb,$dob)."','".safee($condb,$_POST['hobbies'])."','".safee($condb,$_POST['state'])."','".safee($condb,$_POST['lga'])."','".safee($condb,$_POST['lgidno'])."','".safee($condb,$_POST['nation'])."','".safee($condb,$_POST['studentreligion'])."','".safee($condb,$_POST['contactaddress'])."','".safee($condb,$_POST['gemail'])."','".safee($condb,$_POST['phone_no'])."','".safee($condb,$_POST['p_add'])."','".safee($condb,$_POST['f_chalenge'])."','".safee($condb,$_POST['s_chalenge'])."','".safee($condb,$_POST['dept1'])."','".safee($condb,$_POST['dept_2'])."','".safee($condb,$_POST['fac_01'])."','".safee($condb,$_POST['fac_02'])."','".safee($condb,$age)."','".safee($condb,$_POST['bloodgroup'])."','".safee($condb,$_POST['gtype'])."','".safee($condb,$modeofentry)."','".safee($condb,$Pin)."','".safee($condb,$serial)."','".safee($condb,$j_reg)."','".safee($condb,$_POST['j_score'])."','".safee($condb,$_POST['prog'])."','".safee($condb,$_POST['session'])."','1','FALSE','0','".safee($condb,$adminthumbnails)."','".safee($condb,$pass1)."')");
 	if(!$sql){
 		echo mysqli_error($condb);
 		message("Unable to Continue Student Registration Please Try Again.", "error");
 				   redirect('apply_b.php?view=N_1');}
-	$sql2="UPDATE pin SET status='USED' WHERE pinnumber='$Pin'";
-$result_upme = mysqli_query($condb,$sql2);
-	message("Record Successfully Add Goto Step 2", "success");
+                   unset($dig); //$r=0;
+	//$sql2="UPDATE pin SET status='USED' WHERE pinnumber='$Pin'";
+//$result_upme = mysqli_query($condb,$sql2);
+	message("Step one Successfully Add Go to Step Two", "success");
 		redirect("apply_b.php?view=N_1");
 	}}
 	
@@ -268,22 +333,14 @@ if($num_pin1 > 0){?> <script language="JavaScript" type="text/javascript">
 			<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
 			<input type="hidden" name="appNo" value="<?php echo "A". $AppNo;?>"  />
 			<input type="hidden" name="prog" value="<?php echo $find_old['ftype']; ?>"  />
-			
+            <input type="hidden" name="pin" id="pin"  value="<?php echo $_SESSION['temppin']; ?>" />
+			<input type="hidden" name="serial" id="serial"  value="<?php echo $_SESSION['tempserial']; ?>" />
 			
 			    		<div class="panel-heading">
 			    	<h5 class="panel-title"> Basic Details </h5>
 			 			</div>
 			    			<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    					<label class="head">Pin <span class="w3l-star"> * </span></label>
-			    					<div class="form-group">
-			    					<input type="text" name="pin" id="pin" class="form-control input-sm"   tabindex="1" value="<?php echo $_SESSION['temppin']; ?>" readonly>
-			    					</div>
-			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    					<label class="head">Serial<span class="w3l-star"> *  </span></label>
-<div class="form-group"><input type="text" name="serial" id="serial" class="form-control input-sm" tabindex="1" value="<?php echo $_SESSION['tempserial']; ?>" readonly></div>
-			    				</div>
+			    				
 			    				<div class="col-xs-6 col-sm-6 col-md-4" style="display: none;">
 			    					<label class="head">Application Type<span class="w3l-star"> * </span></label>
 			    					<div class="form-group"><select class="form-control input-sm"   name="progx" id="progx"  >
@@ -310,29 +367,42 @@ if($num_pin1 > 0){?> <script language="JavaScript" type="text/javascript">
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Session<span class="w3l-star"> * </span></label>
 			    					<div class="form-group">
-			    				<select class="form-control input-sm"   name="session" id="session"  required="required">
-		<?php if($find_record['Asession'] == ""){ ?>
-  <option value="">Select Session</option><?php }else{ ?> <option value="<?php echo $find_record['Asession']; ?>"><?php echo $find_record['Asession']; ?></option> <?php } ?> <?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	} ?>
-</select>	</div></div>
+    <input class="form-control input-sm"  type="text" name="session" id="session"  tabindex="1" readonly="readonly" value="<?php if($find_record['Asession'] == ""){ echo $appsession; }else{ echo $find_record['Asession'];} ?>"/>
+      	</div>
+
+   <label class="head">Password * </label><div class="form-group" >
+<input type="password" name="pword" id="pword" title="Password Should be Between 6  to 12 Characters (Letters and Numbers)" <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?> tabindex="1"  class="form-control input-sm" autcomplete="false" ></div>
+    	<label class="head">Comfirm Password *</label>
+<div class="form-group" ><input type="password" name="pword2" id="pword2" <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?>  tabindex="1"  class="form-control input-sm" autcomplete="false" > </div>
+			    				                              
+</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Jamb Reg No<span class="w3l-star"><?php echo $alart; ?></span></label>
 			    					<div class="form-group"><input type="text" name="j_reg" id="j_reg" class="form-control input-sm"   tabindex="1" value="<?php echo $utmereg_e; ?>" <?php echo $req; ?> >
 			    					</div>
+                                   	<label class="head">Jamb Score<span class="w3l-star"><?php echo $alart; ?></span></label>
+			    					<div class="form-group"><input type="text" name="j_score" id="j_score" class="form-control input-sm" tabindex="1" onkeypress="return isNumber(event);" value="<?php echo $utmescore_e ;?>" <?php echo $req; ?>>    					
+                                    </div>
+			    						<label class="head"><span>Upload Passport</span>
+                                        <font color="red" size="2">(NB:Size Not more than 300kb.)</font></label>
+<div class="form-group"><input name="image_name" class="form-control input-sm" id="fileInput" type="file" accept="image/*"  onchange="preview_image(event)"  style="width:260px;"></div>
+</div>
+			    		
+                                   
+			    				
+                                <div class="col-xs-6 col-sm-6 col-md-4">
+			    				<label class="head">Passport Preview</label>
+<div class="form-group"><div class="otherinputs"><div class="fileinput-new thumbnail" style="width: 200px; height: 175px; border: 1px solid #0080e5;">
+<img src="<?php  if ($existspn > 0 ){print "./Student/".$find_record['images'];
+	}else{ print "./Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+				  ?>" alt="" id="output_image" style="width:200px;height: 175px;"> </div> </div>
+			    					</div>
 			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Jamb Score<span class="w3l-star"><?php echo $alart; ?></span></label>
-			    					<div class="form-group"><input type="text" name="j_score" id="j_score" class="form-control input-sm" tabindex="1" onkeypress="return isNumber(event);" value="<?php echo $utmescore_e ;?>" <?php echo $req; ?>>    					</div>
-			    				</div>
+                                
 			    			</div>
-			    			
-			    			<div class="row"><div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Password *</label><div class="form-group" >
-<input type="password" name="pword" id="pword"  <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?> tabindex="1"  class="form-control input-sm" autcomplete="false" ></div> </div>		    			
-			    			<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Comfirm Password *</label>
-<div class="form-group" ><input type="password" name="pword2" id="pword2" <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?>  tabindex="1"  class="form-control input-sm" autcomplete="false" > </div>
-			    				</div>   			</div>
+			    		
+                                
+                                
 			    			<h5 class="panel-title"> Choice of Course/Program </h5>
 			    			<div class="row">
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
@@ -485,7 +555,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 			    				<label class="head">Hobbies</label>
 <div class="form-group"><input type="text" class="form-control input-sm" name="hobbies" id="hobbies" tabindex="1" value="<?php echo $hobbies_e; ?>"></div></div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Religion</label><div class="form-group"><select class="form-control input-sm"  name="studentreligion" id="studentreligion"  required="required">
+			    				<label class="head">Religion</label><div class="form-group"><select class="form-control input-sm"  name="studentreligion" id="studentreligion"  >
 <?php if($find_record['religion'] == ""){ ?>
   <option value="" selected="selected" disabled="disabled">Select</option><?php }else{ ?> <option value="<?php echo $find_record['religion']; ?>"><?php echo $find_record['religion']; ?></option> <?php } ?>
 <option  value="Hindu">Hindu</option>
@@ -637,7 +707,7 @@ message("This Jamb Registration Number '$_POST[j_reg2]' Has Applied Before", "er
 $sql_OLEVEL2=mysqli_query($condb,"insert into olevel_tb2(oapp_No,oNo_re,oExam_t1,oExam_no1,oExam_y1,oSub1,oGrade_1)values('".safee($condb,$_POST['app_No'])."','2','".safee($condb,$_POST['exam_type2'])."','".safee($condb,$_POST['e_number1'])."','".safee($condb,$_POST['e_date1'])."','".safee($condb,$osubb[$cn2])."','".$ogradeb[$cn2]."')")  or die(mysqli_error($condb));
 }
 }
-	message("Result Record Successfully Added Goto Final Step", "success");
+	message("Result Record Successfully Added Go to Final Step", "success");
 	redirect("apply_b.php?view=N_1");
 if($num_pin2 > 0){
 				//header("location:apply_b.php?view=N_1");?>
@@ -725,7 +795,7 @@ if($num_pin2 > 0){
 			    					<div class="col-xs-6 col-sm-6 col-md-3">
 			    				<label class="head">Exam Year</label>
 	<div class="form-group"><select class="form-control input-sm" name="e_date" id="e_date"  required="required">
-<?php if($num_pin2 > 0){ ?> <option value="<?php echo $orow_01['oExam_y1']; ?>"><?php echo ($orow_01['oExam_y1']); ?></option><?php }else{ ?> <option value="">Year 1</option> <?php } ?>
+<?php if($num_pin2 > 0){ ?> <option value="<?php echo $orow_01['oExam_y1']; ?>"><?php echo ($orow_01['oExam_y1']); ?></option><?php }else{ ?> <option value="">Year </option> <?php } ?>
 <?php for($x=1980;$x<2021;$x++){
 	echo '<option value="'.$x.'">'.$x.'</option>';
 	} ?>
@@ -783,7 +853,7 @@ if($num_pin2 > 0){
 			    				<div class="col-xs-6 col-sm-6 col-md-3"  >
 			    				<label class="head" >Exam Year 2</label>
 			    					<div class="form-group"  >	<select class="form-control input-sm" name="e_date1" id="e_date1"  >
-			    					<?php if($countnosub > 0){ ?> <option value="<?php echo $orow_1['oExam_y1']; ?>"><?php echo ($orow_1['oExam_y1']); ?></option><?php }else{ ?> <option value="">Year 2</option> <?php } ?> <?php for($x=1980;$x<2021;$x++){
+			    					<?php if($countnosub > 0){ ?> <option value="<?php echo $orow_1['oExam_y1']; ?>"><?php echo ($orow_1['oExam_y1']); ?></option><?php }else{ ?> <option value="">Year </option> <?php } ?> <?php for($x=1980;$x<2021;$x++){
 	echo '<option value="'.$x.'">'.$x.'</option>';
 	} ?>
     </select>
@@ -820,94 +890,57 @@ if($num_pin2 > 0){ $sn1=1; while($orow12 = mysqli_fetch_array($sql_oresult2)){  
 					<div id="center">
 					
 					<?php
-						$school_form = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM schoolsetuptd "));
-						$schoolinitial =$school_form['initial'];
- $sql2="SELECT * FROM new_apply1 where appNo = '$_POST[app_No]' ";
+				$result_olevelp=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$find_record['appNo'])."'");
+$resoltcont = mysqli_num_rows($result_olevelp);		
+ $sql2="SELECT * FROM new_apply1 where appNo = '".safee($condb,$find_record['appNo'])."' ";
   $qsql2= mysqli_query($condb,$sql2);
-$rs2 = mysqli_fetch_array($qsql2);
-
-$staffdb = mysqli_query($condb,"SELECT * FROM new_apply1  where appNo = '$_POST[app_No]'");
-$rs23 = mysqli_fetch_array($staffdb);
-	$exists = imgExists("./Student/".$rs2['images']);
-//if($_SESSION['insid3']==$_POST['insid3'])
-//{
+$rs23 = mysqli_fetch_array($qsql2);
+$existkn = imgExists("Student/".$rs23['images']); $Pinx = $rs23['Pin'];
+ $progs = ucfirst(getprog($rs23['app_type'])); $session = ucfirst($rs23['Asession']); 
+ $jno = ucfirst($rs23['JambNo']); $jbscore = ucfirst($rs23['J_score']);
+ $fchoice = getdeptc($rs23['first_Choice']); $schoice = ucfirst(getdeptc($rs23['Second_Choice']));
+$sname = ucfirst($rs23['FirstName']); $fname = ucfirst($rs23['SecondName']); $oname = ucfirst($rs23['Othername']);
+$bgroup = ucfirst($rs23['bloodgroup']); $gender = $rs23['Gender']; $dob = $rs23['dob']; $hobbies = $rs23['hobbies'];
+$gtype = ucfirst($rs23['gtype']); $religion = $rs23['religion']; $any_fchalenge = $rs23['any_fchalenge']; $phone = $rs23['phone'];
+$email = $rs23['e_address']; $address = $rs23['address']; $lga = $rs23['lga']; $state = $rs23['state']; $nation = $rs23['nation'];
 if(isset($_POST['SubmitApp'])){
- $name4     = $_FILES['image_name']['name'];
-$tmpName  = $_FILES['image_name']['tmp_name'];
- $ext = strtolower(pathinfo($name4, PATHINFO_EXTENSION));
-$maxsize = 300000;
-
-if($_FILES['image_name']['size'] == Null)  {
-	message("Please Select an Image Before You Submit Your Application", "error");
-				   redirect('apply_b.php?view=N_1');
-	
-				}elseif($_SESSION['temppin'] == "" AND $_SESSION['tempserial'] == "" ){
-//echo "<script>alert('Unable To Continue Registration Because Payment Information Not Verified');</script>";
-message("Unable To Continue Registration Because Payment Information Not Verified", "error");
-//echo "<script>window.location.assign('apply_b.php?view=New');</script>";
-	redirect("apply_b.php");
-
-}elseif(!in_array($ext, array('jpg','jpeg','png','gif')) ){
- 	message("Invalid file type. Only  JPG, GIF and PNG types are accepted", "error");
-				   redirect('apply_b.php?view=N_1');
-			//}elseif($_FILES["image_name"]["size"] > $maxsize)  {
-			}elseif(getimagesize($_FILES['image_name']['tmp_name']) < $maxsize){
-	message("File size should be less than 300kb", "error");
-				   redirect('apply_b.php?view=N_1');
-			}elseif(!$_POST['approve']){
-			message("Your Have Not Approve Your Application Information Click The Check Box to Approve !", "error");
-				   redirect('apply_b.php?view=N_1');
-		
+ 
+if(!$_POST['approve']){
+message("Your Have Not Approve Your Registration Information Click The Check Box to Approve", "error");
+				    redirect('apply_b.php?view=N_1');
+                   }elseif($resoltcont < 1){
+message("Step Two information is required before Final Submission", "error");
+				    redirect('apply_b.php?view=N_1');
 }else{
-	$sql_complete="UPDATE new_apply1 SET reg_status ='".safee($condb,$_POST['approve'])."',dateofreg = NOW() WHERE appNo = '".safee($condb,$_POST['app_No'])."'";
+	$sql_complete="UPDATE new_apply1 SET reg_status ='$_POST[approve]',dateofreg = NOW() WHERE appNo = '".safee($condb,$_POST['app_No'])."'";
 					$result_complete = mysqli_query($condb,$sql_complete);
+                    	$sql2="UPDATE pin SET status='USED' WHERE pinnumber='".safee($condb,$_POST['pin'])."'";
+                        $result_upme = mysqli_query($condb,$sql2);
 
-if ($_FILES['image_name']['size'] !== 0){
-
-	                                while($r < 6){
-								   $dig .=rand(3,9);
-                                    $r+=1;
-                                          }
-                                         $newname=$dig . ".gif";
-                                          
-                                    $watermark = $schoolinitial;
-							      	
-							      	$uploadfile = $newname;
-$image = addslashes(file_get_contents($_FILES['image_name']['tmp_name']));
-                                $image_name = addslashes($_FILES['image_name']['name']);
-                                $image_size = getimagesize($_FILES['image_name']['tmp_name']);
-                               //$recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "admin/apply_uploads/$uploadfile");
-                                //$adminthumbnails = "apply_uploads/" .$newname;
-                                $recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "Student/uploads/$uploadfile");
-                                textwatermark($newname, $watermark, $newname);
-								$adminthumbnails = "uploads/" .$newname;
-                               
-mysqli_query($condb,"update new_apply1 set images = '".safee($condb,$adminthumbnails)."' where appNo = '".safee($condb,$_POST['app_No'])."'");
-								 
-unset($dig);
-$r=0;
-unlink("Student/$rs23[images]");
-} 
  ob_start();
 	echo "<script>alert('Your Application was Sucessfully Submited!');</script>";
 		echo "<script>window.location.assign('studentappprint.php?applicationid=".md5($_POST['app_No'])."');</script>";
 	
 
 }
-}//}$_SESSION['insid3'] = rand();
-// Function to add text water mark over image
+}
 
+
+//}$_SESSION['insid3'] = rand();
+// Function to add text water mark over image
 function textwatermark($src, $watermark, $save=NULL) { 
+    putenv('GDFONTPATH=' . realpath('.'));
  list($width, $height) = getimagesize($src);
  $image_p = imagecreatetruecolor($width, $height);
  $image = imagecreatefromjpeg($src);
  imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width, $height); 
-// $txtcolor = imagecolorallocate($image_p, 200, 255, 300);
+ //$txtcolor = imagecolorallocate($image_p, 200, 255, 350);
 $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
- $font = 'monofont.ttf';
- $font_size = 20;
- //imagettftext($image_p, $font_size, 0, 50, 150, $txtcolor, $font, $watermark);
- imagettftext($image_p, $font_size, 0, 26, 88, $txtcolor, $font, $watermark);
+ $font = dirname(__FILE__) . "/study/monofont.ttf";
+ //$font = 'monofont.ttf';
+ $font_size = 35;
+ imagettftext($image_p, $font_size, 0, 50, 220, $txtcolor, $font, $watermark);
+ //imagettftext($image_p, $font_size, 0, 120, 530, $txtcolor, $font, $watermark);
  if ($save<>'') {
  imagejpeg ($image_p, $save, 100); 
  } else {
@@ -923,59 +956,168 @@ $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
 			<input type="hidden" name="insid2" value="<?php echo $_SESSION['insid2'];?> " />
 			<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
 			<input type="hidden" name="appNo" value="<?php echo "A". $AppNo;?>"  />
-			<div class="panel-heading">
-			    	<h5 class="panel-title"> Basic Details</h5>
-			 			</div>
+            <input type="hidden" name="pin" id="pin"  value="<?php echo $_SESSION['temppin']; ?>" >
+            <input type="hidden"  name="serial" id="serial"  value="<?php echo $_SESSION['tempserial']; ?>" >
+            <input type="hidden"  name="j_reg2" id="j_reg2"    value="<?php echo $jno; ?>" >
+            <input type="hidden" name="app_No" id="app_No"   value="<?php echo $find_record['appNo']; ?>" readonly>
+		
 				
-					<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-3">
-			    				<label class="head">Pin</span></label>
-			    					<div class="form-group">
-		<input type="text" name="pin" id="pin" class="form-control input-sm"   tabindex="1" value="<?php echo $_SESSION['temppin']; ?>" readonly>
-									</div></div>
-			    				<div class="col-xs-6 col-sm-6 col-md-3">
-			    				<label class="head">Serial</label>
-			    					<div class="form-group">
-			    					<input type="text" class="form-control input-sm" name="serial" id="serial" tabindex="1" value="<?php echo $_SESSION['tempserial']; ?>" readonly>
-			    					</div>
-			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-3">
-			    				<label class="head">Jamb Reg No:</label>
-			    					<div class="form-group"><input type="text" class="form-control input-sm" name="j_reg2" id="j_reg2"   tabindex="1" value="<?php echo $find_record['JambNo']; ?>" readonly>
-			    					</div>
-			    				</div>
-			    					<div class="col-xs-6 col-sm-6 col-md-3">
-			    				<label class="head">Application No</label>
-			    					<div class="form-group">
-	<input type="text" name="app_No" id="app_No" tabindex="1" class="form-control input-sm"  value="<?php echo $find_record['appNo']; ?>" readonly>
-			    					</div>
-			    				</div>
-			    			</div>				
-				<div class="panel-heading">
-			    	<h5 class="panel-title"> <strong>&nbsp;Upload Your Passport <font color="red" size="2">(Note :Image Size Should Not be more than 300kb.)</font>&nbsp;&nbsp;</strong></h5>
+									
+				<?php if($resoltcont < 1){  }else{?>
+                        <div class="panel-heading">
+			    	<h5 class="panel-title"><strong>&nbsp;Information Review <font color="red" size="2">(NB :You are advised to review your details before final Submission
+                    .)</font>&nbsp;&nbsp;</strong></h5>
 			 			</div>
-					<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Upload Passport</span></label>
-			    					<div class="form-group"><input name="image_name" class="form-control input-sm" id="fileInput" type="file" accept="image/*" onchange="preview_image(event)" style="width:200px;"></div></div>
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Passport Preview</label>
-			    					<div class="form-group"><div class="otherinputs"><div class="fileinput-new thumbnail" style="width: 200px; height: 150px; border: 1px solid #0080e5;">
-<img src="<?php  if ($exists > 0 ){print "./Student/".$rs2['images'];
-	}else{ print "./Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
-				  ?>" alt="" id="output_image" style="width:200px;height: 150px;"> </div> </div>
-			    					</div>
-			    				</div></div>
-				<div class="panel-heading">
-			    	<h5 class="panel-title"><strong>&nbsp;Declaration and Undertaking <font color="red" size="2">(Note :After This Final Stage Information update will not be possible.)</font>&nbsp;&nbsp;</strong></h5>
-			 			</div>
-			 			<div class="row">
+					<div class="panel-heading">
+			    <div class="form_box">
+			 <div class="clear" style="overflow: auto;">
+        <table  border="0">
+       
+       <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Basic Details</strong></td></tr>
+ <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Passport:</strong></td>
+    <td width="20%" colspan="3"><img src="<?php    if ($existkn > 0 ){ echo "Student/".$rs23['images'];
+	}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+	//if ($rs2['image']==NULL ){print "./Student/uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rs2['image'];}?>" alt="" id="output_image" style="width:25px;height: 20px;"><?php if($existkn > 0){ echo "<font color='green'> <i class='fa fa-check'></i>"." Uploaded"."</font>"; }else{ echo "<font color='red'><i class='fa fa-close'></i>"." Not Uploaded"." </font>";}  ?></td>
+   
+   </tr>
+    <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> JAMB Reg No:</strong></td>
+    <td width="20%" colspan="1"><?php echo $jno ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>JAMB Score:</strong></td>
+    <td width="20%" colspan="1"><?php echo $jbscore ; //$_SESSION['mobile']; ?></td>
+   </tr>
+ 
+     <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Personal Data</strong></td>
+</tr>  
+ <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Surname :</strong></td>
+    <td width="20%" colspan="1"><?php echo $sname ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Middle Name:</strong></td>
+    <td width="20%" colspan="1"><?php echo $fname; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Other Name:</strong></td>
+    <td width="20%" colspan="1"><?php echo $oname ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Blood Group:</strong></td>
+    <td width="20%" colspan="1"><?php echo $bgroup; ?></td>
+   </tr> 
+ 
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Gender:</strong></td>
+    <td width="20%" colspan="1"><?php echo $gender ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Date Of Birth:</strong></td>
+    <td width="20%" colspan="1"><?php echo $dob; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Hobbies:</strong></td>
+    <td width="20%" colspan="1"><?php echo $hobbies ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Genotype:</strong></td>
+    <td width="20%" colspan="1"><?php echo $gtype; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Religion:</strong></td>
+    <td width="20%" colspan="1"><?php echo $religion ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Any Phyisical Disability?:</strong></td>
+    <td width="20%" colspan="1"><?php echo $any_fchalenge; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Mobile Number:</strong></td>
+    <td width="20%" colspan="1"><?php echo $phone ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Email Address:</strong></td>
+    <td width="20%" colspan="1"><?php echo $email; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Contact Address:</strong></td>
+    <td width="20%" colspan="1"><?php echo $address ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Local Government:</strong></td>
+    <td width="20%" colspan="1"><?php echo $lga; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> State:</strong></td>
+    <td width="20%" colspan="1"><?php echo $state ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Nationality:</strong></td>
+    <td width="20%" colspan="1"><?php echo $nation; ?></td>
+   </tr>
+     <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Choice of Course/Program</strong></td>
+</tr>
+ <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> First Choice:</strong></td>
+    <td width="20%" colspan="1"><?php echo $fchoice ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Second Choice:</strong></td>
+    <td width="20%" colspan="1"><?php echo $schoice ; //$_SESSION['mobile']; ?></td>
+   </tr>
+   <?php $getappn = $find_record['appNo'];
+ $sql_oresult1=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$getappn)."' AND oNo_re = '1'");
+$sql_oresult2=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$getappn)."' AND oNo_re = '2'");
+$count_olresult1 = mysqli_num_rows($sql_oresult1);
+$count_olresult2 = mysqli_num_rows($sql_oresult2);
+$sql_oresult10=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$getappn)."' AND oNo_re = '1' limit 1");
+$sql_oresult20=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$getappn)."' AND oNo_re = '2' limit 1");
+$countnosub = mysqli_num_rows($sql_oresult20);
+ ?>
+  <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Post Primary School Qualification ('O' Level Record)</strong></td>
+</tr>
+<?php $orow_01 = mysqli_fetch_array($sql_oresult10); $orow_1 = mysqli_fetch_array($sql_oresult20);
+if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col =2;}else{ $subcont = $orow_01['oNo_re']; $col = 4; } 
+ if($count_olresult1 > 0 ){ ?>
+<tr class="row1">
+  <td width="50%" colspan="<?php echo $col; ?>" ><div class="pull-left">
+  <table border="1" style="margin:4px;  font-family: Verdana;  max-width:390px; min-width:370px; " >
+  <tr style="font-weight: bold;"><td colspan="2"> First Certificate Used</td> </tr>
+  <tr><td>Exam Type</td><td><?php echo getexamtype($orow_01['oExam_t1']);?></td></tr>
+  <tr><td>Exam Number</td><td><?php echo $orow_01['oExam_no1'] ;?></td></tr>
+  <tr><td>Exam Year</td><td><?php echo ($orow_01['oExam_y1']); ?></td></tr>
+   <tr style="font-weight: bold;"><td>Subject</td><td>Grade</td></tr>
+   <?php while($orow1 = mysqli_fetch_array($sql_oresult1)){ ?> <tr><td><?php echo  getf_sub($orow1['oSub1']);?></td><td><?php echo  getfgrade($orow1['oGrade_1']);?></td></tr> <?php } ?>
+   </table>
+   </div></td>
+   <?php if($count_olresult2 > 0){ ?> <td width="50%" colspan="<?php echo $col; ?>"><div class="pull-right"> 
+   <table border="1" style="margin:3px;  font-family: Verdana;  max-width:390px; min-width:370px;">
+    <tr style="font-weight: bold;"><td colspan="2"> Second Certificate Used</td> </tr>
+     <tr><td>Exam Type</td><td><?php echo getexamtype($orow_1['oExam_t1']);?></td></tr>
+  <tr><td>Exam Number</td><td><?php echo $orow_1['oExam_no1'] ;?></td></tr>
+  <tr><td>Exam Year</td><td><?php echo ($orow_1['oExam_y1']); ?></td></tr>
+  <tr style="font-weight: bold;"><td>Subject</td><td>Grade</td></tr>
+  <?php while($orow12 = mysqli_fetch_array($sql_oresult2)){ ?>
+   <tr><td><?php echo getf_sub($orow12['oSub1']);?></td><td><?php echo  getfgrade($orow12['oGrade_1']);?></td></tr> <?php } ?>
+     </table></div></td> <?php } ?>
+     
+   </tr>
+   <?php }else{ ?>
+   <tr class="row1">
+     <td width="20%" colspan="4" height="15" style="text-align:center;"><strong> You have not add any Result Goto Step Two.</strong></td>
+
+   </tr>
+    <?php } ?>
+    <tr class="row1">
+      <td width="19%" height="20" colspan="5"></td>
+  </tr>
+ 
+		</table>
+            
+      </div>
+	
+			</div>
+			 		
+                  
 			    				<div class="col-xs-6 col-sm-6 col-md-12">
 			    			
-			    					<div class="form-group">  <input id="approve" name="approve" value="1"  onclick="javascript: toggleCheckBox();" type="checkbox"> I hereby acknowledge by ticking this check box that if it is discovered at any time that I do not possess any of the qualifications which I claim I have obtained,I will be expelled From The institution and shall not be re-admitted for the same or any other programme,even if I have upgraded my previous qualifications or possess additional qualifications.</div></div>
-			    				</div>
-	<button name="SubmitApp" class="btn btn-primary"   data-placement="right" type="submit" title="Click to Submit Application">Submit</button>
+	<div class="form-group" style="text-align:center;color: green;"><br>  <input id="approve" name="approve" value="1"  
+			onchange="document.getElementById('SubmitApp').disabled = !this.checked;"
+			onclick="javascript: toggleCheckBox();" type="checkbox">
+	I hereby acknowledge by ticking this check box that if it is discovered at any time that I do not possess any of the qualifications which I claim I have obtained,I will be expelled From The institution and shall not be re-admitted for the same or any other programme,even if I have upgraded my previous qualifications or possess additional qualifications..<br>
+		<button name="SubmitApp" id="SubmitApp" class="btn btn-primary" disabled   data-placement="right" type="submit" title="Click to Submit Application">Submit</button></div></div>
+			    			  
+                     	</div>
+                            <?php } ?> 
+                                
 				
+			 		
 				
 					</div> 	</form> </div></div>
 				

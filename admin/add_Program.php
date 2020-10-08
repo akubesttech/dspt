@@ -82,8 +82,8 @@
                           <th>Program Name</th>
                           <th>Program Description</th>
                          <th>Duration</th>
-                         <th>C A Scores <?php echo " ".getamax($class_ID)." %"; ?></th>
-                          <th>Exam Scores <?php echo " ".getemax($class_ID)." %"; ?></th>
+                         <th>C A Scores <?php //echo " ".getamax($class_ID)." %"; ?>%</th>
+                          <th>Exam Scores <?php //echo " ".getemax($class_ID)." %"; ?>%</th>
                            <th>Certificate in view</th>
                           <th>Status</th>
                       

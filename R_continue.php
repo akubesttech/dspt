@@ -115,7 +115,8 @@ if (!isset($_SESSION['temppin']) ||(trim ($_SESSION['temppin']) == '')) {
 $result_pin1 = mysqli_query($condb,$sql_pin1);
 $num_pin1 = mysqli_num_rows($result_pin1);
 $find_record = mysqli_fetch_array($result_pin1);
-$studentpics = $find_record['images']; $agen = $find_record['dob']; $fname_e = $find_record['FirstName'];$sname_e = $find_record['SecondName'];
+$studentpics = imgExists("Student/".$find_record['images']); //$studentpics = $find_record['images'];
+ $agen = $find_record['dob']; $fname_e = $find_record['FirstName'];$sname_e = $find_record['SecondName'];
 $oname_e = $find_record['Othername']; $phone_e = $find_record['phone']; $address_e = $find_record['address'];
  $email_e = $find_record['e_address']; $paddress_e = $find_record['postal_address']; $paddress_e = $find_record['postal_address'];
  $hobbies_e = $find_record['hobbies'];
@@ -188,7 +189,7 @@ $result_ph = mysqli_query($condb,"SELECT * FROM student_tb WHERE phone='".safee(
 				//$resi=1;
 				}else{
 				if($num_pin > 0){
-				$sql_ME="UPDATE student_tb SET FirstName='".safee($condb,$_POST['sname'])."',SecondName='".safee($condb,$_POST['mname'])."',Othername='".safee($condb,$_POST['oname'])."',Gender='".safee($condb,$_POST['gender'])."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$_POST['hobbies'])."',state='".safee($condb,$_POST['state'])."',lga='".safee($condb,$_POST['lga'])."',nation='".safee($condb,$_POST['nation'])."',religion='".safee($condb,$_POST['studentreligion'])."',address='".safee($condb,$_POST['contactaddress'])."',e_address='".safee($condb,$_POST['gemail'])."',phone='".safee($condb,$_POST['phone_no'])."',postal_address='".safee($condb,$_POST['p_add'])."',any_fchalenge='".safee($condb,$_POST['f_chalenge'])."',State_chalenge='".safee($condb,$_POST['s_chalenge'])."',Faculty='".safee($condb,$_POST['fac_01'])."',Department='".safee($condb,$_POST['dept1'])."',Age='".safee($condb,$age)."',bloodgroup='".safee($condb,$_POST['bloodgroup'])."',gtype='".safee($condb,$_POST['gtype'])."',RegNo='".safee($condb,$_SESSION['temppin'])."',app_type='".safee($condb,$_POST['prog'])."',Asession='".safee($condb,$csession)."',Moe='".safee($condb,$_POST['moe'])."',yoe='".safee($condb,$yoe)."',yog='".safee($condb,$yearofgrag)."',prog_dura='".safee($condb,$p_dura)."',p_level='".safee($condb,$_POST['level'])."',dateofreg=NOW(),reg_status='0',Cert_inview = '".safee($condb,$_POST['prog'])."',password = '".safee($condb,$pass1)."',lginno = '".safee($condb,$_POST['lgidno'])."' WHERE RegNo= '".safee($condb,$_SESSION['temppin'])."'";
+				$sql_ME="UPDATE student_tb SET FirstName='".safee($condb,$_POST['sname'])."',SecondName='".safee($condb,$_POST['mname'])."',Othername='".safee($condb,$_POST['oname'])."',Gender='".safee($condb,$_POST['gender'])."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$_POST['hobbies'])."',state='".safee($condb,$_POST['state'])."',lga='".safee($condb,$_POST['lga'])."',nation='".safee($condb,$_POST['nation'])."',religion='".safee($condb,$_POST['studentreligion'])."',address='".safee($condb,$_POST['contactaddress'])."',e_address='".safee($condb,$_POST['gemail'])."',phone='".safee($condb,$_POST['phone_no'])."',postal_address='".safee($condb,$_POST['p_add'])."',any_fchalenge='".safee($condb,$_POST['f_chalenge'])."',State_chalenge='".safee($condb,$_POST['s_chalenge'])."',Faculty='".safee($condb,$_POST['fac_01'])."',Department='".safee($condb,$_POST['dept1'])."',Age='".safee($condb,$age)."',bloodgroup='".safee($condb,$_POST['bloodgroup'])."',gtype='".safee($condb,$_POST['gtype'])."',RegNo='".safee($condb,$_SESSION['temppin'])."',app_type='".safee($condb,$_POST['prog'])."',Asession='".safee($condb,$csession)."',Moe='".safee($condb,$_POST['moe'])."',yoe='".safee($condb,$yoe)."',yog='".safee($condb,$yearofgrag)."',prog_dura='".safee($condb,$p_dura)."',p_level='".safee($condb,$_POST['level'])."',dateofreg=NOW(),reg_status='0',Cert_inview = '".safee($condb,$_POST['prog'])."',password = '".safee($condb,$pass1)."',lgidno = '".safee($condb,$_POST['lgidno'])."' WHERE RegNo= '".safee($condb,$_SESSION['temppin'])."'";
 					$result_qsql2 = mysqli_query($condb,$sql_ME);
 				}else{
 				if($num_ph > 0){
@@ -209,7 +210,8 @@ VALUES('".safee($condb,$_POST['appNo'])."','".safee($condb,$_POST['sname'])."','
 	}}
 }
 
-if($studentpics == Null){
+//if($studentpics == Null){
+   if($studentpics < 1){ 
 				//header("location:apply_b.php?view=N_1");?>
 				<script language="JavaScript" type="text/javascript">
 	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 1});
@@ -217,7 +219,7 @@ if($studentpics == Null){
 </script>
 		<?php 
 		//message("Record Successfully Added, Please Complete the Final Step.", "info");
-		echo "<script>alert('Record Successfully Added Goto Final Step');</script>";
+		echo "<script>alert('Record Successfully Added Goto Step Two');</script>";
 		echo "<script>window.location.assign('apply_b.php?view=O_C');</script>";
 			///redirect("apply_b.php?view=O_C");
 		}	}
@@ -277,10 +279,12 @@ if($studentpics == Null){
 			 			 <div class="TabbedPanels" id="AccountSummaryPanel">
 		<ul class="TabbedPanelsTabGroup"> 
 			<li class="TabbedPanelsTab" tabindex="0" ><img src="css/images/tab1.png"></li>
-		
-			<li class="TabbedPanelsTab" tabindex="0"><img src="css/images/tab3.png"></li>
+			<li class="TabbedPanelsTab" tabindex="0" ><img src="css/images/tab2.png"></li>
+		<li class="TabbedPanelsTab" tabindex="0"><img src="css/images/tab3.png"></li>
+			
 		</ul>
 		<div class="TabbedPanelsContentGroup">
+		
 			<div class="TabbedPanelsContent">
 		   	<div id="center">
 		   	
@@ -381,13 +385,14 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
 			    					</div>
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Department<span class="w3l-star"> * </span></label>
+			    				<label class="head"><?php echo $SGdept1; ?><span class="w3l-star"> * </span></label>
+                              
 			    					<div class="form-group"><select class="form-control input-sm"   name="dept1" id="dept1" onchange="showgroup(this.value)" required="required"> <?php if($find_record['Department'] == ""){ ?>
-  <option value="">Select Department</option><?php }else{ ?> <option value="<?php echo $find_record['Department']; ?>"><?php echo getdeptc($find_record['Department']); ?></option> <?php } ?>
+  <option value="">Select <?php echo $SGdept1; ?></option><?php }else{ ?> <option value="<?php echo $find_record['Department']; ?>"><?php echo getdeptc($find_record['Department']); ?></option> <?php } ?>
 									 </select></div>
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Department Group</label>
+			    				<label class="head"><?php echo $SGdept1; ?> Group</label>
 			    					<div class="form-group" ><div  id="txtroomno" ><input type="text" name="d_group1" id="d_group1"   tabindex="1"  class="form-control input-sm" readonly> </div></div>
 			    				</div>
 			    				
@@ -582,6 +587,9 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
 			    	</div>
 			    	</div></div>
 			    	
+			    	
+			    	
+			    	
 	    		<div class="TabbedPanelsContent">
 					<div id="center">
 					<?php
@@ -589,11 +597,11 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
 					//$age2=birthday($agens); 
 						$school_form = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM schoolsetuptd "));
 						$schoolinitial =$school_form['initial'];
- $sql2="SELECT * FROM student_tb where RegNo = '$_POST[regnopic]' ";
+ $sql2="SELECT * FROM student_tb where RegNo = '".safee($condb,$_SESSION['temppin'])."' ";
   $qsql2= mysqli_query($condb,$sql2);
-$rs2 = mysqli_fetch_array($qsql2);
+$rs2 = mysqli_fetch_array($qsql2); $approven = $rs2['reg_status'];
 $existn = imgExists("Student/".$rs2['images']);
-$staffdb = mysqli_query($condb,"SELECT * FROM student_tb  where RegNo = '$_POST[regnopic]'");
+$staffdb = mysqli_query($condb,"SELECT * FROM student_tb  where RegNo = '".safee($condb,$_SESSION['temppin'])."'");
 $rs23 = mysqli_fetch_array($staffdb);
 
 //if($_SESSION['insid3']==$_POST['insid3'])
@@ -625,19 +633,19 @@ message("You Have Not Completed Stage One Please Fill up and Continue.", "error"
 				//$resi=1;
 				message("File size should be greater than 300kb", "error");
 				   redirect('apply_b.php?view=O_C');
-			}elseif(!$_POST['approve']){
+			//}elseif(!$_POST['approve']){
 		//$res="<font color='Red'><strong>Your Have Not Approve Your Registration Information Click The Check Box to Approve !</strong></font><br>";
 				//$resi=1;
 			
-					message("Your Have Not Approve Your Registration Information Click The Check Box to Approve", "error");
-				   redirect('apply_b.php?view=O_C');
+					//message("Your Have Not Approve Your Registration Information Click The Check Box to Approve", "error");
+				   //redirect('apply_b.php?view=O_C');
 
 }else{
-	$sql_complete="UPDATE student_tb SET reg_status ='$_POST[approve]',dateofreg = NOW() WHERE RegNo = '$_POST[regnopic]'";
+	$sql_complete="UPDATE student_tb SET reg_status ='0',dateofreg = NOW() WHERE RegNo = '$_POST[regnopic]'";
 					$result_complete = mysqli_query($condb,$sql_complete);
 	list($txt2, $ext2) = explode(".", $_FILES['image_name']['name']);
 if ($_FILES['image_name']['size'] !== 0){
-                             
+                             $r = 0;$dig = 0;
 	                                while($r < 6){
 								   $dig .=rand(3,9);
                                     $r+=1;
@@ -652,34 +660,50 @@ if ($_FILES['image_name']['size'] !== 0){
 $image = addslashes(file_get_contents($_FILES['image_name']['tmp_name']));
                                 $image_name = addslashes($_FILES['image_name']['name']);
                                 $image_size = getimagesize($_FILES['image_name']['tmp_name']);
+                                $waterup = "Student/uploads/".$newname;
                                $recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "Student/uploads/$newname");
                                 $adminthumbnails = "uploads/" .$newname;
-                               textwatermark($newname, $watermark, $newname);
+                               textwatermark($waterup, $watermark, $waterup);
+                               //$WaterMark = 'admin/uploads/65964589.gif';
+							//addImageWatermark ($waterup, $WaterMark, $waterup, 20);
 mysqli_query($condb,"update student_tb set images = '".safee($condb,$adminthumbnails)."' where RegNo = '$_POST[regnopic]'");
 								 
 unset($dig);
-$r=0;
-//unlink("Student/uploads/$rs23[images]");
+//$r=0;
+unlink("Student/$rs23[images]");
 } 
- ob_start();
-	echo "<script>alert('Your Have Sucessfully Completed The Form!');</script>";
-		echo "<script>window.location.assign('studregprint.php?stid=".md5($_POST['regnopic'])."');</script>";
+ //ob_start();
+	//echo "<script>alert('Your Have Sucessfully Completed The Form!');</script>";
+		//echo "<script>window.location.assign('studregprint.php?stid=".md5($_POST['regnopic'])."');</script>";
+		if(empty($approven) and $studentpics > 0){
+				//header("location:apply_b.php?view=N_1");?>
+				<script language="JavaScript" type="text/javascript">
+	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 2});
+</script>
+		<?php 
+		//message("Record Successfully Added, Please Complete the Final Step.", "info");
+		echo "<script>alert('Loading Registration Review Goto Final Step');</script>";
+		echo "<script>window.location.assign('apply_b.php?view=O_C');</script>";
+			///redirect("apply_b.php?view=O_C");
+		}
 	
 
 }
 }//}$_SESSION['insid3'] = rand();
 // Function to add text water mark over image
 function textwatermark($src, $watermark, $save=NULL) { 
+    putenv('GDFONTPATH=' . realpath('.'));
  list($width, $height) = getimagesize($src);
  $image_p = imagecreatetruecolor($width, $height);
  $image = imagecreatefromjpeg($src);
  imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width, $height); 
-// $txtcolor = imagecolorallocate($image_p, 200, 255, 300);
+ //$txtcolor = imagecolorallocate($image_p, 200, 255, 350);
 $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
- $font = 'monofont.ttf';
- $font_size = 20;
- //imagettftext($image_p, $font_size, 0, 50, 150, $txtcolor, $font, $watermark);
- imagettftext($image_p, $font_size, 0, 26, 88, $txtcolor, $font, $watermark);
+ $font = dirname(__FILE__) . "/study/monofont.ttf";
+ //$font = 'monofont.ttf';
+ $font_size = 35;
+ imagettftext($image_p, $font_size, 0, 50, 220, $txtcolor, $font, $watermark);
+ //imagettftext($image_p, $font_size, 0, 120, 530, $txtcolor, $font, $watermark);
  if ($save<>'') {
  imagejpeg ($image_p, $save, 100); 
  } else {
@@ -689,30 +713,28 @@ $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
  imagedestroy($image); 
  imagedestroy($image_p); 
 }
+
+
 ?>
 
 				<div class="panel-body">
 			    			<form name="register3" action="" method="post" enctype="multipart/form-data" id="register3">
 			    		<input type="hidden" name="insid3" value="<?php echo $_SESSION['insid3'];?> " />
+			    		<input type="hidden" name="app_No" id="app_No" tabindex="1"  value="<?php echo $find_record['appNo']; ?>" />
 			<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
 			    		<div class="panel-heading">
-			    	<h5 class="panel-title"> Registration ID </h5>
+			    	<h5 class="panel-title" style="text-align:center;"><strong>&nbsp;Upload Your Passport <font color="red"  size="2">(Note :Image Size Should Not be more than 300kb.)</font>&nbsp;&nbsp;</strong></h5>
 			 			</div>
 				
-					<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Matric Number</span></label>
+					<div class="row" >
+			    				<div class="col-xs-6 col-sm-6 col-md-12">
+			    				<label class="head">Matric Number  </span></label>
 			    					<div class="form-group"><input type="text" class="form-control input-sm" name="regnopic" id="regnopic"   tabindex="1" value="<?php echo $_SESSION['temppin']; ?>" readonly></div></div>
-			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head">Track No</label>
-			    					<div class="form-group"><input type="text" class="form-control input-sm" name="app_No" id="app_No" tabindex="1"  value="<?php echo $find_record['appNo']; ?>" readonly>
-			    					</div>
-			    				</div>
+			    			<!--<div class="col-xs-6 col-sm-6 col-md-4"><label class="head">Track No</label>
+			    					<div class="form-group"><input type="text" class="form-control input-sm" name="app_No" id="app_No" tabindex="1"  value="<?php echo $find_record['appNo']; ?>" readonly></div></div> --!>
 			    				
 			    			</div>
-					<div class="panel-heading">
-			    	<h5 class="panel-title"><strong>&nbsp;Upload Your Passport <font color="red"  size="2">(Note :Image Size Should Not be more than 300kb.)</font>&nbsp;&nbsp;</strong></h5>
-			 			</div>
+					
 				<div class="row">
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Upload Passport</span></label>
@@ -725,26 +747,206 @@ $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
 	//if ($rs2['image']==NULL ){print "./Student/uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rs2['image'];}?>" alt="" id="output_image" style="width:200px;height: 150px;"> </div> </div>
 			    					</div>
 			    				</div></div>
-				<div class="panel-heading">
-			    	<h5 class="panel-title"><strong>&nbsp;Declaration and Undertaking <font color="red" size="2">(Note :After This Final Stage Information update will not be possible.)</font>&nbsp;&nbsp;</strong></h5>
-			 			</div>
-				
-				<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-12">
-			    			
-			    					<div class="form-group">  <input id="approve" name="approve" value="1"  onclick="javascript: toggleCheckBox();" type="checkbox">
-			
-		I hereby acknowledge by ticking this check box that all the information Supplied are Correct and has been Verify By me.</div></div>
+				<!--	<div class="panel-heading">
+			    	<h5 class="panel-title"><strong>&nbsp;Declaration and Undertaking <font color="red" size="2">(Note :After This Final Stage Information update will not be possible.)</font>&nbsp;&nbsp;</strong></h5></div>
+				<div class="row"><div class="col-xs-6 col-sm-6 col-md-12">
+<div class="form-group">  <input id="approve" name="approve" value="1"  onclick="javascript: toggleCheckBox();" type="checkbox">
+I hereby acknowledge by ticking this check box that all the information Supplied are Correct and has been Verify By me.</div></div>
 			    				</div>
-			<!--	<input type="submit" value="Submit" class="btn btn-primary" title="Click to Submit Your Registration"> --!>
-				 <button name="SubmitForm" class="btn btn-primary"  data-placement="right" type="submit" title="Click to Submit Your Registration">Submit</button>
+		<input type="submit" value="Submit" class="btn btn-primary" title="Click to Submit Your Registration"> --!>
+<br><button name="SubmitForm" class="btn btn-primary"  data-placement="right" type="submit" title="Click to Save Passport">Save Passport</button>
 				
 				</div> 	</form> </div>
 			
 				</div>
 				
+				
+				<div class="TabbedPanelsContent">
+					<div id="center">
+					<?php
+				//$agens=	date("Y-m-d", strtotime($agen));
+					//$age2=birthday($agens); 
+						$school_form = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM schoolsetuptd "));
+						$schoolinitial =$school_form['initial'];
+ $sql2="SELECT * FROM student_tb where RegNo = '".$_SESSION['temppin']."' ";
+  $qsql2= mysqli_query($condb,$sql2);
+  $resoltcont = mysqli_num_rows($qsql2);	
+$rs23 = mysqli_fetch_array($qsql2);
+$existk = imgExists("Student/".$rs23['images']);
+$matno = ucfirst($rs23['RegNo']); $progs = ucfirst(getprog($rs23['app_type'])); $session = ucfirst($rs23['Asession']); $moen = getamoe($rs23['Moe']);
+$yoen = ucfirst($rs23['yoe']); $los = ucfirst(getlevel($rs23['p_level'],$rs23['app_type'])); $fac = getfacultyc($rs23['Faculty']); $dept = ucfirst(getdeptc($rs23['Department']));
+$sname = ucfirst($rs23['FirstName']); $fname = ucfirst($rs23['SecondName']); $oname = ucfirst($rs23['Othername']);
+$bgroup = ucfirst($rs23['bloodgroup']); $gender = $rs23['Gender']; $dob = $rs23['dob']; $hobbies = $rs23['hobbies'];
+$gtype = ucfirst($rs23['gtype']); $religion = $rs23['religion']; $any_fchalenge = $rs23['any_fchalenge']; $phone = $rs23['phone'];
+$email = $rs23['e_address']; $address = $rs23['address']; $lga = $rs23['lga']; $state = $rs23['state']; $nation = $rs23['nation'];
+
+if(isset($_POST['SubmitForm2'])){
+ 
+if(!$_POST['approve']){
+message("Your Have Not Approve Your Registration Information Click The Check Box to Approve", "error");
+				   redirect('apply_b.php?view=O_C');
+                   }elseif($existk < 1){
+message("Passport Upload is Required please Goto Step Two", "error");
+				   redirect('apply_b.php?view=O_C');
+}else{
+	$sql_complete="UPDATE student_tb SET reg_status ='$_POST[approve]',dateofreg = NOW() WHERE RegNo = '$_POST[regnopic]'";
+					$result_complete = mysqli_query($condb,$sql_complete);
+
+ ob_start();
+	echo "<script>alert('Your Have Sucessfully Completed The Form!');</script>";
+		echo "<script>window.location.assign('studregprint.php?stid=".md5($_POST['regnopic'])."');</script>";
+	
+
+}
+}//}$_SESSION['insid3'] = rand();
+// Function to add text water mark over image
+
+?>
+
+				<div class="panel-body">
+			    			<form name="register3" action="" method="post" enctype="multipart/form-data" id="register3">
+			    			<input type="hidden" name="insid3" value="<?php echo $_SESSION['insid3'];?> " />
+			    		<input type="hidden" name="regnopic" id="regnopic" value="<?php echo $_SESSION['temppin']; ?>" />
+			    		<input type="hidden" name="app_No" id="app_No" value="<?php echo $find_record['appNo']; ?>" />
+			<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+			    		<?php if($resoltcont < 1){  }else{?>
+                    
+                    <div class="panel-heading">
+			    	<h5 class="panel-title"><strong>&nbsp;Information Review <font color="red" size="2">(NB :You are advised to review your details before final Submission
+                    .)</font>&nbsp;&nbsp;</strong></h5>
+			 			</div>
+				
+					<div class="panel-heading">
+			    <div class="form_box">
+			 <div class="clear" style="overflow: auto;">
+        <table  border="0">
+       
+       <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Entry Information</strong></td></tr>
+ <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Passport:</strong></td>
+    <td width="20%" colspan="3"><img src="<?php    if ($existn > 0 ){ echo "Student/".$rs2['images'];
+	}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+	//if ($rs2['image']==NULL ){print "./Student/uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rs2['image'];}?>" alt="" id="output_image" style="width:25px;height: 20px;"><?php if($existk > 0){ echo "<font color='green'> <i class='fa fa-check'></i>"." Uploaded"."</font>"; }else{ echo "<font color='red'><i class='fa fa-close'></i>"." Not Uploaded"." </font>";}  ?></td>
+   
+   </tr>
+    <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Matric Number:</strong></td>
+    <td width="20%" colspan="1"><?php echo $matno ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Program Of Study:</strong></td>
+    <td width="20%" colspan="1"><?php echo $progs ; //$_SESSION['mobile']; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Academic Session:</strong></td>
+    <td width="20%" colspan="1"><?php echo $session ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Mode Of Entry:</strong></td>
+    <td width="20%" colspan="1"><?php echo $moen; ?></td>
+   </tr> 
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Year Of Entry:</strong></td>
+    <td width="20%" colspan="1"><?php echo $yoen ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Level Of Study:</strong></td>
+    <td width="20%" colspan="1"><?php echo $los; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> <?php echo $SCategory; ?> :</strong></td>
+    <td width="20%" colspan="1"><?php echo $fac ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong><?php echo $SGdept1; ?> :</strong></td>
+    <td width="20%" colspan="1"><?php echo $dept; ?></td>
+   </tr>
+     <tr class="row2">
+  <td width="20%" colspan="4" height="15" style="text-align:center;background-color:#add8e6;"><strong> Bio Data</strong></td>
+</tr>  
+ <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Surname :</strong></td>
+    <td width="20%" colspan="1"><?php echo $sname ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>First Name:</strong></td>
+    <td width="20%" colspan="1"><?php echo $fname; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Other Name:</strong></td>
+    <td width="20%" colspan="1"><?php echo $oname ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Blood Group:</strong></td>
+    <td width="20%" colspan="1"><?php echo $bgroup; ?></td>
+   </tr> 
+ 
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Gender:</strong></td>
+    <td width="20%" colspan="1"><?php echo $gender ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Date Of Birth:</strong></td>
+    <td width="20%" colspan="1"><?php echo $dob; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Hobbies:</strong></td>
+    <td width="20%" colspan="1"><?php echo $hobbies ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Genotype:</strong></td>
+    <td width="20%" colspan="1"><?php echo $gtype; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Religion:</strong></td>
+    <td width="20%" colspan="1"><?php echo $religion ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Any Phyisical Disability?:</strong></td>
+    <td width="20%" colspan="1"><?php echo $any_fchalenge; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Mobile Number:</strong></td>
+    <td width="20%" colspan="1"><?php echo $phone ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Email Address:</strong></td>
+    <td width="20%" colspan="1"><?php echo $email; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> Contact Address:</strong></td>
+    <td width="20%" colspan="1"><?php echo $address ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Local Government:</strong></td>
+    <td width="20%" colspan="1"><?php echo $lga; ?></td>
+   </tr>
+   <tr class="row1">
+  <td width="20%" colspan="1" height="20"><strong> State:</strong></td>
+    <td width="20%" colspan="1"><?php echo $state ; ?></td>
+      <td width="20%" colspan="1" height="20"><strong>Nationality:</strong></td>
+    <td width="20%" colspan="1"><?php echo $nation; ?></td>
+   </tr>
+  
+
+    <tr class="row1">
+      <td width="19%" height="20" colspan="5"></td>
+  </tr>
+ 
+		</table>
+            
+      </div>
+	
+			</div>
+			 			</div>
+				
+				
+				
+				<div class="row">
+			    				<div class="col-xs-6 col-sm-6 col-md-12">
+			    			
+	<div class="form-group" style="text-align:center">  <input id="approve" name="approve" value="1"  
+			onchange="document.getElementById('SubmitForm2').disabled = !this.checked;"
+			onclick="javascript: toggleCheckBox();" type="checkbox">
+	I hereby acknowledge by ticking this check box that all the information Supplied are Correct and has been Verify By me.<br>
+	<button name="SubmitForm2" id="SubmitForm2" class="btn btn-primary" disabled  data-placement="right" type="submit" title="Click to Submit Your Registration">Submit</button>
+	</div></div>
+			    				</div> <?php } ?>
+			<!--	<input type="submit" value="Submit" class="btn btn-primary" title="Click to Submit Your Registration"> --!>
+	
+
+				</div> 	</form> </div>
+			
+				</div>
+				
+				
+				
 				</div></div>
 				</div>
+				
+				
+				
+				
+	
     	
     	
     
@@ -777,23 +979,22 @@ $txtcolor = imagecolorallocate($image_p, 255, 200, 300);
     
      <?php 
  
-   if($num_pin1 > 0 and $studentpics == Null){ ?>
+   if($num_pin1 > 0 and $studentpics < 1){ ?>
 <script language="JavaScript" type="text/javascript">
 	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 1});
-
 </script>
-
-      <?php }else{ ?>
+<?php }else{ ?>
       <script language="JavaScript" type="text/javascript">
 	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 0});
-
 </script>
       <?php } ?>
-      <?php if($num_pin1 < 1 ){ ?>
+      <?php if(empty($approven) and $studentpics > 0){ ?>
  <script language="JavaScript" type="text/javascript">
-	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 0});
+	var tp1 = new Spry.Widget.TabbedPanels("AccountSummaryPanel", { defaultTab: 2});
 <?php } ?>
 </script>
+
+
 
     
 </div>

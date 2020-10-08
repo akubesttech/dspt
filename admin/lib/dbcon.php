@@ -630,13 +630,24 @@ $count_hod = mysqli_fetch_array($query2_hod);
 }
 
 //get assement default score
-function getamax($get_fac)
-{ $query2_hod = mysqli_query(Database::$conn,"select assmax from prog_tb where pro_id = '$get_fac' ");
-$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['assmax']; return $nameclass22;}
+function getamax($get_fac,$emax,$dept)
+{ $maxn = 0 ;  $query2_hod = mysqli_query(Database::$conn,"select assmax from courses where C_code = '".trim($get_fac)."' and dept_c = '".safee(Database::$conn,$dept)."' ");
+$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['assmax'];
+if(empty($nameclass22)){ $maxn = $emax; }else{$maxn = $nameclass22;} 
+return $maxn;}
+//get assement2 default score
+function getpmax($get_fac,$dept)
+{ $maxn = 0 ; $query2_hod = mysqli_query(Database::$conn,"select assmax2 from courses where C_code = '".trim($get_fac)."' and dept_c = '".safee(Database::$conn,$dept)."' ");
+$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['assmax2']; 
+if(empty($nameclass22)){ $maxn = 0; }else{$maxn = $nameclass22;}
+return $maxn;}
 //get assement default score
-function getemax($get_fac)
-{ $query2_hod = mysqli_query(Database::$conn,"select exammax from prog_tb where pro_id = '$get_fac' ");
-$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['exammax']; return $nameclass22; }
+function getemax($get_fac,$amax,$dept)
+{ $maxn = 0 ; $query2_hod = mysqli_query(Database::$conn,"select exammax from courses where C_code = '".trim($get_fac)."' and dept_c = '".safee(Database::$conn,$dept)."' ");
+$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['exammax']; 
+if(empty($nameclass22)){ $maxn = $amax; }else{$maxn = $nameclass22;} 
+return $maxn; }
+
 
 //get last string
 function getlstr($string,$length)
@@ -658,6 +669,11 @@ $matno ="DSPT/".($dID)."/".$yearadds."/".$maxadd;
 //dspt/otm/1718/no
 return $matno;
 }
+//get mode of entry code
+function getmcode($apptype)
+{ $mcode_query = mysqli_query(Database::$conn,"SELECT mt.id,mt.mcode FROM mode_tb mt LEFT JOIN student_tb st ON st.Moe = mt.id WHERE st.app_type ='".safee(Database::$conn,$apptype)."' GROUP BY Department") or die(mysqli_error($condb));
+$count_hod = mysqli_fetch_array($mcode_query);
+$nameclass22=$count_hod['mcode']; return $nameclass22;}
 // function to student payment status for the section
 function getpayn($mat,$sec,$prog,$lev,$sh){ $conn = 0; //$sh = 0;
     $getstd = $viewutme_query = mysqli_query(Database::$conn,"select * from student_tb WHERE stud_id = '".safee($conn,$mat)."' ")or die(mysqli_error($conn));
@@ -703,15 +719,15 @@ $mail = new PHPMailer(true);
         $mail->SMTPDebug = 0;                     // enables SMTP debug information (for testing)
         $mail->SMTPAuth = true;                  // enable SMTP authentication
         $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
-        $mail->Host = "mail.smartdelta.com.ng";      // sets GMAIL as the SMTP server
+        $mail->Host = "mail.deltasmartcity.ng";      // sets GMAIL as the SMTP server
         $mail->Port = 465;                   // set the SMTP port for the GMAIL server
-        $mail->Username = 'notification@smartdelta.com.ng';
+        $mail->Username = 'notification@deltasmartcity.ng';
          $mail->Password = 'xculp82017';
 
        // $mail->SetFrom('youremail@gmail.com', 'Your Name');
-       $mail->SetFrom('notification@smartdelta.com.ng', $sendername);
-       $mail->AddReplyTo("notification@smartdelta.com.ng",$sendername);
-      $mail->addBCC("mailcopy@smartdelta.com.ng");
+       $mail->SetFrom('notification@deltasmartcity.ng', $sendername);
+       $mail->AddReplyTo("notification@deltasmartcity.ng",$sendername);
+      $mail->addBCC("mailcopy@deltasmartcity.ng");
      $mail->AddAddress($email);
        $mail->Subject = $sub ;//trim("Email Verifcation - www.thesoftwareguy.in");
         $mail->MsgHTML($message);
@@ -739,15 +755,15 @@ $mail = new PHPMailer(true);
         $mail->SMTPDebug = 0;                     // enables SMTP debug information (for testing)
         $mail->SMTPAuth = true;                  // enable SMTP authentication
         $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
-        $mail->Host = "mail.smartdelta.com.ng";      // sets GMAIL as the SMTP server
+        $mail->Host = "mail.deltasmartcity.ng";      // sets GMAIL as the SMTP server
         $mail->Port = 465;                   // set the SMTP port for the GMAIL server
-        $mail->Username = 'notification@smartdelta.com.ng';
+        $mail->Username = 'notification@deltasmartcity.ng';
          $mail->Password = 'xculp82017';
 
        // $mail->SetFrom('youremail@gmail.com', 'Your Name');
-       $mail->SetFrom('notification@smartdelta.com.ng', $sendername);
-       $mail->AddReplyTo("notification@smartdelta.com.ng",$sendername);
-       $mail->addBCC("mailcopy@smartdelta.com.ng");
+       $mail->SetFrom('notification@deltasmartcity.ng', $sendername);
+       $mail->AddReplyTo("notification@deltasmartcity.ng",$sendername);
+       $mail->addBCC("mailcopy@deltasmartcity.ng");
         $mail->AddAddress($email);
        $mail->Subject = $sub ;//trim("Email Verifcation - www.thesoftwareguy.in");
         $mail->MsgHTML($message);
@@ -845,6 +861,62 @@ function gnum($nob){
 function getsdept($get_admin)
 {$query2 = mysqli_query(Database::$conn,"select s_dept from staff_details where usern_id = '$get_admin' "); $count = mysqli_fetch_array($query2);
  $nameclass2=$count['s_dept'];return $nameclass2;}
+ 
+
+ function getsimage($get_fac)
+{ $query2_hod = mysqli_query(Database::$conn,"select images from student_tb where RegNo = '".trim($get_fac)."' ");
+$count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['images']; return $nameclass22; }
+
+//paystack transaction charges
+function getptcharge($getamount,$per)
+{  $trancharge = 0; if($getamount > 2499){ $trancharge = ($getamount / 100) * $per + 100;
+}else{ $trancharge = ($getamount / 100) * $per;} return round($trancharge,2); }
+
+
+//get student name by id
+function getsnameid($get_RegNo){$conn="";  $query2_fac = mysqli_query(Database::$conn,"select FirstName,SecondName,Othername from student_tb where stud_id = '".safee($conn,$get_RegNo)."' ")or die(mysqli_error($conn));
+$count_fac = mysqli_fetch_array($query2_fac);
+ $nameclass2=$count_fac['FirstName']." ".$count_fac['SecondName']." ".$count_fac['Othername'];
+return $nameclass2;
+}
+//sessional CGPA
+function getcgpa($s_id,$prog,$sess,$lev){ $tp = 0; $cu = 0; $tp2 =0; $cu2 =0;
+$queryf = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'First' and total > 0  group BY course_code ") or die(mysqli_error($conn)); $gp=0;
+ $querys = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'Second' and total > 0  group BY course_code ") or die(mysqli_error($conn)); $gp2=0;
+while($row_camt = mysqli_fetch_array($queryf)){
+    $gp1 = gradpoint($row_camt['total'],$prog) * $row_camt['c_unit']; $tp += $gp1 ; $cu += $row_camt['c_unit'];
+  }
+  if($tp != 0){ $gp = round($tp/$cu,2); }else{ $gp = 0.00;}
+    while($row_camts = mysqli_fetch_array($querys)){
+    $gp2 = gradpoint($row_camts['total'],$prog) * $row_camts['c_unit']; $tp2 += $gp2 ; $cu2 += $row_camts['c_unit'];
+    }
+    if($tp2 != 0){ $gp2 = round($tp2/$cu2,2); }else{ $gp2 = 0.00;}  
+    if($gp2  > 0){ return $cgpa = round($gp + $gp2 / 2,2); }else{ return $cgpa = $gp; }
+}
+
+ function getAcastatus($statnum)
+{ if($statnum > 0){
+    if ($statnum==1){ return "Active"; }else if($statnum==2){return "Graduated";
+  }else if($statnum==3){ return "Defered";}else if($statnum==4){ return "Expelled";}else if($statnum==5){ return "Suspended";}
+  else if($statnum==6){ return "Transfered";}else if($statnum==7){ return "Withdrawn";}else if($statnum==8){ return "Repeat";}else if($statnum==0){ return "Active";}
+  }else{ $output = '';  
+	$arr = array("Active" =>"1","Graduated" =>"2","Defered" =>"3","Expelled" =>"4","Suspended" =>"5","Transfered" =>"6","Withdrawn" =>"7","Repeat" =>"8"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;}
+  }
+   function getAstate($statnum)
+{ if ($statnum==1){ return "TRUE"; }else if($statnum==2){return "FALSE";
+  }else if($statnum==3){ return "FALSE";}else if($statnum==4){ return "FALSE";}else if($statnum==5){ return "FALSE";}
+  else if($statnum==6){ return "TRUE";}else if($statnum==7){ return "FALSE";}else{return "TRUE";}
+  
+  }
+//get student academic status by Sessional GP
+function getAcagpstatus($marks,$class_name20){ 
+$grade = mysqli_query(Database::$conn,"SELECT gradename,grade_group,prog FROM grade_tb WHERE gpmin <= round($marks,2) and gpmax >= round($marks,2) and prog='".($class_name20)."' and grade_group ='03'");
+$gd =mysqli_fetch_row($grade);
+return $gd[0];
+}
 // // time zone manager
 /*if(!isset($_SESSION['timezone']))
 {if(!isset($_REQUEST['offset']))

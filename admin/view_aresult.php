@@ -2,14 +2,14 @@
                 <div class="x_panel">
                   <div class="x_title">
                   <?php 
-                  
 $sql="select * from uploadrecord where up_id='".safee($condb,$_GET['userId'])."' ";
 			$resultso=mysqli_query($condb,$sql) or die(mysqli_error($condb));
 		//	$count=mysql_num_rows($result);
 		$row_fend=mysqli_fetch_array($resultso);
 		$recode = $row_fend['course'];$semester=$row_fend['semester'];
 $session=$row_fend['session'];
-$level= $row_fend['level'];
+$level= $row_fend['level']; $dept = $row_fend['dept'];
+$pmaxn = getpmax($recode,$dept);
 	//extract($row);
 	$serial=1;
                   ?>
@@ -59,8 +59,9 @@ Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".
                           <th>Student Name</th>
                           <th>Course Title</th>
                           <th>Credit Unit</th>
-                          <th>C A Score <?php echo " ".getamax($class_ID)." %"; ?></th>
-                          <th>Exam Score <?php echo " ".getemax($class_ID)." %"; ?></th>
+                          <th>C A Score <?php echo " ".getamax($recode,$amax,$dept)." %"; ?></th>
+                          <?php if(!empty($pmaxn)){ ?> <th>Practical <?php echo " ".$pmaxn." %"; ?></th> <?php } ?>
+                          <th>Exam Score <?php echo " ".getemax($recode,$emax,$dept)." %"; ?></th>
                           <th>Total</th>
                           <th>Grade</th>
                         <!-- <th>View Info</th> --!>
@@ -70,11 +71,10 @@ Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".
                       
  <tbody>
                  <?php
-
 $viewupco=mysqli_query($condb,"select * from results where course_code ='". safee($condb,$recode) ."' and session ='". safee($condb,$session) ."' and semester='". safee($condb,$semester) ."' and level='". safee($condb,$level) ."' ");
 		while($row_upfile = mysqli_fetch_array($viewupco)){
-		$id = $row_upfile['up_id'];
-		$course_id = $row_upfile['course_code'];
+		if(!empty($pmaxn)){ $cell = 5; }else{ $cell = 4;}
+		$course_id = $row_upfile['course_code']; $escore = $row_upfile['exam'];
 		$student_regno = $row_upfile['student_id']; $stprogram = getstudentpro($row_upfile['student_id']);
 ?>     
 <tr><td width="30"><input id="optionsCheckbox" class="uniform_on1" name="selector[]"  type="checkbox" value="<?php echo $student_regno; ?>"   checked>
@@ -92,12 +92,17 @@ $viewupco=mysqli_query($condb,"select * from results where course_code ='". safe
                           <td><?php echo getsname($row_upfile['student_id']); ?></td>
                           <td><?php echo getcourse($row_upfile['course_code']); ?></td>
                           <td><input type="text" class="form-control " name='chour[]' id="chour" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['c_unit']; ?> "    maxlength="2" readonly ></td>
+                          <?php if(empty($escore)){ ?>
+                            <td colspan="<?php echo $cell; ?>" style="text-align: center;font-size: medium;color: red;"> Absent </td>
+                          <?php }else{?>
                           <td> <input type="text" class="form-control " name='assess[]' id="assess" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['assessment']; ?>"    maxlength="2" ></td>
+                          <?php if(!empty($pmaxn)){ ?>
+                           <td> <input type="text" class="form-control " name='assess2[]' id="assess2" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['passessment']; ?>"    maxlength="2" ></td>
+                           <?php } ?>
                           <td><input type="text" class="form-control " name='exams[]' id="exams" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['exam']; ?>"    maxlength="3" ></td>
                            <td><?php echo $row_upfile['total']; ?></td>
-                           <td><?php echo grading($row_upfile['total'],$stprogram); ?></td>
-                          
-										<!--		<td width="90">
+                           <td><?php echo grading($row_upfile['total'],$stprogram); ?></td><?php } ?>
+<!--		<td width="90">
 	<a rel="tooltip"  title="Click to Edit The Selected Student Result <?php echo $row_upfile['course_code']; ?>" id="divButtons2" href="?view=e_ares&userId=<?php echo $student_regno;?>&cos_id=<?php echo $row_upfile['course_code'];?>&lev_id=<?php echo $level;?>&ses_id=<?php echo $session;?>&sem_id=<?php echo $semester;?>" 	  data-toggle="modal" class="btn btn-info" name="divButtons2"><i class="fa fa-file icon-large"> Edit Result</i></a>				</td> --!>
                         </tr>
                      

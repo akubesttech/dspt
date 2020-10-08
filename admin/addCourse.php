@@ -82,6 +82,8 @@ $other2 = $_POST['otherl'];
 $dept_c = $_POST['dept1'];
 $facadd = $_POST['fac1'];
 $coursecat = $_POST['ccat'];
+$amax = $_POST['assmax']; $amax2 = $_POST['assmax2']; $exmax = $_POST['exammax'];
+$sump = $amax + $amax2 + $exmax;
 $query = mysqli_query($condb,"select * from courses where C_code = '".safee($condb,$Ccode)."' and dept_c = '".safee($condb,$dept_c)."'")or die(mysqli_error($condb));
 $row_course = mysqli_num_rows($query);
 //$query_CO = mysqli_query($condb,"select * from courses where  C_title = '".safee($condb,$Ctitle)."'")or die(mysqli_error($condb));
@@ -89,17 +91,15 @@ $row_course = mysqli_num_rows($query);
 if ($row_course>0){
 message("The Course Code <strong> $Ccode </strong>  Entered  Already Exist in $dept_c Dept Try Again.", "error");
 		        redirect('add_Courses.php?view=addc');
-//$res="<font color='red'><strong>The Course Code <strong>'$Ccode'</strong>  Entered  Already Exist in $dept_c Dept Try Again..</strong></font><br>";
-				///$resi=1;
-				//}elseif($row_course_CO >0){
-//$res="<font color='red'><strong>The Course Title <strong>'$Ctitle'</strong> Entered  Already Exist Try Again..</strong></font><br>";
-				//$resi=1;
+}elseif($sump!= 100){
+message("The sum of the Score inputs must be equal to 100", "error");
+		        redirect('add_Courses.php?view=addc');
 				}elseif(!ctype_digit($Cunit)){
 				message("Incorrect Input it should be a Digit.", "error");
 		        redirect('add_Courses.php?view=addc');
 			}else{
 if($level=="Others"){
-mysqli_query($condb,"insert into courses (dept_c,C_title,C_code,C_unit,semester,C_level,fac_id,c_cat) values('$dept_c','$Ctitle','$Ccode','$Cunit','$semester','$other2','".safee($condb,$facadd)."','".$coursecat."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into courses (dept_c,C_title,C_code,C_unit,semester,C_level,fac_id,c_cat,assmax,assmax2,exammax) values('$dept_c','$Ctitle','$Ccode','$Cunit','$semester','$other2','".safee($condb,$facadd)."','".$coursecat."','".safee($condb,$amax)."','".safee($condb,$amax2)."','".safee($condb,$exmax)."')")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Course Titled $Ctitle was Add')")or die(mysqli_error($condb)); 
  ob_start();
@@ -108,7 +108,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 
 				}else{
 
-mysqli_query($condb,"insert into courses (dept_c,C_title,C_code,C_unit,semester,C_level,fac_id,c_cat) values('$dept_c','$Ctitle','$Ccode','$Cunit','$semester','$level','".safee($condb,$facadd)."','".$coursecat."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into courses (dept_c,C_title,C_code,C_unit,semester,C_level,fac_id,c_cat,assmax,assmax2,exammax) values('$dept_c','$Ctitle','$Ccode','$Cunit','$semester','$level','".safee($condb,$facadd)."','".$coursecat."','".safee($condb,$amax)."','".safee($condb,$amax2)."','".safee($condb,$exmax)."')")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Course Titled $Ctitle was Add')")or die(mysqli_error($condb));
  message("New Course was Successfully Added", "success");
@@ -140,7 +140,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 }
 ?> </span>
 
-  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" >
+  <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" >
 					    
 						  	  <label for="heard"><?php echo $SCategory; ?> </label>
 						  	  
@@ -168,7 +168,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                           
                           </select>
                       </div>
-                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
                        
 						  	  <label for="heard"><?php echo $SGdept1; ?></label>
                             	  <select name='dept1' id="dept1" class="form-control" required="required" >
@@ -176,24 +176,22 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                           </select>
                       </div>
  
- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+ <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Course Title </label>
                             	  <input type="text" class="form-control " name='Ctitle' id="Ctitle"  required="required">
                       </div>
                       
-                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                      <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Course Code </label>
                             	  <input type="text" class="form-control " name='Ccode' id="Ccode"  required="required">
                       </div>
                       
-                     <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                     <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Credit Unit </label>
                             	  <input type="text" class="form-control " name='Cunit' id="Cunit"  required="required">
                       </div>
  
-
-                      
-                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+ <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 					  <label for="heard">Semester </label>
                       
                           <select name='semester' id="semester" class="form-control" required>
@@ -203,17 +201,25 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                           
                           </select> </div>
                       
-                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 					  <label for="heard">Level </label>
                       <?php include("loadlevel.php"); ?>
                            </div>
                     
-						  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
-						  	  <label for="heard"  style="display: none;"  id="other2" >Other Level</label>
-                            	  <input type="text" class="form-control " style="display: none;"  type="hidden" name='otherl' id="otherl">
-                      </div>
+						  
+                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Max CA Score </label>
+                      <input type="text" class="form-control " name='assmax' id="assmax" maxlength="2"   placeholder="eg.CA (20%)" onkeypress="return isNumber(event);" required="required"> </div>
+                          
+                          <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Max Pratical Score (Optional) </label>
+                      <input type="text" class="form-control " name='assmax2' id="assmax2" maxlength="2"   placeholder="eg.Pratical (10%)" onkeypress="return isNumber(event);" > </div>
+                        
+                          <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Max Exam Score  </label><input type="text" class="form-control " name='exammax' id="exammax" maxlength="2"  placeholder="eg.Exam (70%)" onkeypress="return isNumber(event);" required="required"> </div>
+                     
                      <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
 <label for="heard" >Course Category</label><br>
 <label class="radio-inline"><input type="radio" name="ccat" value="1"  /> Compulsory </label><label class="radio-inline"><input type="radio" name="ccat" value="0"  /> Elective </label></div></div>
                

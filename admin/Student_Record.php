@@ -122,8 +122,52 @@ $sql = mysqli_query(Database ::$conn,"UPDATE student_tb SET verify_Data = '".saf
 }}}
 	message(" Student(s) information  Successfully Verified .", "success");
 	redirect($links); }}
- 
-    ?>
+    
+    //change of Course validation
+    if(isset($_POST['caccept'])){
+	 if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect("Student_Record.php?view=coc");
+			}elseif(empty($_POST['selector'])){
+				message("Select at least one Record to proceed !", "error");
+		        redirect("Student_Record.php?view=coc");
+				}else{ $id=$_POST['selector'];  $N = count($id);
+for($i=0; $i < $N; $i++){$status = "TRUE";  $urllogin = host(); $staff = getstaff($session_id);
+    $getsup=mysqli_query(Database ::$conn,"SELECT * FROM student_tb WHERE  stud_id ='".safee($condb,$id[$i])."' AND reg_status = '1'");
+    $getccourse=mysqli_query(Database ::$conn,"SELECT * FROM coc_tb WHERE  sid ='".safee($condb,$id[$i])."' AND chod_app ='1' AND nhod_app ='1' AND pay_status = '1'");
+  $countv=mysqli_num_rows($getsup);$rown=mysqli_fetch_array($getsup); $rowi=mysqli_fetch_array($getccourse);
+  if($countv > 0){ extract($rown); extract($rowi); $cf = $n_fac; 
+  $sessionad  = $Asession; $department  = $Department; $pro = $app_type; $cd = strtoupper(getdeptc($c_dept)); $nd = strtoupper(getdeptc($n_dept));
+    $studentRegno = getmatno($sessionad,$department,$pro); $p_email = $e_address;
+   if(empty($a_app)){ $regcount = "1".getlstr($studentRegno,3); }else{$regcount = $reg_count ;} 
+  $regNo1 = $RegNo; $pass_word = substr(md5($studentRegno.SUDO_M),14);
+  //if(empty($a_app)){ $pass_word = substr(md5($regNo1.SUDO_M),14); $pshow = $studentRegno; }else{$pass_word = $password; $pshow = " Use password created during Registration "; }
+$std = getsnameid($sid);
+$msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
+	Your Change of Course From ".$cd." to ".$nd." was Successfully Validated .\n
+	Find below your New Matric Number and your CMS Password \n
+	Matric Number :".$studentRegno.   "\n
+	Password :".$studentRegno.   "\n
+	..................................................................\n
+    Please Login and reset your Password!\n
+    
+    This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
+    For inquiry and complaint please email info@smartdelta.com.ng \n
+	
+	Thank You Admin!\n\n");
+$subject="Change Of Course Validation CMS";
+//define the body of the message.
+ob_start(); //Turn on output buffering
+$mail_data = array('to' => $e_address, 'sub' => $subject, 'msg' => 'Notify','body' => $msg, 'srname' => $comn);
+	send_email($mail_data);
+$sql = mysqli_query(Database ::$conn,"UPDATE student_tb SET RegNo='".safee(Database ::$conn,$studentRegno)."',Faculty = '".safee(Database ::$conn,$cf)."',Department = '".safee(Database ::$conn,$n_dept)."',reg_count='".safee(Database ::$conn,$regcount)."',password = '".safee(Database ::$conn,$pass_word)."' WHERE stud_id = '".safee(Database ::$conn,$id[$i])."'"); //redirect("Student_Record.php?details&userId=");
+$sql2 = mysqli_query(Database ::$conn,"UPDATE coc_tb SET a_app = '1' WHERE sid ='".safee(Database ::$conn,$id[$i])."'");
+mysqli_query(Database ::$conn,"insert into activity_log (date,username,action) values(NOW(),'".$admin_username."','$std Change of Course into $nd , validated by $staff ')")or die(mysqli_error(Database ::$conn)); 
+
+}}
+message("Student(s) Change of Course was Successfully Validated .", "success");
+	redirect("Student_Record.php?view=coc"); }}
+ ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
@@ -168,9 +212,22 @@ $sql = mysqli_query(Database ::$conn,"UPDATE student_tb SET verify_Data = '".saf
 		            $content    = 'selectprog.php';		
 		            break;
                     
+                    case 'p_book' :
+		            $content    = 'selectpbook.php';		
+		            break;
+                    
 		            case 'Clearance' :
 		            $content    = 'app_clearance_file.php';		
 		            break;
+                    
+                    case 'coc' :
+		            $content    = 'cocourse.php';		
+		            break;
+                    
+                    case 'sas' :
+		            $content    = 'academicstatus.php';		
+		            break;
+                    
 	                default :
 		            //$content    = 'searchStud.php';
 					$content    = 'olist.php';

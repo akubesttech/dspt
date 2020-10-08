@@ -8,11 +8,12 @@ require_once 'Excel/reader.php';
 $session_id = $_GET['userid'];
 $session = $_GET['session'];
 $course_e = $_GET['cos'];
+$dept = $_GET['dept1'];
 //$depart2 =  substr($depart,0,8);
 $c_choice = $_GET['semester'];
 $level = $_GET['level'];
 $table = 'coursereg_tb';
-
+$pmaxn = getpmax($course_e,$dept);
 
 //$query = "SELECT sregno,c_code,c_unit,assesment,exam FROM $table where c_code = '$course_e' && session = '$session' && level = '$level'&& semester = '$c_choice' && creg_status='1'";  
 
@@ -48,7 +49,8 @@ $table = 'coursereg_tb';
 
     <?php
     	$option = trim($course_e);
-$option = str_replace(' ', '_', $option); $assessment = "Continous Assessment ".getamax($class_ID)." %"; $examscore = "Exam Score ".getemax($class_ID)." %";
+$option = str_replace(' ', '_', $option); $assessment = "Continous Assessment ".getamax($course_e,$amax,$dept)." %"; $examscore = "Exam Score ".getemax($course_e,$emax,$dept)." %";
+$p_assess = $CA2." ".$pmaxn." %";
     	header("Content-Type: application/xls"); 
 		//header("Content-Disposition: attachment; filename='$session'_'".$course_e."'_Student_Exam_Template.xls");
 		header("Content-Disposition: attachment; filename=".$session."_".$option."_Student_Exam_Template.xls");     
@@ -70,24 +72,27 @@ $option = str_replace(' ', '_', $option); $assessment = "Continous Assessment ".
     						<th>Name</th>
     						<th>Course Code</th>
     						<th>Credit Unit</th>
-    						<th>" .$assessment."</th>
-    						<th>".$examscore."</th>
+    						<th>" .$assessment."</th>";
+                           if(!empty($pmaxn)){
+                            $output .="	<th>".$p_assess."</th>"; }
+   					$output .="	<th>".$examscore."</th>
     					</tr>
     				<tbody>
     		";
      
-    		$query = mysqli_query($condb,"SELECT sregno,c_code,c_unit,assesment,exam FROM coursereg_tb where c_code = '$course_e' AND session = '$session' AND level = '$level' AND semester = '$c_choice' AND creg_status='1' ") or die(mysqli_errno($condb));
+    		$query = mysqli_query($condb,"SELECT sregno,c_code,c_unit,assesment,exam,p_assess  FROM coursereg_tb where c_code = '$course_e' AND session = '$session' AND level = '$level' AND semester = '$c_choice' AND creg_status='1' ") or die(mysqli_errno($condb));
     		$countt = mysqli_num_rows($query);
 			while($fetch = mysqli_fetch_array($query)){
-     
-    		$output .= "
+     $output .= "
     					<tr>
     						<td>".$fetch['sregno']."</td>
     						<td>".getsname($fetch['sregno'])."</td>
     						<td>".$fetch['c_code']."</td>
     						<td>".$fetch['c_unit']."</td>
-    						<td>".$fetch['assesment']."</td>
-    						<td>".$fetch['exam']."</td>
+    						<td>".$fetch['assesment']."</td>";
+                             if(!empty($pmaxn)){
+                      $output .= "      <td>".$fetch['p_assess']."</td>"; }
+    					$output .= "	<td>".$fetch['exam']."</td>
     					</tr>
     		";
     		}

@@ -8,9 +8,11 @@ $f_pro = $_POST['f_pro'];$min_grade = $_POST['min'];
 		$max_grade = $_POST['max'];$grade_group = $_POST['ggroup'];
 		$grade = $_POST['grade'];$gstatus = $_POST['gstatus'];
 		$gpmin = $_POST['gpmin'];$gpmax = $_POST['gpmax']; 
- if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint'];}else{$graderemark = getappstatus($gstatus);
+if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint']; $ngrade = $grade;}elseif($grade_group == "03"){ $graderemark = $gstatus;$ngrade = ""; $gradepoint = 0; }else{$graderemark = getappstatus($gstatus);$ngrade = "";
 $gradepoint= $_POST['gstatus']; }
-$sql_grade = mysqli_query($condb,"SELECT * FROM grade_tb where prog= '".safee($condb,$f_pro)."' and grade= '".safee($condb,$grade)."' and grade_group='".safee($condb,$grade_group)."'")or die(mysqli_error($condb)); $gradecount = mysqli_num_rows($sql_grade);
+//if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint'];}else{$graderemark = getappstatus($gstatus);
+//$gradepoint= $_POST['gstatus']; }
+$sql_grade = mysqli_query($condb,"SELECT * FROM grade_tb where prog= '".safee($condb,$f_pro)."' and grade= '".safee($condb,$ngrade)."' and grade_group='".safee($condb,$grade_group)."' and gradename = '".safee($condb,$graderemark)."'")or die(mysqli_error($condb)); $gradecount = mysqli_num_rows($sql_grade);
 $query_check = mysqli_query($condb,"select * from session_tb where action = '1'")or die(mysqli_error($condb));
 $action = mysqli_num_rows($query_check);
 $count2 = mysqli_fetch_array($query_check);
@@ -18,11 +20,11 @@ if($gradecount > 1){ 	message("ERROR: grade bound has been added for this progra
 		        redirect('add_grade.php?id='.$get_RegNo); }elseif($min_grade > $max_grade){
 			message("ERROR:  Minimum score bound cannot be More than Maximum score bound, Try Again", "error");
 		        redirect('add_grade.php?id='.$get_RegNo);	
-				}elseif($gpmin > $gpmax and $grade_group == "01"){
+				}elseif($gpmin > $gpmax and $grade_group !== "02"){
 			message("ERROR:  Minimum GPA bound cannot be More than Maximum GPA bound, Try Again", "error");
 		        redirect('add_grade.php?id='.$get_RegNo);	       		
 }else{
-mysqli_query($condb,"update grade_tb SET prog='".safee($condb,$f_pro)."',grade_group='".safee($condb,$grade_group)."',b_min='".safee($condb,$min_grade)."',b_max='".safee($condb,$max_grade)."',grade = '".safee($condb,$grade)."' ,gp = '".safee($condb,$gradepoint)."',gradename = '".safee($condb,$graderemark)."',gpmin = '".safee($condb,$gpmin)."',gpmax='".safee($condb,$gpmax)."' where id='".safee($condb,$get_RegNo)."'") or die(mysqli_error($condb));
+mysqli_query($condb,"update grade_tb SET prog='".safee($condb,$f_pro)."',grade_group='".safee($condb,$grade_group)."',b_min='".safee($condb,$min_grade)."',b_max='".safee($condb,$max_grade)."',grade = '".safee($condb,$ngrade)."' ,gp = '".safee($condb,$gradepoint)."',gradename = '".safee($condb,$graderemark)."',gpmin = '".safee($condb,$gpmin)."',gpmax='".safee($condb,$gpmax)."' where id='".safee($condb,$get_RegNo)."'") or die(mysqli_error($condb));
 // ob_start();
 message("Grade Bound Successfully Updated", "success");
 		        redirect('add_grade.php');
@@ -63,11 +65,11 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
     <option value="02">Entrance Exam</option>
  </select>
                       </div>
-   <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
+   <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" id="smin" >
 						  	  <label for="heard"   id="enable3" >Min Score Bound * </label><div  id="txtroomno" >
 <input type="text"  id="min" name="min" value="<?php echo ($row_upform['b_min']); ?>" placeholder="0"  required="required" onkeypress="return isNumber(event);"  class="form-control" ></div>
 </div>
- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
+ <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" id="smax" >
 						  	  <label for="heard"   id="enable3" >Max Score Bound *</label>
 <input type="text"  id="max" name="max" value="<?php echo ($row_upform['b_max']); ?>" placeholder="0" onkeypress="return isNumber(event);"   class="form-control" >
                   </div>
@@ -99,6 +101,14 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
 						  	  <label for="heard">Grade Status</label>
 <select  name="gstatus" id="gstatus" class="form-control" ><option value="<?php echo $row_upform['gp']; ?>"><?php echo getappstatus($row_upform['gp']); ?></option>
 <option  value="1">Admitted</option><option value="2">Pending</option> <option value="3">Not Admitted</option></select></div>
+
+<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="display: none;" id="gastatus">
+						  	  <label for="heard">Academic Status </label>
+<select  name="gstatus" id="gstatus" class="form-control" >
+<option value="<?php echo $row_upform['gradename']; ?>"><?php 
+if($row_upform['grade_group'] =="03"){ echo getAcastatus($row_upform['gradename']);}else{ echo $row_upform['gradename'];} ?></option>
+<?php echo getAcastatus(0); ?>
+</select></div>
             <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                         

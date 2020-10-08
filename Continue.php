@@ -19,7 +19,7 @@ if(isset($_POST['Login_Continue'])){
  $Pin = $_POST["pin"];
 $serial = $_POST["serial"];
 $nappNo20 = $_POST["nappNo20"];
-	$_SESSION['temppin']=$Pin;
+	//$_SESSION['temppin']=$Pin;
 $passwordn = $_POST['pword'];
 $password = substr(md5($passwordn.SUDO_M),14);
 	//$result_pinn=mysqli_query($condb,"SELECT * FROM new_apply1 WHERE Pin ='$Pin' AND appNo ='".safee($condb,$nappNo20)."'");
@@ -27,6 +27,7 @@ $password = substr(md5($passwordn.SUDO_M),14);
 $num_pinn = mysqli_num_rows($result_pinn);
 $num_serial = mysqli_fetch_array($result_pinn);
 $num_serialNo = $num_serial['SerialNo'];
+$num_pin = $num_serial['Pin'];
 	$sql_pinn2="SELECT reg_status FROM new_apply1 WHERE password ='".safee($condb,$password)."' AND appNo ='".safee($condb,$nappNo20)."' AND reg_status = '1'";
 $result_pinn2 = mysqli_query($condb,$sql_pinn2);
 $num_pinn2 = mysqli_num_rows($result_pinn2);
@@ -44,6 +45,8 @@ message("Application with the Following Details '$nappNo20' Has Been Submited,yo
 		        redirect('studentappprint.php?applicationid='.md5($nappNo20));
 				}else{
 				redirect("apply_b.php?view=N_1");
+                	$_SESSION['temppin']=$num_pin;
+	               $_SESSION['tempserial']=$num_serialNo;
 				//header("location:apply_b.php?view=N_1");
 				//echo "<script>window.location.assign('apply_b.php?view=N_1 & applicationid=".$nappNo20."');</script>";
 			}}
