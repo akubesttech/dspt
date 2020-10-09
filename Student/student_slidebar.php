@@ -8,7 +8,7 @@
             <div class="clearfix"></div>
 	<?php $query= mysqli_query($condb,"select * from student_tb where stud_id = '$session_id'")or die(mysqli_error($condb));
 							  $row = mysqli_fetch_array($query); $existx = imgExists($row['images']);
-							  $checkstatus = $row['access_level'];
+							  //$checkstatus = $row['access_level'];
 							  
 							  if($student_state == "Delta"){ $scan = "1";}else{ $scan = "0";}
 $qcompamtd = mysqli_query($condb,"select * from fee_db where ft_cat ='1' and level= '".safee($condb,$student_level)."' and program='".safee($condb,$student_prog)."' and status = '1' and Cat_fee = '".safee($condb,$scan)."' ") or die(mysqli_error($condb)); $sumcreditm=0;
@@ -63,6 +63,7 @@ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payme
               <div class="menu_section">
               
                 <h3>Registration No :<?php echo $row['RegNo'];  ?></h3>
+                <h3>Academic Status :<b><?php echo getAcastatus($row['acads']);  ?></b></h3>
                 <ul class="nav side-menu">
                 <li class="current-page"><a href="../Student/"><i class="fa fa-home"></i> Dashboard</a>
 </li>
@@ -71,6 +72,7 @@ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payme
                     <ul class="nav child_menu">
                       <li><a href="student_Private.php?view=SPRO">Student Profile</a></li>
                     <li><a href="student_Private.php?view=Nclearance">New Student Clearance</a></li>
+                    <li><a href="changeofcourse_m.php?view=capply">Change of Course</a></li> 
                     
                     </ul>
                   </li>
@@ -108,6 +110,7 @@ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payme
                       
                     </ul>
                   </li>
+                  <?php if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm ){ //if($checkpay > 0){ ?>
                    <li><a><i class="fa fa-ticket"></i>Election<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="select.php?view=s_e">Vote / Election Result (s)</a></li>
@@ -115,7 +118,7 @@ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payme
                       
                       
                     </ul>
-                  </li>
+                  </li> <?php } ?>
                   <!--
                    <li><a><i class="fa fa-book"></i>Library  Management<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">

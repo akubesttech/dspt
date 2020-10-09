@@ -56,7 +56,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
-Enter Matric Number and Click Sujested Matric No To Edit/View Student Academic Status. <?php //echo  $elect2 = getecated("2"); ?>
+Enter Matric Number and Click Sujested Matric No To Edit/View Student Academic Status. <?php  //echo getAcastatus()  ; ?>
                   </div>
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Matric Number*</label>
@@ -84,7 +84,7 @@ Enter Matric Number and Click Sujested Matric No To Edit/View Student Academic S
  
  <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback" style="display:none; " id="changestatus"><label for="heard">Academic Status</label>
 <div class="form-group"><select name='changestatus' id="changestatus"    class="form-control"   >
-                <option value="">--Status--</option> <?php echo getAcastatus(0) ; ?>          
+                <option value="">--Status--</option> <?php echo getAcastatus(0,1) ; ?>          
        </select></div></div>
        
         <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">

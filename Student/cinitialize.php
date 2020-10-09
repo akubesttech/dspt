@@ -7,11 +7,13 @@ dbcon();
 $curl = curl_init();
 
 $email = $_POST['emailx'];
-$amountn = $_POST['total'] ;  //the amount in kobo. This value is actually NGN 300
+$amountn = $_POST['total'];  //the amount in kobo. This value is actually NGN 300
+//$amount = $_POST['total'] * 100;  //the amount in kobo. This value is actually NGN 300
 $tcharge = getptcharge($amountn,1.5); $amountp = $amountn + $tcharge; $amount = $amountp * 100;
+
 // url to go to after payment
 //$callback_url = 'myapp.com/pay/callback.php';  
-$callback_url = host().'Student/hcallback.php'; 
+$callback_url = host().'Student/ccallback.php'; 
 
 curl_setopt_array($curl, array(
   CURLOPT_URL => "https://api.paystack.co/transaction/initialize",

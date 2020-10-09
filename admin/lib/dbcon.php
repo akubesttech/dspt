@@ -881,8 +881,8 @@ return $nameclass2;
 }
 //sessional CGPA
 function getcgpa($s_id,$prog,$sess,$lev){ $tp = 0; $cu = 0; $tp2 =0; $cu2 =0;
-$queryf = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'First' and total > 0  group BY course_code ") or die(mysqli_error($conn)); $gp=0;
- $querys = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'Second' and total > 0  group BY course_code ") or die(mysqli_error($conn)); $gp2=0;
+$queryf = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'First' and exam > 0  group BY course_code ") or die(mysqli_error($conn)); $gp=0;
+ $querys = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'Second' and exam > 0  group BY course_code ") or die(mysqli_error($conn)); $gp2=0;
 while($row_camt = mysqli_fetch_array($queryf)){
     $gp1 = gradpoint($row_camt['total'],$prog) * $row_camt['c_unit']; $tp += $gp1 ; $cu += $row_camt['c_unit'];
   }
@@ -894,8 +894,8 @@ while($row_camt = mysqli_fetch_array($queryf)){
     if($gp2  > 0){ return $cgpa = round($gp + $gp2 / 2,2); }else{ return $cgpa = $gp; }
 }
 
- function getAcastatus($statnum)
-{ if($statnum > 0){
+  function getAcastatus($statnum ="",$n = "")
+{  if(empty($n)){
     if ($statnum==1){ return "Active"; }else if($statnum==2){return "Graduated";
   }else if($statnum==3){ return "Defered";}else if($statnum==4){ return "Expelled";}else if($statnum==5){ return "Suspended";}
   else if($statnum==6){ return "Transfered";}else if($statnum==7){ return "Withdrawn";}else if($statnum==8){ return "Repeat";}else if($statnum==0){ return "Active";}

@@ -127,9 +127,10 @@ echo "<tr class='row2' style=\"background-color:#CFF;text-align:centre;\"><td co
 
  }else{?>
                  <?php
-$serial=1;
+$serial=1;$i = 0;
 while($row_utme = mysqli_fetch_array($viewutme_query)){
-//$id = $row_utme['appNo'];
+$escore = $row_utme['exam'];
+if($resultview == "yes"){ $cell = 3;  }else{ $cell = 3; }
 $new_a_id = $row_utme['student_id'];
 $stprogram = getstudentpro($row_utme['student_id']);
 if ($i%2) {$class = 'row1';} 
@@ -151,26 +152,28 @@ if ($i%2) {$class = 'row1';}
                           <td><?php echo getlevel($row_utme['level'],$student_prog); ?></td>
                          <td width="120">
 <?php echo $row_utme['session']; ?>	</td> --!>
-<!--style="text-align:justify;" --!>
+<!--style="text-align:justify;" --!> <?php if(empty($escore)){ ?>
+                            <td colspan="<?php echo $cell; ?>" style="text-align: center;font-size: medium;color: red;"> Absent </td>
+                          <?php }else{?>
 <td style="text-align:center;"><?php echo grading($row_utme['total'],$stprogram); ?></td>
 							<td style="text-align:center;"><?php echo gradpoint($row_utme['total'],$student_prog); ?></td>	
-							<td style="text-align:center;"><?php echo $row_utme['qpoint']; ?></td>	
+							<td style="text-align:center;"><?php echo $row_utme['qpoint']; ?></td>	<?php } ?>
 						
                         </tr>
                     <?php } ?>
 					
 					<?php if($semd == "Annual"){
-$query2_gp = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."'")or die(mysqli_error($condb));
-$resultsumnet = mysqli_query($condb,"select SUM(c_unit) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."'");
+$query2_gp = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."' and exam > 0 ")or die(mysqli_error($condb));
+$resultsumnet = mysqli_query($condb,"select SUM(c_unit) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."' and exam > 0  ");
 
-$resultGP = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."'");
-$resultQP = mysqli_query($condb,"select SUM(qpoint) from results where student_id ='$regen' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."'");
+$resultGP = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."' and exam > 0 ");
+$resultQP = mysqli_query($condb,"select SUM(qpoint) from results where student_id ='$regen' and session ='".safee($condb,$sessd)."'  and level='".safee($condb,$lecd)."' and exam > 0 ");
 }else{
-$query2_gp = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."'")or die(mysqli_error($condb));
-$resultsumnet = mysqli_query($condb,"select SUM(c_unit) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."'");
+$query2_gp = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."' and exam > 0 ")or die(mysqli_error($condb));
+$resultsumnet = mysqli_query($condb,"select SUM(c_unit) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."' and exam > 0 ");
 
-$resultGP = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."'");
-$resultQP = mysqli_query($condb,"select SUM(qpoint) from results where student_id ='$regen' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."'");
+$resultGP = mysqli_query($condb,"select SUM(gpoint) from results where student_id ='".safee($condb,$regen)."' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."' and exam > 0  ");
+$resultQP = mysqli_query($condb,"select SUM(qpoint) from results where student_id ='$regen' and session ='".safee($condb,$sessd)."' and semester='".safee($condb,$semd)."' and level='".safee($condb,$lecd)."' and  exam > 0 ");
 }
 $count_gp = mysqli_fetch_array($query2_gp);	?>	
                      </tbody>

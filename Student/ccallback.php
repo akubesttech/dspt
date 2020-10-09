@@ -42,19 +42,20 @@ if('success' == $tranx->data->status){
   // please check other things like whether you already gave value for this ref
   // if the email matches the customer who owns the product etc
   // Give value
-  	$hinfoo=mysqli_query($condb,"SELECT * FROM hostelallot_tb WHERE  trans_id ='".safee($condb,$refme)."'");
-	$hinfoo1 = mysqli_fetch_array($hinfoo); $roomid = $hinfoo1['roomno']; $paid = $hinfoo1['amount'];
-  $sql2_up=	mysqli_query($condb,"UPDATE hostelallot_tb SET amount = '".safee($condb,$paid)."',paystatus = '".safee($condb,$pstart)."'  WHERE trans_id ='".safee($condb,$refme)."'")or die(mysqli_error($condb));
+  $hinfoo = mysqli_query($condb,"SELECT pt.dueamount,ct.roomno FROM payment_tb pt LEFT JOIN coc_tb ct ON  ct.trans_id = pt.trans_id WHERE ct.trans_id ='".safee($condb,$refme)."'") or die(mysqli_error($condb));
+//$hinfoo=mysqli_query($condb,"SELECT * FROM coc_tb WHERE  trans_id ='".safee($condb,$refme)."'");
+	$hinfoo1 = mysqli_fetch_array($hinfoo); $roomid = $hinfoo1['roomno']; $paid = $hinfoo1['dueamount'];
+  $sql2_up=	mysqli_query($condb,"UPDATE coc_tb SET amount = '".safee($condb,$paid)."',pay_status = '".safee($condb,$pstart)."'  WHERE trans_id ='".safee($condb,$refme)."'")or die(mysqli_error($condb));
   $sql2_up=	mysqli_query($condb,"UPDATE payment_tb SET pay_status='".safee($condb,$pstart)."',paid_amount = '".safee($condb,$paid)."' WHERE trans_id ='".safee($condb,$refme)."' ")or die(mysqli_error($condb));
-  $sql2   = mysqli_query($condb,"UPDATE  roomdb SET room_status = '0' WHERE room_id = '".safee($condb,$roomid)."'");
+  
   //echo "<h2>Thank you for making a purchase. Your file has bee sent your email.</h2>"
   	message("Your Payment with Transaction Refrence: ".$refme. " was Successful!", "success");
-		    redirect("shostel_manage.php?view=H_info");
+		    redirect("shostel_manage.php?view=cslip");
    //header('Location: Spay_manage.php?view=e_suc&id='.($refme));
 	exit();
 }else{
   	message("Your Payment with Transaction Refrence:".$refme. " was not Successful!", "error");
-		        redirect('shostel_manage.php?view=Hrequest');
+		        redirect('changeofcourse_m.php?view=capply');
 		        
 }
 //function give_value($reference, $trx){

@@ -5,14 +5,14 @@
                   <?php 
                   $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee($condb,$student_prog)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error($condb)); $getmg = mysqli_fetch_array($sql_gradeset);  $getpass = $getmg['b_max'];
                   
-$que_warning23=mysqli_query($condb,"select * from payment_tb where stud_reg ='$student_RegNo' and session ='$default_session' and level='".safee($condb,$student_level)."' OR app_no = '$student_appNo' and session ='$default_session'  and level='".safee($condb,$student_level)."'")or die(mysqli_error($condb));
-	$warning_count2=mysqli_num_rows($que_warning23);
-$warning_data=mysqli_fetch_array($que_warning23);
-	$pay_status = $warning_data['pay_status'];
-		if ($pay_status > 0 ){ 
-	}else{//echo "<script>alert('Access Not Granted ,Payment Information not verified!');</script>";
-		message("Access Not Granted ,Payment Information not verified!", "error");
-		        redirect("index.php");}
+//$que_warning23=mysqli_query($condb,"select * from payment_tb where stud_reg ='$student_RegNo' and session ='$default_session' and level='".safee($condb,$student_level)."' OR app_no = '$student_appNo' and session ='$default_session'  and level='".safee($condb,$student_level)."'")or die(mysqli_error($condb));
+	//$warning_count2=mysqli_num_rows($que_warning23);
+//$warning_data=mysqli_fetch_array($que_warning23);
+	//$pay_status = $warning_data['pay_status'];
+		//if ($pay_status > 0 ){ 
+	//}else{//echo "<script>alert('Access Not Granted ,Payment Information not verified!');</script>";
+		//message("Access Not Granted ,Payment Information not verified!", "error");
+		        //redirect("index.php");}
 $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row_C = mysqli_fetch_array($query);
 							  $s_utme = $row_C['p_utme'];
@@ -105,8 +105,8 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                           <th>Semester</th>
                           <th>Level</th>
                          <th>Session</th>
-                         <th>C A Score <?php echo " ".getamax($student_prog)." %"; ?></th>
-                          <th>Exam Score <?php echo " ".getemax($student_prog)." %"; ?></th>
+                         <th>C A Score <?php //echo " ".getamax($student_prog)." %"; ?></th>
+                          <th>Exam Score <?php //echo " ".getemax($student_prog)." %"; ?></th>
                          <th>Total</th>
                          <th>Grade</th>
                         </tr>
@@ -115,21 +115,15 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                       
  <tbody>
                  <?php
-$depart = $_GET['dept1_find'];
-$level=$_GET['level'];
-$semester= $_GET['semester'];
+//$depart = $_GET['dept1_find'];
+//$level=$_GET['level'];
+//$semester= $_GET['semester'];
 
 
 //$mado = mysqli_query($condb,"SELECT * FROM details  INNER JOIN payment ON details.regno = payment.regno  and details.level  = payment.level where details.regno like '%$typein%'   AND payment.regno like '%$typein%'  ");
 
-$viewutme_query = mysqli_query($condb,"select * from results where student_id='".safee($condb,$student_RegNo)."' and total <= '".safee($condb,$getpass)."'  order by session DESC ")or die(mysqli_error($condb)); ?>
- <tr>
-
-	<?php		 		
-											
-							 if(mysqli_num_rows($viewutme_query)<1){
-	  echo "<td colspan='12' style='text-align:centre;'><strong>No Outstanding course (s) Found.</strong></td>";
- }?>
+$viewutme_query = mysqli_query($condb,"select * from results where student_id='".safee($condb,$student_RegNo)."' and total <= '".safee($condb,$getpass)."'  order by session DESC ")or die(mysqli_error($condb)); ?><tr>
+<?php if(mysqli_num_rows($viewutme_query)<1){ echo "<td colspan='12' style='text-align:centre;'><strong>No Outstanding course (s) Found.</strong></td>"; }?>
  						
 </tr>
 <?php
@@ -158,9 +152,7 @@ $viewreg_query = mysqli_query($condb,"select DISTINCT creg_status  from coursere
 <?php echo $serial++; ?>
 												</td>
 						  <td><?php 
-					if(mysqli_num_rows($viewreg_query)>0){
-						echo "<font color='green'>$row_utme[course_code]</font>";
-						}else{echo "<font color='red'>$row_utme[course_code]</font>";}
+if(mysqli_num_rows($viewreg_query)>0){echo "<font color='green'>$row_utme[course_code]</font>"; }else{echo "<font color='red'>$row_utme[course_code]</font>";}
 					 ?></td>
 					 <td><?php echo getcourse($row_utme['course_code']); ?></td>
                           <td align='center'><?php echo $row_utme['c_unit']; ?></td>

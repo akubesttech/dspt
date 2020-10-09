@@ -7,8 +7,8 @@ dbcon();
 $curl = curl_init();
 
 $email = $_POST['emailx'];
-$amount = $_POST['total'] * 100;  //the amount in kobo. This value is actually NGN 300
-
+$amountn = $_POST['total'];  //the amount in kobo. This value is actually NGN 300
+$tcharge = getptcharge($amountn,1.5); $amountp = $amountn + $tcharge; $amount = $amountp * 100;
 // url to go to after payment
 //$callback_url = 'myapp.com/pay/callback.php';  
 $callback_url = host().'Student/callback.php'; 
@@ -24,7 +24,7 @@ curl_setopt_array($curl, array(
     'callback_url' => $callback_url
   ]),
   CURLOPT_HTTPHEADER => [
-   //"authorization: Bearer sk_test_07a04bc4d12ea7c4640ba82055729ff1175def5a", //replace this with your own test key
+    //"authorization: Bearer sk_test_07a04bc4d12ea7c4640ba82055729ff1175def5a", //replace this with your own test key
     "authorization: Bearer ".t_gate,
     "content-type: application/json",
     "cache-control: no-cache"
@@ -50,8 +50,8 @@ if(!$tranx->status){
 //print_r($tranx);
 // redirect to page so User can pay
 // uncomment this line to allow the user redirect to the payment page
-header('Location: ' . $tranx['data']['authorization_url']);
-
+//header('Location: ' . $tranx['data']['authorization_url']);
+redirect($tranx['data']['authorization_url']);
 
 
 ?>

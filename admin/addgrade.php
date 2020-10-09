@@ -107,7 +107,7 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="display: none;" id="gastatus">
 						  	  <label for="heard">Academic Status </label>
 <select  name="gstatus" id="gstatus" class="form-control" ><option value="">Select Academic Status</option>
-<?php echo getAcastatus(0); ?>
+<?php echo getAcastatus(0,1); ?>
 </select></div>
             
 			<div class="form-group">

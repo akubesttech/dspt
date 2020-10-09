@@ -31,12 +31,13 @@ $student_RegNo = $user_row['RegNo'];
 $student_appNo = $user_row['appNo']; $student_facut = $user_row['Faculty'];
 $student_dept = $user_row['Department'];$student_prog = $user_row['app_type']; $student_state = $user_row['state'];
 $student_level = $user_row['p_level']; $sprog_dura = $user_row['prog_dura'];$s_session = $user_row['Asession'];
-$regSession   =	substr($user_row['Asession'],5,10); 
+$regSession   =	substr($user_row['Asession'],5,10);  $acastatus = $user_row['acads'];
 $syog = $user_row['yog'];
 $c_year = date("Y");
 $sender_counts = "1";
 $p_dro = $sprog_dura * 100;
 $difflevel = $p_dro - $student_level;
+$resultview = showfullresult ;
 //$queryupdatelevel = mysqli_query($condb,"UPDATE student_tb SET p_level +='100' WHERE stud_id='".mysql_real_escape_string($session_id)."'");
 //$output2=mysqli_query($condb,$queryupdate);
 //}
@@ -50,9 +51,14 @@ $default_session=$user_row2['session_name']; $esetSession   =	substr($user_row2[
 $acasemestertag =$user_row2['term']; $setendst=$user_row2['start_end'];
 $_SESSION['regno'] = $student_RegNo;
 $diffsession = $esetSession - $regSession;
+$sessionGP = getcgpa($student_RegNo,$student_prog,$s_session,$student_level);
+$getsecgpstatus = getAcagpstatus($sessionGP,$student_prog);
+if($getsecgpstatus == 8){  $flevel = $student_level; $fsec = $s_session; $fs_status = 8;
+}elseif($getsecgpstatus == 7){ $flevel = $student_level; $fsec = $s_session; $fs_status = 7;
+}else{ $flevel = $newl; $fsec = $default_session; $fs_status = 1; }
 if(($default_session !== $s_session) and ($esetSession > $regSession) and ($student_level < $p_dro) and ($diffsession == 1) ){
-$queryupdatelevel = mysqli_query($condb,"UPDATE student_tb SET p_level ='".safee($condb,$newl)."',Asession='".safee($condb,$default_session)."' WHERE stud_id='".safee($condb,$session_id)."'")or die(mysqli_error($condb));
-//$output2=mysqli_query($condb,$queryupdate);
+//$queryupdatelevel = mysqli_query($condb,"UPDATE student_tb SET p_level ='".safee($condb,$newl)."',Asession='".safee($condb,$default_session)."',acads = '".safee($condb,$default_session)."' WHERE stud_id='".safee($condb,$session_id)."'")or die(mysqli_error($condb));
+$queryupdatelevel = mysqli_query($condb,"UPDATE student_tb SET p_level ='".safee($condb,$flevel)."',Asession='".safee($condb,$fsec)."',acads = '".safee($condb,$fs_status)."' WHERE stud_id='".safee($condb,$session_id)."'")or die(mysqli_error($condb));
 }
 $date_now = new DateTime();
  $date2    = new DateTime($setendst);

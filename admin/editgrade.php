@@ -62,7 +62,7 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
           <select name='ggroup' id="ggroup" class="form-control"  required>
                             <option value="<?php echo ($row_upform['grade_group']); ?>"><?php echo getggroup($row_upform['grade_group']); ?></option>
                         <option value="01">General</option>
-    <option value="02">Entrance Exam</option>
+    <option value="02">Entrance Exam</option><option value="03">Promotion Status</option>
  </select>
                       </div>
    <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" id="smin" >
@@ -107,7 +107,7 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
 <select  name="gstatus" id="gstatus" class="form-control" >
 <option value="<?php echo $row_upform['gradename']; ?>"><?php 
 if($row_upform['grade_group'] =="03"){ echo getAcastatus($row_upform['gradename']);}else{ echo $row_upform['gradename'];} ?></option>
-<?php echo getAcastatus(0); ?>
+<?php echo getAcastatus(0,1); ?>
 </select></div>
             <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">

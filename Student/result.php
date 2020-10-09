@@ -2,14 +2,20 @@
                 <div class="x_panel">
                   <div class="x_title">
                   <?php 
+                  
 $asession = $_GET['session'];
 $level=$_GET['level'];
-$semester= $_GET['semester'];
+$semester= $_GET['semester']; 
+
 $qres = "select * from resultapproval_tb WHERE prog = '".safee($condb,$student_prog)."' AND dept = '".safee($condb,$student_dept)."' AND session = '".safee($condb,$asession)."' AND level = '".safee($condb,$level)."' AND apstatus = '1' ";
  if($semester != "Annual"){  $qres .= " AND semester='$semester'";  }
  $queryresultapp =  mysqli_query($condb,$qres)or die(mysqli_error($condb));
   $aptatus = mysqli_num_rows($queryresultapp);
  if($semester != "Annual"){ $semn = $semester." Semester ";}else{ $semn ="Annual";} 
+ 
+// if($aptatus < 1){ 	message("The Selected Result is not Yet Published  please Check Back Later", "error");
+		        //redirect('result_manage.php?view=S_re'); }
+ 
 $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row_nb = mysqli_fetch_array($query);
 							  $s_utme = $row_nb['p_utme'];
@@ -25,12 +31,12 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                   <?php if($aptatus < 1){  ?>
+                 <?php if($aptatus < 1){  ?>
                              <tr class="row1" >
 <td colspan="6" class="text-muted well well-sm no-shadow" style="margin-top: 10px;"><center>
                        <font color="red" size="6" face="bold"><?php echo $asession." Session ".$semn." Results for ".getlevel($level,$student_prog)." level  is not Yet Published  please Check Back Later ";  ?><strong><a href="javascript:void(0);" onClick="window.location.href='result_manage.php?view=S_re';">Click Here to Go back </a></strong> </font></center>
                           </td></tr><?php }else{  ?>
-                    <p class="text-muted font-13 m-b-30">
+                        <p class="text-muted font-13 m-b-30">
                   
                     </p>
                  
@@ -101,10 +107,10 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                          <th>S/N</th>
 						 <th>Course Code</th>
                          <th>Course Title</th>
-                          <th>Credit Unit</th>
-                       <!-- <th>C A Score <?php echo " ".getamax($student_prog)." %"; ?></th>
-                          <th>Exam Score <?php echo " ".getemax($student_prog)." %"; ?></th>
-                         <th>Total</th>--!>
+                          <th>Credit Unit</th><?php if($resultview == "yes"){?>
+                        <th>C A Score <?php //echo " ".getamax($student_prog)." %"; ?></th>
+                        <th>Exam Score <?php //echo " ".getemax($student_prog)." %"; ?></th>
+                         <th>Total</th><?php }?>
                          <th>Grade</th>
                           <th>Grade Point</th>
                         </tr>
@@ -116,8 +122,8 @@ $viewutme_query = mysqli_query($condb,"select * from results where student_id = 
  }?><?php if(mysqli_num_rows($viewutme_query)<1){ if($semester == "Annual"){ echo "<tr class='row1'><td colspan='10' style='text-align:centre;'><strong>No result found in the database For This $semester   Result. </strong></td></tr>"; }else{ echo "<tr class='row1'><td colspan='10' style='text-align:centre;'><strong>No result found in the database For This $semester   Semester. </strong></td></tr>"; } }?>
 <?php
 $serial=1; $i= 0;
-while($row_utme = mysqli_fetch_array($viewutme_query)){
-//$id = $row_utme['appNo'];
+while($row_utme = mysqli_fetch_array($viewutme_query)){ $escore = $row_utme['exam'];
+if($resultview == "yes"){ $cell = 5; $cell2 = 4; }else{ $cell = 2; $cell2 = 1;}
 $new_a_id = $row_utme['student_id'];
  $stprogram = getstudentpro($row_utme['student_id']);
 if ($i%2) {$class = 'row1';} 
@@ -144,15 +150,18 @@ if ($i%2) {$class = 'row1';}
                         <!--  <td><?php //echo $row_utme['semester']; ?></td>
                           <td><?php //echo getlevel($row_utme['level'],$student_prog); ?></td>
                          <td width="120">
-<?php //echo $row_utme['session']; ?>	</td> --!>
-<!--<td style="text-align:justify;"><?php echo $row_utme['assessment']; ?></td>
+<?php //echo $row_utme['session']; ?>	</td> --!><?php if(empty($escore)){ ?>
+                            <td colspan="<?php echo $cell; ?>" style="text-align: center;font-size: medium;color: red;"> Absent </td>
+                          <?php }else{?>
+<?php if($resultview == "yes"){?>
+<td style="text-align:justify;"><?php echo $row_utme['assessment']; ?></td>
 							<td style="text-align:justify;"><?php echo $row_utme['exam']; ?></td>	
-							<td style="text-align:justify;"><?php echo $row_utme['total']; ?></td>	--!>
+							<td style="text-align:justify;"><?php echo $row_utme['total']; ?></td>	<?php }?>
 							<td style="text-align:justify;"><?php echo grading($row_utme['total'],$student_prog); ?></td> 
 							<td style="text-align:justify;"><?php echo gradpoint($row_utme['total'],$student_prog); ?></td>		</tr>
                         
-                    <?php } ?><?php  if($semester == "Annual"){ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and level ='".safee($condb,$level)."' "; }else{ 
-$sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level ='".safee($condb,$level)."' ";
+                    <?php } }?><?php  if($semester == "Annual"){ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and level ='".safee($condb,$level)."' and exam > 0 "; }else{ 
+$sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level ='".safee($condb,$level)."' and exam > 0 ";
 }
   $resultsumnet = mysqli_query($condb,$sumnet); 
   $num_rows2 =mysqli_num_rows($resultsumnet);
@@ -166,11 +175,11 @@ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$stud
     <tr class="text-offset">
       <td colspan="4"><strong>Total Credit Unit:</strong></td>
     <td align='center' colspan="1"><strong> <?php if($sumcredit > 0){ echo $sumcredit;}else{echo "0";}} ?></strong></td>
-    <td colspan="1"><strong>Total Grade Points:</strong></td>
-    <td colspan="1"><strong><?php if($semester == "Annual"){ $resultgP = mysqli_query($condb,"select SUM(gpoint) as totalgpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."'  and level='".safee($condb,$level)."'");
-    $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit) as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."'  and level='".safee($condb,$level)."'");
-   }else{ $resultgP = mysqli_query($condb,"select SUM(gpoint) as totalgpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."'");
-    $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit)as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."'");
+    <td colspan="<?php echo $cell2; ?>"><strong>Total Grade Points:</strong></td>
+    <td colspan="1"><strong><?php if($semester == "Annual"){ $resultgP = mysqli_query($condb,"select SUM(gpoint) as totalgpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."'  and level='".safee($condb,$level)."' and exam > 0");
+    $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit) as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."'  and level='".safee($condb,$level)."' and exam > 0 ");
+   }else{ $resultgP = mysqli_query($condb,"select SUM(gpoint) as totalgpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."' and exam > 0");
+    $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit)as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."' and exam > 0");
    } $num_rows2 =mysqli_num_rows($resultgP); $get_gp = mysqli_fetch_array($resultgP);$get_qp = mysqli_fetch_array($resultQP);  if($get_gp['totalgpoint'] > 0){ echo $get_gp['totalgpoint'];}else{echo "0";} $sumqp = $get_qp['totalqpoint']; ?></strong></td>
     </tr>
     
@@ -217,7 +226,7 @@ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$stud
                     
                     
                     </div>
-                    <?php }  ?>
+                     <?php }  ?>
                   </div>
                 </div>
               </div>
