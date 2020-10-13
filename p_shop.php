@@ -192,7 +192,7 @@ $sqlporder =	mysqli_query($condb,"INSERT INTO fshop_tb (ftrans_id, fsname, fonam
 			    					</div>
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-6">
-			    					<label class="head">Othername<span class="w3l-star"> * </span></label>
+			    					<label class="head">First Name<span class="w3l-star"> * </span></label>
 			    					<div class="form-group">
 			    					<input type="text" name="oname1" id="oname1" required="required" class="form-control input-sm">
 			    					</div>

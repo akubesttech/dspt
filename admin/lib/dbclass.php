@@ -1,10 +1,10 @@
 <?php
 define('DB_DRIVER', 'mysql');
 define('SERVER', 'localhost');
-define('USERNAME', 'smartdel_dspogharasmart');
+define('USERNAME', 'deltasma_dspogharasmart');
 define('PASSWORD', 'ogharasmart_2019l#');
-define('DATABASE', 'smartdel_dspogharasmartdb');//
-define('t_gate', 'sk_test_375b86dbef946eaf1fa3fa26c5c30503c5355f21');
+define('DATABASE', 'deltasma_dspogharasmartdb');//
+//define('t_gate', 'sk_test_375b86dbef946eaf1fa3fa26c5c30503c5355f21');
 define('t_gate', 'sk_live_3f4facadaf3a76db8ca7bb654e40b9d1e4007e1a');
 class Database
 {
