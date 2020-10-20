@@ -6,10 +6,10 @@
 if(isset($_POST['editgrade'])){
 $f_pro = $_POST['f_pro'];$min_grade = $_POST['min'];
 		$max_grade = $_POST['max'];$grade_group = $_POST['ggroup'];
-		$grade = $_POST['grade'];$gstatus = $_POST['gstatus'];
+		$grade = $_POST['grade'];$gstatus = $_POST['gstatus']; $gstatusn = $_POST['gstatusn'];
 		$gpmin = $_POST['gpmin'];$gpmax = $_POST['gpmax']; 
-if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint']; $ngrade = $grade;}elseif($grade_group == "03"){ $graderemark = $gstatus;$ngrade = ""; $gradepoint = 0; }else{$graderemark = getappstatus($gstatus);$ngrade = "";
-$gradepoint= $_POST['gstatus']; }
+if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint']; $ngrade = $grade;}elseif($grade_group == "03"){ $graderemark = $gstatus;$ngrade = ""; $gradepoint = 0; }else{$graderemark = getappstatus($gstatusn);$ngrade = "";
+$gradepoint= $gstatusn; }
 //if($grade_group == "01"){  $graderemark = $_POST['gremark']; $gradepoint = $_POST['gpoint'];}else{$graderemark = getappstatus($gstatus);
 //$gradepoint= $_POST['gstatus']; }
 $sql_grade = mysqli_query($condb,"SELECT * FROM grade_tb where prog= '".safee($condb,$f_pro)."' and grade= '".safee($condb,$ngrade)."' and grade_group='".safee($condb,$grade_group)."' and gradename = '".safee($condb,$graderemark)."'")or die(mysqli_error($condb)); $gradecount = mysqli_num_rows($sql_grade);
@@ -97,9 +97,10 @@ echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" id="gmark" style="display: none;" ><label for="email">Grade Remark *</label>
     <div class="form-group">
                 	 <input type="text" class="form-control "   name='gremark' id="gremark" value="<?php echo $row_upform['gradename']; ?>"  placeholder="Grade Remark ie:A (Excellent)" ></div></div>
+                     
                 	 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="display: none;" id="gstatus">
 						  	  <label for="heard">Grade Status</label>
-<select  name="gstatus" id="gstatus" class="form-control" ><option value="<?php echo $row_upform['gp']; ?>"><?php echo getappstatus($row_upform['gp']); ?></option>
+<select  name="gstatusn" id="gstatus" class="form-control" ><option value="<?php echo $row_upform['gp']; ?>"><?php echo getappstatus($row_upform['gp']); ?></option>
 <option  value="1">Admitted</option><option value="2">Pending</option> <option value="3">Not Admitted</option></select></div>
 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="display: none;" id="gastatus">

@@ -25,7 +25,7 @@ $countnosub = mysqli_num_rows($sql_oresult20);
 </div>
 <div class="block-content2 collapse in">
                                 <div class="span121" style="background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('<?php if ($existl > 0 ){ echo "admin/".$row['Logo'];
-	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: inline; -webkit-print-color-adjust: exact; ">
+	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: block; -webkit-print-color-adjust: exact; ">
 								
 								 <!--------------------form------------------->
 								<form method="post" enctype="multipart/form-data">
@@ -66,7 +66,7 @@ if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploa
 //if ($rsprint['images']==NULL ){print "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rsprint['images'];}
 				  
 				  
-				 // echo $row['adminthumbnails']; ?>" width="200" height="130" >
+				 // echo $row['adminthumbnails']; ?>" width="200" height="130" style=" border-radius: 50%;" >
   </div></td>
      
           </tr>
@@ -206,10 +206,11 @@ if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploa
         <tr style="height: 30px;" ><td style="font-color:gray;  font-weight:normal;"><?php echo getexamtype($orow_01['oExam_t1']);?></td><td style="font-color:gray;  font-weight:normal;"><?php echo $orow_01['oExam_no1'] ;?></td><td style="font-color:gray;  font-weight:normal;"><?php echo ($orow_01['oExam_y1']); ?></td></tr>
       <tr style="height: 30px;text-align:center;"><td colspan="4">First Certificate Subject Grades</td></tr>
       <?php $sn1=1; while($orow1 = mysqli_fetch_array($sql_oresult1)){ ?>
-      <tr style="height: 30px;border: 1px solid #98C1D1;"><td colspan="1" style="font-color:gray;  font-weight:normal;text-align:center;"> <?php echo $sn1++; ?></td><td colspan="2" style="font-color:gray;  font-weight:normal;"><?php echo  getf_sub($orow1['oSub1']);?></td><td colspan="1" style="font-color:gray;  font-weight:normal;"><?php echo getfgrade($orow1['oGrade_1']); ?></td></tr> <?php } $sn2=1; if($count_olresult2 > 0){ ?>
+      <tr style="height: 30px;border: 1px solid #98C1D1;"><td colspan="1" style="font-color:gray;  font-weight:normal;text-align:center;"> <?php echo $sn1++; ?></td><td colspan="2" style="font-color:gray;  font-weight:normal;"><?php echo  getf_sub($orow1['oSub1']);?></td><td colspan="1" style="font-color:gray;  font-weight:normal;"><?php echo getfgrade($orow1['oGrade_1']); ?></td></tr> <?php } $sn2=1; 
+      if($count_olresult2 > 0){ ?>
       
       <tr style="height: 30px;"><td rowspan="2">Second Certificate Used</td><td>Exam Type</td><td>Exam Number</td><td>Exam Year</td></tr>
-        <tr style="height: 30px;" ><td style="font-color:gray;  font-weight:normal;">WEAC</td><td style="font-color:gray;  font-weight:normal;">AB34567891</td><td style="font-color:gray;  font-weight:normal;">2018</td></tr> 
+        <tr style="height: 30px;" ><td style="font-color:gray;  font-weight:normal;"><?php echo getexamtype($orow_1['oExam_t1']);?></td><td style="font-color:gray;  font-weight:normal;"><?php echo $orow_1['oExam_no1'] ;?></td><td style="font-color:gray;  font-weight:normal;"><?php echo ($orow_1['oExam_y1']); ?></td></tr> 
          <tr style="height: 30px;text-align:center;"><td colspan="4">Second Certificate Subject Grades</td></tr>
         <?php while($orow12 = mysqli_fetch_array($sql_oresult2)){ ?>
        <tr style="height: 30px;border: 1px solid #98C1D1;" id="rown"><td colspan="1" style="font-color:gray;  font-weight:normal;text-align:center;"><?php echo $sn2++; ?></td><td colspan="2" style="font-color:gray;  font-weight:normal;"><?php echo getf_sub($orow12['oSub1']);?> </td><td colspan="1" style="font-color:gray;  font-weight:normal;"><?php echo getfgrade($orow12['oGrade_1']);?></td></tr>
