@@ -14,7 +14,7 @@ $dep1 = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $sec1 = isset($_GET['session2']) ? $_GET['session2'] : '';
 $los =  isset($_GET['c_choice']) ? $_GET['c_choice'] : '';
  //$dep1 = $_GET['dept1_find']; $sec1 = $_GET['session2']; $los 	= $_GET['c_choice'];
- if(empty($dep1)){ $links = "new_apply.php"; $np = $default_session;}else{ $links = "new_apply.php?dept1_find=".$dep1."&session2=".$sec1."&c_choice=".$los; $np = $sec1;}
+ if(empty($dep1)){ $links = "new_apply.php"; $np = $default_secadmin;}else{ $links = "new_apply.php?dept1_find=".$dep1."&session2=".$sec1."&c_choice=".$los; $np = $sec1;}
  ?>
 	
 		    	
@@ -76,9 +76,9 @@ message("You don't have the permission to access this page", "error");
 					$id=$_POST['selector'];
 $N = count($id);
 for($i=0; $i < $N; $i++)
-{ $sqlstud1=mysqli_query($condb,"select * from new_apply1 where stud_id ='".safee($condb,$id[$i])."' and app_type = '".safee($condb,$class_ID)."' and Asession = '".safee($condb,$default_session)."' and adminstatus = '1' and reg_status = '1' and application_r = '0' ")or die(mysqli_error($condb));
+{ $sqlstud1=mysqli_query($condb,"select * from new_apply1 where stud_id ='".safee($condb,$id[$i])."' and app_type = '".safee($condb,$class_ID)."' and Asession = '".safee($condb,$default_secadmin)."' and adminstatus = '1' and reg_status = '1' and application_r = '0' ")or die(mysqli_error($condb));
 $row_b = mysqli_fetch_array($sqlstud1);  extract($row_b);
-$num_fchoice2 =$row_b['course_choice'] ; $entryyear   =	substr($default_session,0,4);   $yog_t =  $entryyear + $p_duration; $modeentry = $row_b['moe']; $entrylev = getelevel($modeentry); $noapp = $row_b['appNo'];
+$num_fchoice2 =$row_b['course_choice'] ; $entryyear   =	substr($default_secadmin,0,4);   $yog_t =  $entryyear + $p_duration; $modeentry = $row_b['moe']; $entrylev = getelevel($modeentry); $noapp = $row_b['appNo'];
 if($num_fchoice2 == '1'){ $facnew =  $row_b['fact_1']; $depnew =  $row_b['first_Choice']; }else{  $facnew =  $row_b['fact_2']; $depnew =  $row_b['Second_Choice'];}
 	$sql_cstudent=mysqli_query($condb,"SELECT * FROM student_tb WHERE stud_id = '".safee($condb,$id[$i])."'");
 				if(mysqli_num_rows($sql_cstudent)>0) 
@@ -312,7 +312,7 @@ if(isset($_POST['Comfirm_record'])){
 
 	$sql_pin="SELECT * FROM student_tb WHERE appNo='".safee($condb,$row_b['appNo'])."'";
 $result_pin = mysqli_query($condb,$sql_pin);
-$num_pin = mysqli_num_rows($result_pin); $entryyear   =	substr($default_session,0,4);   $yog_t =  $entryyear + $p_duration;
+$num_pin = mysqli_num_rows($result_pin); $entryyear   =	substr($default_secadmin,0,4);   $yog_t =  $entryyear + $p_duration;
 
 				if($num_pin > 0){
 				$sql_ME="UPDATE student_tb SET FirstName='".safee($condb,$row_b['FirstName'])."',SecondName='".safee($condb,$row_b['SecondName'])."',Othername='".safee($condb,$row_b['Othername'])."',Gender='".safee($condb,$row_b['Gender'])."',dob='".safee($condb,$row_b['dob'])."',hobbies='".safee($condb,$row_b['hobbies'])."',state='".safee($condb,$row_b['state'])."',lga='".safee($condb,$row_b['lga'])."',nation='".safee($condb,$row_b['nation'])."',religion='".safee($condb,$row_b['religion'])."',address='".safee($condb,$row_b['address'])."',e_address='".safee($condb,$row_b['e_address'])."',phone='".safee($condb,$row_b['phone'])."',postal_address='".safee($condb,$row_b['postal_address'])."',any_fchalenge='".safee($condb,$row_b['any_fchalenge'])."',State_chalenge='".safee($condb,$row_b['State_chalenge'])."',Faculty='".safee($condb,$row_b['Faculty'])."',Age='".safee($condb,$row_b['Age'])."',bloodgroup='".safee($condb,$row_b['bloodgroup'])."',gtype='".safee($condb,$row_b['gtype'])."',RegNo='',app_type='".safee($condb,$row_b['app_type'])."',Asession='".safee($condb,$row_b['Asession'])."',Moe='".safee($condb,$modeentry2)."',yoe='".safee($condb,$entryyear)."',yog='".safee($condb,$yog_t)."',prog_dura='".safee($condb,$p_duration)."',p_level='".safee($condb,$entrylev2)."',images = '".safee($condb,$row_b['images'])."',dateofreg=Now(),reg_status='1',verify_Data='FALSE',Cert_inview = '".safee($condb,$row_b['app_type'])."' WHERE  appNo= '".safee($condb,$row_b['appNo'])."'";

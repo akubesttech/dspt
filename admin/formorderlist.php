@@ -3,9 +3,9 @@
                   message("ERROR:  No Programme Select,Please Select a Programme and continue.", "error");
 		       redirect('new_apply.php?view=spro');
 						}
-$gprog = $_GET['xpo'];
-$gsec=$_GET['xsec'];
-$gdop= $_GET['xdop']; 
+$gprog =  isset($_GET['xpo']) ? $_GET['xpo'] : '';
+  $gsec =  isset($_GET['xsec']) ? $_GET['xsec'] : '';
+   $gdop =  isset($_GET['xdop']) ? $_GET['xdop'] : '';
 				$serial=1;			?>
  <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -94,7 +94,6 @@ $viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '"
 } */
 if($gprog=="" || $gsec == "" ){
 $viewutme_query = mysqli_query($condb,"select * from fshop_tb where ftype = '".safee($condb,$class_ID)."' and session = '".safee($condb,$default_session)."' and  DATE(fdate_paid) > (CURDATE() - INTERVAL 7 DAY)  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb));
-
 }elseif($gdop == Null){
 $viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '".safee($condb,$gprog)."' and session = '".safee($condb,$gsec)."'  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); 
 }else{ 
@@ -104,7 +103,7 @@ $viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '"
 
 while($row_utme = mysqli_fetch_array($viewutme_query)){
 $id = $row_utme['form_id'];
-$new_a_id = $row_utme['form_id'];
+$new_a_id = $row_utme['form_id']; $i = 0;
 //$newstatus = $row_utme['verify_apply'];
 if ($i%2) {$classo = 'row1';} else {$classo = 'row2';}$i += 1;
 $forderquery = mysqli_query($condb,"select fpay_status,fpamount from fshop_tb where fpay_status > 0 and fpamount > 0 and form_id ='".safee($condb,$id)."'")or die(mysqli_error($condb));
@@ -119,9 +118,14 @@ $countpay = mysqli_num_rows($forderquery);
 												<?php } ?>
 												</td>
 												<td width="30"> <?php echo $serial++;?> </td>
-						  <td><a rel="tooltip"  title="View form Order Details" id="<?php echo $new_a_id; ?>" onclick="window.open('?details&userId=<?php echo $new_a_id;?>&xpo=<?php echo $gprog; ?>&xsec=<?php echo $gsec; ?>&xdop=<?php echo $gdop; ?>','_self')"
+						  <td>
+                          <!--<a rel="tooltip"  title="View form Order Details" id="<?php echo $new_a_id; ?>" onclick="window.open('?details&userId=<?php echo $new_a_id;?>&xpo=<?php echo $gprog; ?>&xsec=<?php echo $gsec; ?>&xdop=<?php echo $gdop; ?>','_self')"
 						  data-toggle="modal" class="btn btn-info"><i class=""> <?php 
-if($countpay > 0){echo "<font color='green'>$row_utme[ftrans_id]</font>";}else{echo "<font color='red'>$row_utme[ftrans_id]</font>";} ?></i></a></td>
+if($countpay > 0){echo "<font color='green'>$row_utme[ftrans_id]</font>";}else{echo "<font color='red'>$row_utme[ftrans_id]</font>";} ?></i></a>
+--!>
+<a rel="facebox" href="fp_pop.php?userId=<?php echo $new_a_id;?>&xpo=<?php echo $gprog; ?>&xsec=<?php echo $gsec; ?>&xdop=<?php echo $gdop; ?>" title="View form Order Details" id="<?php echo $new_a_id; ?>" class="btn btn-info"><i class=""> <?php 
+if($countpay > 0){echo "<font color='green'>$row_utme[ftrans_id]</font>";}else{echo "<font color='red'>$row_utme[ftrans_id]</font>";} ?></i></a>
+</td>
                           <td><?php echo $row_utme['fsname'].'  '.$row_utme['foname']; ?></td>
                           <td><?php echo $row_utme['femail']; ?></td>
                           <td><?php echo $row_utme['fphone']; ?></td>

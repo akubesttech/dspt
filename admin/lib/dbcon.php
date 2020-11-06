@@ -840,7 +840,8 @@ function FeesCalc($Fees,$per,$sdate){
             return $TotalFees = $late+$Fees;}else{ return $TotalFees = $Fees; }}
  function getfeecat($statnum)
 {if ($statnum==0){return "Others";}else if($statnum==1){return "Service Charge";}
-else if($statnum==3){return "Form";}else if($statnum==2){return "Dues";}}
+else if($statnum==3){return "Form";}else if($statnum==2){return "Dues";}else if($statnum==4){return "Acceptance";}}
+
 function getappname($subid){$query2 = mysqli_query(Database::$conn,"select FirstName,SecondName,Othername from new_apply1 where appNo = '$subid' ")or die(mysqli_error($condb));
 $count = mysqli_fetch_array($query2);$nameclass2=$count['FirstName']." ".$count['SecondName']." ".$count['Othername'];return $nameclass2;}
 
@@ -871,7 +872,10 @@ $count_hod = mysqli_fetch_array($query2_hod); $nameclass22=$count_hod['images'];
 function getptcharge($getamount,$per)
 {  $trancharge = 0; if($getamount > 2499){ $trancharge = ($getamount / 100) * $per + 100;
 }else{ $trancharge = ($getamount / 100) * $per;} return round($trancharge,2); }
-
+//getpercentage 
+function getper($getamount,$per,$gmmnt=0)
+{  $trancharge = 0;  if($gmmnt > 2499){ $trancharge = ($getamount / 100) * $per + 100;}else{$trancharge = ($getamount / 100) * $per ; };
+ return round($trancharge,2); }
 
 //get student name by id
 function getsnameid($get_RegNo){$conn="";  $query2_fac = mysqli_query(Database::$conn,"select FirstName,SecondName,Othername from student_tb where stud_id = '".safee($conn,$get_RegNo)."' ")or die(mysqli_error($conn));
@@ -916,6 +920,48 @@ function getAcagpstatus($marks,$class_name20){
 $grade = mysqli_query(Database::$conn,"SELECT gradename,grade_group,prog FROM grade_tb WHERE gpmin <= round($marks,2) and gpmax >= round($marks,2) and prog='".($class_name20)."' and grade_group ='03'");
 $gd =mysqli_fetch_row($grade);
 return $gd[0];
+}
+// get putme exam schedule 
+function getpumet($getprog,$fac = null,$dept = null)
+{ $dshow = 0; $query2 = "select * from utmedate where prog = '".trim($getprog)."'   ";
+if($fac != null){ $query2 .= " AND fac = '".safee(Database::$conn,$fac)."'"; }
+if($dept != null){ $query2 .= " AND dept = '".safee(Database::$conn,$dept)."'";}
+$query2_hod = mysqli_query(Database::$conn,$query2);
+$count =mysqli_num_rows($query2_hod); $count_hod = mysqli_fetch_array($query2_hod); $edte = $count_hod['examdate'];
+$timestamp = strtotime($edte);$datetime	= date('l, jS F Y', $timestamp);
+if($count > 0){ $dshow = $datetime.", ". $count_hod['etime'].".<br>".$count_hod['venue']; }else{ $dshow = "---------------------" ;
+} 
+return $dshow; }
+
+//load session 
+function fill_sec(){     
+$output = ''; $resultsec = mysqli_query(Database::$conn,"SELECT DISTINCT session_name FROM session_tb  ORDER BY session_name ASC");
+while($rssec = mysqli_fetch_array($resultsec))
+{ $output .='<option value="'.$rssec["session_name"].'">'.$rssec["session_name"].'</option>';}
+return $output;
+}
+// date difference
+function dateDiff($start, $end) {
+$start_ts = strtotime($start);
+$end_ts = strtotime($end);
+$diff = $end_ts - $start_ts;
+return round($diff / 86400);
+}
+//payment split paystack
+function getsplit($amountn,$fran="",$fra1="",$fras="",$samt="",$scom=0,$var = 0){
+$tcharge = getptcharge($amountn,$fran); $amountp = $amountn + $tcharge; 
+$actualcharge = getper($amountp,$fra1,$amountn);
+$diffcharge = $actualcharge - $tcharge ;
+if($scom > 0){
+ $shareamount = $samt - $scom;   }else{ $shareamount = $samt;}
+$schshare = $amountp - $shareamount - $tcharge  ;
+$finalshare = $amountp -  $schshare;
+$endshare =  $finalshare - $tcharge ;
+$bamt = getper($endshare,$fras) + $tcharge ;
+$benamt = $finalshare -  $bamt ;
+$amt = $shareamount - $diffcharge;
+ $smartamount =  $actualcharge + $amt ;
+if ($var==1){ return $schshare; }else if($var==2){return $benamt;}else if($var==3){return $amountp;}else{ return $smartamount;}
 }
 // // time zone manager
 /*if(!isset($_SESSION['timezone']))

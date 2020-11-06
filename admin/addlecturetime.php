@@ -79,19 +79,8 @@ $dbsettime = "INSERT INTO lecttime_tb (t_dept,t_level,semester,session,day,time,
 $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
 //$counter=1;
 while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
-	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
-?></select>
+{if($_GET['loadfac'] ==$rsblocks['fac_id'] ){echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
+}else{ echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}} ?></select>
                       </div>
                      
                       
@@ -108,13 +97,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 						  	  <label for="heard">Academic Session</label>
 							   <select class="form-control"   name="session" id="session"  required="required">
   <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+<?php echo fill_sec(); ?>
 </select>
                       </div>
               

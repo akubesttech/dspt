@@ -1,3 +1,5 @@
+
+
 <?php
 
 if($class_ID > 0){}else{
@@ -37,8 +39,7 @@ ob_start();
 		       message("Exam End Time should not be lessthan Start Time.", "error");
 		       redirect('lecture_time.php?view=examt');
 }else{
-$dbsettime = "INSERT INTO examtime_tb (t_dept,t_level,semester,session,date,time,duration,course,venue,prog) values 
-('".safee($condb,$salot_dept)."', '".safee($condb,$salot_los)."','".safee($condb,$salot_sem)."', '".safee($condb,$salot_session)."','".safee($condb,$Day)."','".safee($condb,$tstart2)."','".safee($condb,$duration)."','".safee($condb,$salot_cos)."','".safee($condb,$venuet)."','".safee($condb,$class_ID)."')";
+$dbsettime = "INSERT INTO examtime_tb (t_dept,t_level,semester,session,date,time,duration,course,venue,prog) values ('".safee($condb,$salot_dept)."', '".safee($condb,$salot_los)."','".safee($condb,$salot_sem)."', '".safee($condb,$salot_session)."','".safee($condb,$Day)."','".safee($condb,$tstart2)."','".safee($condb,$duration)."','".safee($condb,$salot_cos)."','".safee($condb,$venuet)."','".safee($condb,$class_ID)."')";
 	$Querysettime = mysqli_query($condb,$dbsettime) or die ("Couldn't set Lecture time For $salot_cos.");
 		message("Exam Time For <b> $salot_cos </b> was successfully Added", "success");
 		       redirect('lecture_time.php?view=load02');
@@ -71,20 +72,10 @@ $dbsettime = "INSERT INTO examtime_tb (t_dept,t_level,semester,session,date,time
 //}
 
 $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//$counter=1;
-while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
-	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
+while($rsblocks = mysqli_fetch_array($resultblocks)){
+if($_GET['loadfac'] ==$rsblocks['fac_id'] ){ echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
+}else{ echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
+}}
 ?>
 </select>
                       </div>
@@ -110,13 +101,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 						  	  <label for="heard">Academic Session</label>
 							   <select class="form-control"   name="session" id="session"  required="required">
   <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+<?php echo fill_sec(); ?>
 </select>
                       </div>
               

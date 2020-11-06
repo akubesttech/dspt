@@ -5,6 +5,7 @@
 		    	
 
  <?php
+ $get_RegNo = isset($_GET['id']) ? $_GET['id'] : '';
  //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
   include('admin_slidebar.php'); ?>
@@ -12,7 +13,7 @@
        //$('#myModalat7').modal('close');
       // })  </script>
     <?php include('navbar.php'); ?>
-  <?php $get_RegNo = $_GET['id']; ?>
+
 
     <!-- page content -->
         <div class="right_col" role="main">
@@ -31,12 +32,8 @@
 				 <!-- /Organization Setup Form -->
 				
 					<?php 
-					$num=$get_RegNo;
-				if ($num!==null){
-			include('editProgram.php');
-			}else{
-			
-				include('addProgram.php'); }?>
+                    if(empty($get_RegNo)){ include('addProgram.php'); }else{ include('editProgram.php');}
+					?>
 				
                    <!-- /Organization Setup Form End -->
                  

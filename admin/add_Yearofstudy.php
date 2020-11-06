@@ -1,3 +1,4 @@
+
 <?php  include('header.php'); ?>
 <?php include('session.php');$status = FALSE;
 if ( authorize($_SESSION["access3"]["sConfig"]["ayos"]["create"]) || 
@@ -6,9 +7,8 @@ authorize($_SESSION["access3"]["sConfig"]["ayos"]["view"]) ||
 authorize($_SESSION["access3"]["sConfig"]["ayos"]["delete"]) ) {
  $status = TRUE;
 }
-
-
- ?>
+$get_RegNo = isset($_GET['id']) ? $_GET['id'] : '';
+?>
 <?php include('admin_slidebar.php'); ?>
  <script type="text/javascript">
  window.onload = function (){
@@ -59,16 +59,20 @@ else
 });   
 });   
 </script>
- <script> $(document).ready(function(){
+  <script type="text/javascript"> $(document).ready(function(){
        $('#myModalat').modal('close');
-       })  </script>
+        })  </script>
+       
     <?php include('navbar.php');	if ($status === FALSE) {
 //die("You dont have the permission to access this page");
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 } ?>
-  <?php $get_RegNo= $_GET['id']; ?>
+
+
+  <?php //$get_RegNo= $_GET['id']; ?>
     <!-- page content -->
+    
         <div class="right_col" role="main">
           <div class="">
           <div class="page-title">
@@ -85,13 +89,7 @@ message("You don't have the permission to access this page", "error");
 				 <!-- /Organization Setup Form -->
 				
 					<?php 
-					$num=$get_RegNo;
-              	if ($num!==null){
-			include('editSession.php');
-			}else{
-			
-				include('addSession.php'); }
-			?>
+			 if(empty($get_RegNo)){ include('addSession.php'); }else{ include('editSession.php');}?>
 				
                    <!-- /Organization Setup Form End -->
                  
@@ -140,6 +138,7 @@ message("You don't have the permission to access this page", "error");
                         <tr>
                          <th><input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');"></th>
                           <th>Session Name</th>
+                          <th>Programme</th>
                           <th>Session Start</th>
                          <th>Session End</th>
                           <th>Semester</th>
@@ -162,6 +161,7 @@ message("You don't have the permission to access this page", "error");
 												</td>
 											
                           <td><?php echo $row_s['session_name']; ?></td>
+                          <td><?php echo getprog($row_s['prog']); ?></td>
                           <td><?php echo $row_s['start_date']; ?></td>
                           <td><?php echo $row_s['start_end']; ?></td>
                           <td><?php echo $row_s['term']; ?></td>
@@ -183,7 +183,19 @@ message("You don't have the permission to access this page", "error");
 												
 													<?php } }?>
                         </tr>
-                   
+                     
+                     
+                      
+                      
+                      
+                      
+                      
+                       
+                       
+                       
+                      
+                      
+                      
                         <?php } ?>
                       </tbody>
                       	</form>

@@ -24,7 +24,7 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 if(isset($_POST['viewRecord'])){
 $salot_dept = $_POST['dept1'];
 $salot_cos = $_POST['cos'];
-$salot_los = $_POST['los'];
+$salot_lev = $_POST['los'];
 $salot_session = $_POST['session'];
 $result_alldept=mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$salot_session)."' and Department ='".safee($condb,$salot_dept)."' and app_type='".safee($condb,$class_ID)."' and verify_Data='TRUE'");
 //$result_alldept = mysqli_query($condb,$sql_alldept);
@@ -37,8 +37,8 @@ message("ERROR: No Student Record Found for ".getdeptc($salot_dept)." Department
 }else{
 	$_SESSION['vsession']=$salot_session;
 	$_SESSION['los']=$salot_los;
-echo "<script>window.location.assign('Print_students.php?Schd=".md5($salot_dept)."');</script>";}
-
+//echo "<script>window.location.assign('Print_students.php?Schd=".md5($salot_dept)."');</script>";}
+echo "<script>window.location.assign('Print_students.php?Schd=".($salot_dept)."&session2=".$salot_session."&lev=".$salot_lev."');</script>";}
 }//}$_SESSION['insidtime'] = rand();
 ?>
 
@@ -102,14 +102,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 						  	  <label for="heard">Academic Session</label>
 							   <select class="form-control"   name="session" id="session"  required="required">
   <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
-
+<?php echo fill_sec(); ?>
 </select>
                       </div>
                  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">

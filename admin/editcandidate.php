@@ -102,7 +102,7 @@ unlink("$row_cand[image]");
  
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">CGPA</label>
-<div class="form-group"><input type="text" class="form-control "    name='cgpa' id="cgpa"  value="<?php echo $row_cand['cgpa']; ?>" required ></div></div> 
+<div class="form-group"><input type="text" class="form-control "    name='cgpa' id="cgpa_1"  value="<?php echo $row_cand['cgpa']; ?>" readonly required ></div></div> 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"><label for="heard">Election</label>
 						  	  <select name='elect' id="elect" onchange='loadposition(this.name);return false;' class="form-control"  required >
 <option value="<?php echo $row_cand['ecate']; ?>"><?php echo getecate($row_cand['ecate']); $ecat = getecated($row_cand['ecate']); ?><?php if($ecat == "2"){ echo $nelect = " (".getfacultyc($row_cand['fac']).")"; }elseif($ecat == "1"){ echo $nelect = " (".getdeptc($row_cand['dept']).")";}else{}  ?></option>

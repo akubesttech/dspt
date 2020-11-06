@@ -38,6 +38,7 @@
                                     var lname = response[0]['lname'];
                                     var fac = response[0]['fac'];
                                     var deptn = response[0]['dept1'];
+                                    var cgpa = response[0]['cgpa'];
                                     var fac2 = response[0]['fac2'];
                                     var deptn2 = response[0]['dept2'];
                                     var gender = response[0]['sex'];
@@ -46,6 +47,7 @@
                                     document.getElementById('lname_'+index).value = lname;
                                     document.getElementById('fac_'+index).value = fac;
                                     document.getElementById('dept1_'+index).value = deptn;
+                                    document.getElementById('cgpa_'+index).value = cgpa;
                                         document.getElementById('fac2_'+index).value = fac2;
                                     document.getElementById('dept2_'+index).value = deptn2;
                                      document.getElementById('sex_'+index).value = gender;
@@ -664,7 +666,7 @@ function IdleTimeout() {
 } 
 
    
-     function ShowHideDiv2() {
+     function ShowHideDiv20() {
         var ddlPassport = document.getElementById("dura");
         var dvPassport = document.getElementById("other1");
         dvPassport.style.display = ddlPassport.value == "Others" ? "block" : "none";
@@ -739,3 +741,37 @@ function check(e, value) {
       if (unicode != 8)
         if ((unicode < 48 || unicode > 57) && unicode != 46) return false;
     }
+    
+    function filltablen(str){
+	var params = str;
+	//console.log(params);
+	if(params=="") {
+		$('table tbody').empty();
+		//console.log("emptied");
+		return;
+	}
+	var request = new XMLHttpRequest();
+	request.open("GET","lpermission.php?q="+params,true);
+	request.onreadystatechange = function(){
+		if(this.readyState==4 && this.status == 200){
+			if(this.responseText != null){
+				if(this.responseText=="No Data"){
+					$('#error').html(this.responseText);
+					$('table tbody').empty();
+				}else{
+					$('#error').html("");
+					$('table  tbody').empty();
+				    $('table  tbody').append(this.responseText);
+                    
+                    	$('#table').DataTable({
+						destroy: true,
+						searching: false,
+                        ordering: false,
+						data: data
+					});
+				}
+			} //console.log("script didn't return a value");
+		}
+	}
+	request.send();
+}

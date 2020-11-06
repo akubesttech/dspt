@@ -1,13 +1,26 @@
 
 <?php  include('header.php'); ?>
 <?php include('session.php'); ?>
-	
+	 <?php
+ 		$status = FALSE;
+if ( authorize($_SESSION["access3"]["sTime"]["examt"]["create"]) || 
+authorize($_SESSION["access3"]["sTime"]["examt"]["edit"]) || 
+authorize($_SESSION["access3"]["sTime"]["examt"]["view"]) || 
+authorize($_SESSION["access3"]["sTime"]["examt"]["delete"]) ) {
+ $status = TRUE;
+}
+ ?>
 		    	
 
  <?php include('admin_slidebar.php'); ?>
-    <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['id']; 
-  $get_staff= $_GET['allot_id'];
+    <?php include('navbar.php');
+    	if ($status === FALSE) {
+message("You don't have the permission to access this page", "error");
+		        redirect('./'); 
+}
+     ?>
+  <?php $get_RegNo=  isset($_GET['id']) ? $_GET['id'] : '';
+  $get_staff= isset($_GET['allot_id']) ? $_GET['allot_id'] : '';
   	
   ?>
     <!-- page content -->
@@ -33,6 +46,18 @@
 			}else{
 			
 				include('addlecturetime.php'); } */
+                if (isset($_POST['delete_edate'])){
+	 if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect('lecture_time.php?view=letime');
+			}elseif(empty($_POST['selector'])){
+				message("Select at least one record to proceed !", "error");
+		       redirect('lecture_time.php?view=letime');
+				}else{ $id=$_POST['selector'];  $N = count($id);
+for($i=0; $i < $N; $i++){
+    $resultd = mysqli_query($condb,"DELETE FROM utmedate where id='$id[$i]'");
+    message('Examination Schedule Successfully Deleted', 'success');
+	redirect('lecture_time.php?view=letime'); }}}
 				?>
 				
                    <!-- /Organization Setup Form End -->
@@ -79,10 +104,12 @@
 		            $content    = 'et_list.php';		
 		            break;
                     
-                    case 'opro' :
-		            $content    = 'selectprog.php';		
+                    case 'etime' :
+		            $content    = 'setutmetime.php';		
 		            break;
-		            
+		            case 'letime' :
+		            $content    = 'utmetime.php';		
+		            break;
 		            
 	                default :
 		            //$content    = 'searchStud.php';

@@ -2,7 +2,9 @@
 <?php check_malert(); ?>
   <?php
 
-  
+
+    
+
    $query= mysqli_query($condb,"select * from admin where admin_id  = '$session_id'")or die(mysqli_error($condb));
 						   $staff_row = mysqli_fetch_array($query);
 						   $thedate=date("U");
@@ -23,72 +25,7 @@ $uprecords="Update admin set lasttime='$thedate' where admin_id='$row[admin_id]'
 						 ?>
         <div class="top_nav">
           <div class="nav_menu">
-         
-            <?php
-
-	$que_warning=mysqli_query($condb,"select * from session_tb where  Action='1'");
-	$warning_count=mysqli_num_rows($que_warning);
-	
-	$que_warning2=mysqli_query($condb,"select * from session_tb where Action='0' ");
-	$warning_count2=mysqli_num_rows($que_warning2);
-	$warning_data2=mysqli_fetch_array($que_warning2);
-	$numactive= $warning_data2['action'];
-	
-	//$warning_data=mysqli_fetch_array($que_warning);
-$newSession   =	substr($warning_data2['session_name'],5,10);
-$fSession   =	$warning_data2['session_name'];
-//if($fSession === $year){
-//$que_warning3=mysqli_query($condb,"select * from session_tb where session_name = '$fSession' and Action='0' ");
-//$warning_data3=mysqli_fetch_array($que_warning3);
-//}
-	if($warning_count>0)
-	{}else{
-		//$warning_data=mysqli_fetch_array($que_warning);
-		$warning_txt=$warning_data3[1];
-			$warning_semester =$warning_data3[4];
-?>
-
-<script>
- $(document).ready(function(){
-        //$('#myModal234').fadeIn('fast');
-          $('#myModalat').modal({
-			backdrop: 'static'
-		});
-		            $('#myModalat').draggable({
-    handle: "#modal-header"
-  });
-    });
-      
-            
-</script>
-
- 
-	
-<?php	
-	}    $sessionlock = $_SESSION['loggedAt2'];
-     if(isset($_SESSION['loggedAt2']) && (time() - $sessionlock > 1800)) {
-               ?>
-                <script>
-            $(window).load(function(){
-        $('#myModalat4').modal({
-	backdrop: 'static'
-		});
-		$('#myModalat4').draggable({
-    handle: "#modal-header"
-  });
-      });
-   
-   
-	</script>
-               <?php
-                   //redirect(host()."Userlogin.php");
-                    unset($_SESSION['id'], $sessionlock);
-//exit;
-}else{
-
-    $_SESSION['loggedAt2'] = time();
-}
-if($pr_count > 0){
+       <?php   if($pr_count > 0){
 	if($class_ID > 0){}else{ ?>
                 <script>
  $(document).ready(function(){
@@ -114,9 +51,59 @@ $(document).ready(function(){
       
 
 </script>
-			<?php	}
-					
-						//$current_url6 	= "";//base64_decode($_GET["return_urlx"]);
+ <?php
+}
+	$que_warning=mysqli_query($condb,"select * from session_tb where  Action='1' and prog = '".$class_ID."'");
+	$warning_count=mysqli_num_rows($que_warning);
+	
+	$que_warning2=mysqli_query($condb,"select * from session_tb where Action='0' and prog = '".$class_ID."' ");
+	$warning_count2=mysqli_num_rows($que_warning2);
+	$warning_data2=mysqli_fetch_array($que_warning2);
+	$numactive= $warning_data2['action'];
+	
+	//$warning_data=mysqli_fetch_array($que_warning);
+$newSession   =	substr($warning_data2['session_name'],5,10);
+$fSession   =	$warning_data2['session_name'];
+//if($fSession === $year){ $que_warning3=mysqli_query($condb,"select * from session_tb where session_name = '$fSession' and Action='0' ");
+//$warning_data3=mysqli_fetch_array($que_warning3);}
+if($warning_count>0){}else{
+?>
+
+<script>
+ $(document).ready(function(){
+        //$('#myModal234').fadeIn('fast');
+          $('#myModalat').modal({
+			backdrop: 'static'
+		});
+  		          $('#myModalat').draggable({
+    handle: "#modal-header"
+  });
+    });
+ </script>
+<?php	
+	}    $sessionlock = $_SESSION['loggedAt2'];
+     if(isset($_SESSION['loggedAt2']) && (time() - $sessionlock > 1800)) {
+               ?>
+                <script>
+            $(window).load(function(){
+        $('#myModalat4').modal({
+	backdrop: 'static'
+		});
+		$('#myModalat4').draggable({
+    handle: "#modal-header"
+  });
+      });
+   </script>
+ <?php
+ //redirect(host()."Userlogin.php");
+ unset($_SESSION['id'], $sessionlock);
+//exit;
+}else{
+$_SESSION['loggedAt2'] = time();
+}
+?>
+<?php	//}
+//$current_url6 	= "";//base64_decode($_GET["return_urlx"]);
 ?>
 
             <nav>
@@ -153,8 +140,7 @@ $(document).ready(function(){
                   </ul>
                 </li>
                 <?php 
-				$recent=date("U")-600;
-				
+			$recent=date("U")-600;
 $getusersonline="SELECT admin_id,username from admin where lasttime>'$recent'"; //grab from sql users on in last 15 minutes
 $getusersonline2=mysqli_query($condb,$getusersonline) or die("Could not get users");
 $num=mysqli_num_rows($getusersonline2);

@@ -1,7 +1,7 @@
  <?php if($class_ID > 0){}else{
                   message("ERROR:  No Programme Select,Please Select a Programme and continue.", "error"); redirect('new_apply.php?view=spro');}
-					
-                    //$depart = $_GET['dept1_find'];
+	$protocol_n = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";  
+//$depart = $_GET['dept1_find'];
 //$session=$_GET['session2'];
 //$c_choice= $_GET['c_choice']; 	
 						?>
@@ -13,7 +13,7 @@
                   
                    <!-- <form action="Delete_sapp.php" method="post"> --!>
                     <form action="" method="post">
-					<?php	$current_url21 = base64_encode($url="https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); ?>
+					<?php	 $current_url21 = base64_encode($url = $protocol_n.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); ?>
                        
                     <table id="datatable-responsive" class="table table-striped table-bordered">
                   <?php   if (authorize($_SESSION["access3"]["adm"]["nsp"]["delete"])){ ?><button class="btn btn-danger" name="delete_newapp" title="Click to Delete selected Applicant Records that are more than Five years " id="com"><i class="fa fa-trash icon-large"></i> Delete </button>
@@ -63,7 +63,7 @@
 
 //if($depart == Null AND $session == Null){
 if(empty($dep1) AND empty($sec1)){
-$view_queryn = "select * from new_apply1 where reg_status = '1' and Asession = '".safee($condb,$default_session)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0'  ";
+$view_queryn = "select * from new_apply1 where reg_status = '1' and Asession = '".safee($condb,$default_secadmin)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0'  ";
 if($Rorder > 2){ $view_queryn .= " AND first_Choice = '$userdept'";}
  $view_queryn .= "order by stud_id DESC limit 0,800";
     $viewutme_query = mysqli_query($condb,$view_queryn)or die(mysqli_error($condb));
@@ -80,6 +80,8 @@ $newstatus = $row_utme['verify_apply']; $chot = $row_utme['course_choice']; $ast
 if($astatus2 > 0){   $alert2 = "<font color='green'><i class='fa fa-check'></i></font>";   }else{ $alert2 = "";   }
 if($chot > 1){   $adep = $row_utme['Second_Choice'];   }else{ $adep = $row_utme['first_Choice'];   }
 $adep2 = $row_utme['Second_Choice']; $adep1 = $row_utme['first_Choice']; 
+$sql_cstudent = mysqli_query($condb,"SELECT * FROM student_tb WHERE appNo = '".safee($condb,$id)."'");
+				$contstate = mysqli_num_rows($sql_cstudent);
 ?>     <?php include('toolttip_edit_delete.php'); ?>
                         <tr>
                         	<td width="30">
@@ -89,12 +91,21 @@ $adep2 = $row_utme['Second_Choice']; $adep1 = $row_utme['first_Choice'];
 				<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $new_a_id; ?>">
 												<?php } ?>
 												</td>
-						  <td><a rel="tooltip"  title="View Student Application Details" id="<?php echo $id; ?>"  onclick="window.open('?details&userId=<?php echo $new_a_id;?>&dept1_find=<?php echo $dep1; ?>&session2=<?php echo $sec1; ?>&c_choice=<?php echo $los; ?>','_self')" data-toggle="modal" class="btn btn-info"><i class=""> <?php 
+						  <td><!--<a rel="tooltip"  title="View Student Application Details" id="<?php echo $id; ?>"  onclick="window.open('?details&userId=<?php echo $new_a_id;?>&dept1_find=<?php echo $dep1; ?>&session2=<?php echo $sec1; ?>&c_choice=<?php echo $los; ?>','_self')" data-toggle="modal" class="btn btn-info"><i class=""> <?php 
 						  if($row_utme['adminstatus']=='1'){
 						echo "<font color='green'>$row_utme[appNo]</font>";
 						}else{
 					echo "<font color='red'>$row_utme[appNo]</font>";
-					} ?></i></a></td>
+					} ?></i></a> --!>
+                    
+                     <a rel="facebox" href="app_pop.php?userId=<?php echo $new_a_id;?>&dept1_find=<?php echo $dep1; ?>&session2=<?php echo $sec1; ?>&c_choice=<?php echo $los; ?>" title="View Student Application Details" id="<?php echo $id; ?>" class="btn btn-info"><i class=""> <?php 
+						  if($row_utme['adminstatus']=='1'){
+						echo "<font color='green'>$row_utme[appNo]</font>";
+						}else{
+					echo "<font color='red'>$row_utme[appNo]</font>";
+					} ?></i></a>
+                           
+                    </td>
                           <td><?php echo $row_utme['FirstName'].'  '.$row_utme['SecondName'].' '.$row_utme['Othername']; ?></td>
                           <td><?php echo $row_utme['Gender']; ?></td> 
                           <td><?php echo $row_utme['phone']; ?></td>
@@ -106,10 +117,11 @@ $adep2 = $row_utme['Second_Choice']; $adep1 = $row_utme['first_Choice'];
                           <td><?php if($row_utme['verify_apply']=='TRUE'){ echo "<font color='green'> <i class='fa fa-check'></i>"." Verified"."</font>"; }else{ echo "<font color='red'><i class='fa fa-close'></i>"." Not Verified"." </font>";}  ?>
 						  </td>
                           <td><?php echo getappstatus($row_utme['adminstatus']); ?></td>
-                          	<td width="120"><?php   if (authorize($_SESSION["access3"]["adm"]["nsp"]["create"])){ if($row_utme['verify_apply']=='TRUE'){ ?>
+                          	<td width="120"><?php   if (authorize($_SESSION["access3"]["adm"]["nsp"]["create"])){ 
+                          	 if($contstate > 0){echo "Records Transfered";}else{ if($row_utme['verify_apply']=='TRUE'){ ?>
 <a rel="tooltip"  title="Click To Process Student Admission" id="<?php echo $new_a_id; ?>" href="javascript:void(0);" 	onClick="window.location.href='new_apply.php?view=P_admin&<?php echo 'userId='.$new_a_id; ?>&loc=<?php echo $current_url21; ?>';"
- data-toggle="modal" class="btn btn-success"><i class="fa fa-gears icon-large"> Process Data</i></a> <?php }else{ echo "-----";}} ?> </td> <!--<td width="90"> <a rel="tooltip"  title="View Student Application Details" id="<?php echo $new_a_id; ?>" href="?details&userId=<?php echo $new_a_id;?>" data-toggle="modal" class="btn btn-info"><i class="fa fa-file icon-large"> Info</i></a> </td>--!>
-                        </tr>
+ data-toggle="modal" class="btn btn-success"><i class="fa fa-gears icon-large"> Process Data</i></a> <?php }else{ echo "-----";}} }?> </td> 
+  </tr>
                      
                      
                         <?php } ?>

@@ -16,6 +16,15 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 		       redirect('Student_Record.php?view=opro');} 
 			   
 			   ?>
+               <script type="text/javascript">
+
+$(document).ready(function() {   
+$('#rtemp').change(function(){   
+if($('#rtemp').val() === '1'){   $('#los').show(); $('#sem').show();  }else if ($('#rtemp').val() === '2') {   
+ $('#los').show(); $('#sem').show(); }else if($('#rtemp').val() === '3'){ $('#los').show();   $('#sem').show(); }else if ($('#rtemp').val() === '4') { 
+$('#los').show(); $('#sem').hide();}else if ($('#rtemp').val() === '5') { 
+$('#los').show(); $('#sem').hide(); }else { $('#los').hide(); $('#sem').hide(); }      });   });   
+</script>
 <?php
 //if($_SESSION['insidtime']==$_POST['insidtime'])
 //{
@@ -26,12 +35,13 @@ $salot_dept = $_POST['dept1'];
 $semester = $_POST['semester'];
 $salot_los = $_POST['los'];
 $salot_session = $_POST['session']; $salot_fac = $_POST['fac1'];
+$rforms = $_POST['rtemp'];
 
 //$result_alldept=mysqli_query($condb,"SELECT * FROM results WHERE session ='".safee($condb,$salot_session)."' and dept ='".safee($condb,$salot_dept)."' and level ='".safee($condb,$salot_los)."' and semester ='".safee($condb,$semester)."'");
-$result_alldept=mysqli_query($condb,"SELECT * FROM results WHERE dept ='".safee($condb,$salot_dept)."' and session ='".safee($condb,$salot_session)."' and  level ='".safee($condb,$salot_los)."' and semester ='".safee($condb,$semester)."'");
+$resultQ="SELECT * FROM results WHERE dept ='".safee($condb,$salot_dept)."' and session ='".safee($condb,$salot_session)."' and  level ='".safee($condb,$salot_los)."' ";
+if($semester != null){ $resultQ .= " and semester ='".safee($condb,$semester)."'";}
+$result_alldept = mysqli_query($condb,$resultQ);
 $num_alldept = mysqli_num_rows($result_alldept);
-//	$_SESSION['vsession']=$salot_session;
-
 if($num_alldept < 1){
 message("ERROR: No Result Broad Sheet Found for ".getdeptc($salot_dept)." Department for ".$salot_session." , Please Try Again .", "error");
  redirect('Result_am.php?view=rbs');
@@ -42,6 +52,8 @@ message("ERROR: No Result Broad Sheet Found for ".getdeptc($salot_dept)." Depart
 //echo "<script>window.location.assign('resultsheet.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
 // POLY
 echo "<script>window.location.assign('resultsheet_p.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
+// COLLEGE OF EDUCATION mosogar
+//echo "<script>window.location.assign('resultsheet_c.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."&rform=".($rforms)."');</script>";
 }
 
 }//}$_SESSION['insidtime'] = rand();
@@ -79,17 +91,20 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                       
   <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback"><label for="heard">Academic Session</label>
 <select class="form-control"   name="session" id="session"  required="required"><option value="">Select Session</option>
-<?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");while($rssec = mysqli_fetch_array($resultsec))
-{echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?></select></div>
-                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-	<label for="heard">Level </label><select class="form-control" name="los" id="los" required >
+<?php echo fill_sec(); ?></select></div>
+ <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" >
+	<label for="heard">Result Form </label><select class="form-control" name="rtemp" id="rtemp" required >
+<option value="">Select Form</option><option value="1">Form A</option><option value="2">Form B</option>
+<option value="3">Form C</option><option value="4">Form D</option><option value="5">Form F</option>
+</select> </div>
+                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;"  id="los">
+	<label for="heard">Level </label><select class="form-control" name="los" id="los"  >
 <option value="">Select Level</option><?php 
 $resultsec2 = mysqli_query($condb,"SELECT * FROM level_db where prog = '$class_ID'  ORDER BY level_order ASC");
 while($rssec2 = mysqli_fetch_array($resultsec2)){echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	
 }?></select> </div>
-<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-					  <label for="heard">Semester </label><select name='semester' id="semester" class="form-control" required>
+<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;"  id="sem">
+					  <label for="heard">Semester </label><select name='semester' id="semester" class="form-control" >
 <option value="">Select Semester</option><option value="First">First</option><option value="Second">Second</option></select> </div>
                     
                       

@@ -63,7 +63,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                           
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Duration</label>
-						  	   <select id="dura" onchange = "ShowHideDiv()" name="dura"  class="form-control" required="required" >
+						  	   <select  name="dura"  id="dura" onchange = "ShowHideDiv20()"  class="form-control" required="required" >
                             <option value="">Select Duration</option><?php //round($rspro['pro_dura'])."".getys(round($rspro['pro_dura'])) 
 $resultpro = mysqli_query($condb,"SELECT DISTINCT pro_dura FROM prog_tb  ORDER BY pro_dura  ASC");
 while($rspro = mysqli_fetch_array($resultpro)){echo "<option value='$rspro[pro_dura]'>".getys($rspro['pro_dura'])." ".getfra($rspro['pro_dura'])."</option>";	} ?>

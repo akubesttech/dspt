@@ -1,5 +1,6 @@
+   
   <?php //include('../member/user_pop_ups.php');
-  	$que_warnings=mysqli_query($condb,"select * from session_tb where  Action='1'");
+  	$que_warnings=mysqli_query($condb,"select * from session_tb where  Action='1' and prog = '".$class_ID."'");
 	$warning_counts=mysqli_num_rows($que_warnings);
    ?>	
  <div class="col-md-3 left_col">

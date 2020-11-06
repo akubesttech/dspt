@@ -1,6 +1,7 @@
  
 <?php  include('header.php');  ?>
 <?php include('session.php'); //unset($_SESSION["select_pro"]);
+
 ?>
 	<?php 
 	
@@ -8,9 +9,13 @@
 
     try {
 
-      $sql = "SELECT mod_modulegroupcode, mod_modulegroupname,mod_modulegroupicon,mod_moduleorder,mod_modulegrouporder FROM module "
+        //$sql = "SELECT mod_modulegroupcode, mod_modulegroupname,mod_modulegroupicon,mod_moduleorder FROM module "
+                //. " WHERE 1 GROUP BY mod_modulegroupcode "
+                //. " ORDER BY mod_modulegrouporder ASC, mod_moduleorder ASC  ";
+ $sql = "SELECT mod_modulegroupcode, mod_modulegroupname,mod_modulegroupicon,mod_moduleorder,mod_modulegrouporder FROM module "
                 . "WHERE 1  GROUP BY mod_modulegroupcode , mod_modulegroupname,mod_modulegroupicon,mod_moduleorder,mod_modulegrouporder "
                 . " ORDER BY mod_modulegrouporder ASC, mod_moduleorder ASC  ";
+
         $stmt = $DB2->prepare($sql);
      $stmt->execute();
         $commonModules = $stmt->fetchAll();
@@ -60,6 +65,7 @@ $amountnonnet = $amountnon * $nonIndigene; $expectedrevenue = $amountinet + $amo
 //Revenue Generated
 $qgetrg = mysqli_query($condb,"select SUM(paid_amount)as totalamount from payment_tb where prog ='".safee($condb,$class_ID)."' and session ='".safee($condb,$default_session)."' and pay_status='1' and ft_cat = '1' ")or die(mysqli_error($condb)); $get_revgen = mysqli_fetch_array($qgetrg); 
 $genrevenue = $get_revgen['totalamount'] ; $outstandingrev = $expectedrevenue - $genrevenue;
+//echo $amountnon;
 	?>
 <?php include('admin_slidebar.php'); ?>
 <?php include('navbar.php');?>
@@ -82,8 +88,9 @@ $genrevenue = $get_revgen['totalamount'] ; $outstandingrev = $expectedrevenue - 
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                              <img  src="<?php  
 //if ($staff_row['adminthumbnails']==NULL ){print "uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $staff_row['adminthumbnails'];}
-if ($exists > 0 ){print $staff_row['adminthumbnails'];}else{ print "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>"   width="20" height="20"><?php  //$Hour = date('H');
-$ctextra = date('H')+5; if( $ctextra > 24){   $Hour = $ctextra - 24;}else{    $Hour = date('H')+5; }
+if ($exists > 0 ){print $staff_row['adminthumbnails'];}else{ print "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>"   width="20" height="20">
+<?php  $Hour = date('H');
+//$ctextra = date('H')+5; if( $ctextra > 24){   $Hour = $ctextra - 24;}else{    $Hour = date('H')+5; }
  //$currentime = strtotime(date("Y-m-d H:i:s"));
   //$mines = strtotime(date("H"));
   //$remainder = $currentime % (60 * 60 * 24);
@@ -194,7 +201,7 @@ if ( $Hour >= 5 && $Hour < 12 ) {
                                     <div class="clearfix"></div>
                                 </div></a></div>
                       </div><?php } ?>
-                      <?php  $pay_rec = mysqli_query($condb,"select * from payment_tb where pay_status = '0'")or die(mysqli_error($condb));
+                      <?php  $pay_rec = mysqli_query($condb,"select * from payment_tb where pay_status = '0' and session = '".safee($condb,$default_session)."' AND prog = '".safee($condb,$class_ID)."' and  DATE(pay_date) > (CURDATE() - INTERVAL 7 DAY) order by pay_id DESC LIMIT 0,800")or die(mysqli_error($condb));
 		 $pay_count = mysqli_num_rows($pay_rec); ?>
 		 <?php   if (authorize($_SESSION["access3"]["dboard"]["main"]["edit"])){ ?>
                        <div class="animated flipInY col-lg-4 col-md-3 col-sm-6 col-xs-12">
@@ -258,8 +265,9 @@ if ( $Hour >= 5 && $Hour < 12 ) {
                       		<?php
 		// set default timezone
 //date_default_timezone_set('Europe/London'); // CDT 
-		date_default_timezone_set('US/Canada');
-	     $log = mysqli_query($condb,"select * from session_tb where action='1'")or die(mysqli_error($condb));
+		//date_default_timezone_set('US/Canada');
+        //date_default_timezone_set('America/Los_Angeles');
+	     $log = mysqli_query($condb,"select * from session_tb where action='1' and prog = '".$class_ID."'")or die(mysqli_error($condb));
 		 $log2 = mysqli_num_rows($log);
 		 	 $log3 = mysqli_fetch_array($log);
 		 	 $academic =$log3['session_name'];
@@ -278,18 +286,7 @@ if ( $Hour >= 5 && $Hour < 12 ) {
 $curdate=date("Y/m/d");
 //$diff2 = strtotime($curdate);
 //$diff3 = round(diff2/86400);
-function dateDiff($start, $end) {
 
-$start_ts = strtotime($start);
-
-$end_ts = strtotime($end);
-
-
-$diff = $end_ts - $start_ts;
-
-return round($diff / 86400);
-
-}
 
 //echo dateDiff($academic2, $curdate);
 
@@ -377,7 +374,7 @@ return round($diff / 86400);
                                 </div>							  
                             </a></div></div>
                             <?php } ?>
-<?php $utme_query = mysqli_query($condb,"select * from new_apply1 where  reg_status = '1' and Asession = '".safee($condb,$default_session)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0' ")or die(mysqli_error($condb));
+<?php $utme_query = mysqli_query($condb,"select * from new_apply1 where  reg_status = '1' and Asession = '".safee($condb,$default_secadmin)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0' ")or die(mysqli_error($condb));
 		 $utme_count = mysqli_num_rows($utme_query);
 		 ?>
                            <div class="animated flipInY col-lg-4 col-md-3 col-sm-6 col-xs-12">
@@ -386,12 +383,12 @@ return round($diff / 86400);
                           </div>
                           <div class="count"><?php echo $utme_count;?></div>
 
-                          <h3>UTME Student
+                          <h3>UTME Student 
 
 </h3></h3> <?php   if (authorize($_SESSION["access3"]["dboard"]["main"]["view"])){ ?>
                         <a href="new_apply.php">							  
                                 <div class="modal-footer">
-                                    <span class="pull-left">View UTME Application</span>
+                                    <span class="pull-left">View UTME Application - <?php echo $default_secadmin; ?></span>
                                     <span class="pull-right"><i class="fa fa-arrow-right"></i></span>
                                     <div class="clearfix"></div>
                                 </div>							  

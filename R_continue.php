@@ -338,8 +338,8 @@ while($rssec2 = mysqli_fetch_array($resultsec2)){echo "<option value='$rssec2[id
 			    					<div class="form-group">
 			    				<select class="form-control input-sm"   name="session" id="session"  required="required">
 			    				<?php if($find_record['Asession'] == ""){ ?>
-  <option value="">Select Session</option><?php }else{ ?> <option value="<?php echo $find_record['Asession']; ?>"><?php echo $find_record['Asession']; ?></option> <?php } ?>  <?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	} ?>
+  <option value="">Select Session</option><?php }else{ ?> <option value="<?php echo $find_record['Asession']; ?>"><?php echo $find_record['Asession']; ?></option> <?php } ?> 
+   <?php echo fill_sec(); ?>
 </select>	</div></div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Year Of Entry<span class="w3l-star"> * </span></label>

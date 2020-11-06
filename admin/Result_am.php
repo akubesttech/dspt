@@ -1,26 +1,27 @@
+
 <?php  include('header.php'); ?>
 <?php include('session.php'); ?>
-<?php 
-$status = FALSE;
+<?php /*	$status = FALSE;
 if ( authorize($_SESSION["access3"]["rMan"]["apc"]["create"]) || 
 authorize($_SESSION["access3"]["rMan"]["apc"]["edit"]) || 
 authorize($_SESSION["access3"]["rMan"]["apc"]["view"]) || 
 authorize($_SESSION["access3"]["rMan"]["apc"]["delete"]) ) {
  $status = TRUE;
-}
+} 
 	if ($status === FALSE) {
 //die("You dont have the permission to access this page");
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
-}
-?>	
+}*/ ?>	
 		    	
-
  <?php include('admin_slidebar.php'); ?>
     <?php include('navbar.php') ?>
       
-  <?php $get_RegNo= $_GET['userId'];
-  $dep1 = $_GET['Schd']; $sec1 = $_GET['sec']; $los = $_GET['slos'];
+  <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : '';
+  $dep1 = isset($_GET['Schd']) ? $_GET['Schd'] : '';
+  $sec1 = isset($_GET['sec']) ? $_GET['sec'] : '';
+  $los = isset($_GET['slos']) ? $_GET['slos'] : '';
+  //$dep1 = $_GET['Schd']; $sec1 = $_GET['sec']; $los = $_GET['slos'];
  if(empty($dep1)){ $links = "Result_am.php?view=caprove";}else{ $links = "Result_am.php?view=caprove&dlist&userId=".($get_RegNo)."&Schd=".$dep1."&sec=".$sec1."&slos=".$los;}
 $links2 = "Result_am.php?view=caprove&userId=".($get_RegNo)."&Schd=".$dep1."&sec=".$sec1."&slos=".$los;
 
@@ -172,7 +173,7 @@ if(isset($_GET['dlist'])){?>
                          <th>Action</th>
 				   </thead>
 <tbody> <?php $user_query = mysqli_query($condb,"select ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title from coursereg_tb ctb LEFT JOIN courses cn ON ctb.course_id = cn.C_id
- WHERE sregno = '".$_GET['userId']."' and level ='". safee($condb,$los) ."' and session ='". safee($condb,$sec1) ."' and dept='". safee($condb,$dep1)."' GROUP BY ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title ORDER BY ctb.semester ASC")or die(mysqli_error($condb)); $serial=1;
+ WHERE sregno = '".$_GET['userId']."' and level ='". safee($condb,$los) ."' and session ='". safee($condb,$sec1) ."' and dept='". safee($condb,$dep1)."' GROUP BY ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title ORDER BY ctb.semester ,ctb.c_code  ASC")or die(mysqli_error($condb)); $serial=1;
 													while($row_b = mysqli_fetch_array($user_query)){
 													$id = $row_b['creg_id']; $cosname = $row_b['course_id']; 
 $user_query2 = mysqli_query($condb,"select * from coursereg_tb WHERE creg_id = '".$id."' and level ='". safee($condb,$los) ."' and session ='". safee($condb,$sec1) ."' and dept='". safee($condb,$dep1)."' and course_id = '".safee($condb,$cosname)."' GROUP BY c_code,semester ORDER BY semester ASC")or die(mysqli_error($condb));

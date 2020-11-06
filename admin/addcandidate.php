@@ -92,7 +92,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
  
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">CGPA</label>
-<div class="form-group"><input type="text" class="form-control "    name='cgpa' id="cgpa"  required="required"></div></div> 
+<div class="form-group"><input type="text" class="form-control "    name='cgpa' id="cgpa_1" readonly  required="required"></div></div> 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"><label for="heard">Election</label>
 <select name='elect' id="elect" onchange='loadposition(this.name);return false;'  required="required" class="form-control"   >
                             <option value="">Select Election</option>

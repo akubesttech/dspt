@@ -10,18 +10,7 @@
 	                <form method="get" class="form-horizontal"  action="vtime_man.php?view=ltime" enctype="multipart/form-data">
                     
                       
-                      <span class="section">Search Lecture Time Table<?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
-?></span>
+                      <span class="section">Search Lecture Time Table</span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
@@ -41,9 +30,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks)){if($_GET['loadfac'] ==$rsbl
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"><label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
-  <option value="">Select Session</option><?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}?>
+  <option value="">Select Session</option><?php echo fill_sec(); ?>
 </select></div>
 
                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">

@@ -67,9 +67,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                            <option value=''>Select Courses</option></select></div> --!>
   <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"><label for="heard">Academic Session</label>
 <select class="form-control"   name="session" id="session"  required="required"><option value="">Select Session</option>
-<?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");while($rssec = mysqli_fetch_array($resultsec))
-{echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?></select></div>
+<?php echo fill_sec(); ?></select></div>
 
               <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 	<label for="heard">Level </label><select class="form-control" name="los" id="los"  >

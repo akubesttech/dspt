@@ -63,17 +63,7 @@ message("Application form titled (".getprog($f_pro)." ".$session.") Was Successf
 
 }
 ?>
-<?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
-	
-
-?>
+<?php //$s=3; while($s>0){ $AppNo .= rand(0,9); $s-=1;} ?>
 <div class="x_panel">
                 
              
@@ -115,8 +105,7 @@ while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
 						  	  <label for="heard"   id="enable3" >Session</label>
                          	  	<select class="form-control"  name="session" id="session"  required="required">
-  <option value="">Select Session</option><?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	} ?>
+  <option value="">Select Session</option><?php echo fill_sec(); ?>
 </select>
                       </div>
                 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >

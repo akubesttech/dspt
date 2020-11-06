@@ -8,8 +8,8 @@ $sprog1 = $_POST['f_pro'];
 $paydate = $_POST['pdate'];
 //$salot_los = $_POST['los'];
 $salot_session = $_POST['session'];
-$sql_alldept="SELECT * FROM fshop_tb WHERE session ='$salot_session' and ftype ='$sprog1'";
-$result_alldept = mysqli_query($condb,$sql_alldept);
+$result_alldept = mysqli_query($condb,"SELECT * FROM fshop_tb WHERE session ='".safee($condb,$salot_session)."' and ftype ='".safee($condb,$sprog1)."'");
+//$result_alldept = mysqli_query($condb,$sql_alldept);
 $num_alldept = mysqli_num_rows($result_alldept);
 //	$_SESSION['vsession']=$salot_session;
 
@@ -56,9 +56,7 @@ while($rsproe = mysqli_fetch_array($resultproe)){echo "<option value='$rsproe[pr
 						  	  <label for="heard">Academic Session *</label>
 							   <select class="form-control"   name="session" id="session" required >
   <option value="">Select Session</option>
-<?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){ echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?></select></div>
+<?php echo fill_sec(); ?></select></div>
        
  <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Payment Date</label>

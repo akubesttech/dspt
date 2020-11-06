@@ -20,7 +20,7 @@ $result_pinr=mysqli_query($condb,"SELECT * FROM coursereg_tb  WHERE   c_code ='"
 $num_pinr = mysqli_num_rows($result_pinr);
 if ($num_pinr < 1){ 
 message("ERROR: No information found for the selected Record .".getcourse($coursed), "error");
-		       redirect('Result_am.php?view=p_book');
+		       redirect('Student_Record.php?view=p_book');
 }else{
 	redirect('e_photobook.php?sec='.($sec).'&cos='.($coursed));
 			}}
@@ -68,10 +68,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
   <option value="">Select Session</option>
-<?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{ echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?></select></div>
+<?php echo fill_sec(); ?></select></div>
                       
                       
                    

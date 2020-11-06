@@ -1,12 +1,10 @@
+
  <?php if($class_ID > 0){}else{
                   message("ERROR:  No Programme Select,Please Select a Programme and continue.", "error");
 		       redirect('new_apply.php?view=spro');
 						}
-$searchp = $_GET['q'];
-$sreg = $_GET['sreg'];
-$gsec=$_GET['xsec'];
-$gdop= $_GET['xdop']; 
-$plevel= $_GET['xlev'];
+$searchp =  isset($_GET['q']) ? $_GET['q'] : '';
+
 				$serial=1;			?>
  <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -36,14 +34,16 @@ echo "Monthly Report (s)";}if($searchp == "qp3"){echo "Quaterly Report (s)";}if(
 									 $('#delete').tooltip('hide'); 	 $('#delete1').tooltip('hide'); $('#delete2').tooltip('hide');
 									 });
 									</script>
-										<?php //include('modal_delete.php'); ?>
-										<h1 style="color:black;font-size:35px;text-shadow: 1px 0px #0000FF;" > <center> <?php echo $schoolNe ; ?></center></h1>
+		<?php $existsop = imgExists($rowp['Logo']); //include('modal_delete.php'); ?>
+	<center><img width="100" height="70" id="Picture 1" src="   <?php  if ($existsop > 0 ){ print $rowp['Logo']; }else{ print "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>  "  ></center>
+			<h2 style="color:black;font-size:35px;text-shadow: 1px 0px #0000FF;" > <center> <?php echo $schoolNe ; ?></center></h2>
 <div class="panel-heading" style="color:blue;font-size:15px;padding: 9px 6px 9px 0px;" id="ccc3"><b> <center><font size='5px'>
 <?php 
-$sreg = $_GET['sreg'];
-$gsec=$_GET['xsec'];
-$gdop= $_GET['xdop']; 
-$plevel= $_GET['xlev'];
+$sreg =  isset($_GET['sreg']) ? $_GET['sreg'] : '';
+$gsec = isset($_GET['xsec']) ? $_GET['xsec'] : '';
+$gdop=  isset($_GET['xdop']) ? $_GET['xdop'] : '';
+$plevel= isset($_GET['xlev']) ? $_GET['xlev'] : '';
+
 $origDate = $gdop;
  $date = str_replace('/', '-', $origDate );
 $newDate = date("Y-m-d", strtotime($date));
@@ -94,8 +94,10 @@ if($countrow < 1){
 <?php
 }
 while($row_utme = mysqli_fetch_array($viewutme_query)){
-$id = $row_utme['pay_id'];
-$new_a_id = $row_utme['form_id'];
+$id = $row_utme['pay_id'];  $feetype = $row_utme['fee_type'];
+if(substr($feetype,0,1) == "B"){ $feet = getfeecat($row_utme['ft_cat']);}else{ $feet = getftype($row_utme['fee_type']);}
+if(empty($row_utme['stud_reg'])){ $fulname = ucwords(getappname($row_utme['app_no']));}else{ $fulname = ucwords(getname($row_utme['stud_reg']));}
+$i = 0;
 //$newstatus = $row_utme['verify_apply'];
 if ($i%2) {$classo = 'row1';} else {$classo = 'row2';}$i += 1;
 $forderquery = mysqli_query($condb,"select pay_status,paid_amount from payment_tb where pay_status > 0 and paid_amount > 0 and pay_id ='".safee($condb,$id)."'")or die(mysqli_error($condb));
@@ -112,12 +114,12 @@ $countpay = mysqli_num_rows($forderquery);
 												</td>
 												<td width="30"> <?php echo $serial++;?> </td>
 						  <td> <?php 
-if($countpay > 0){echo "<font color='green'>$row_utme[pay_id]</font>";}else{echo "<font color='red'>$row_utme[pay_id]</font>";} ?></td>
-                          <td><?php echo ucwords(getname($row_utme['stud_reg'])); ?></td>
+if($countpay > 0){echo "<font color='green'>$row_utme[trans_id]</font>";}else{echo "<font color='red'>$row_utme[trans_id]</font>";} ?></td>
+                          <td><?php echo $fulname; ?></td>
                           <td><?php echo getdeptc($row_utme['department']); ?></td>
                       <td><?php echo getprog($row_utme['prog']); ?></td>
                       <td><?php echo getlevel($row_utme['level'],$class_ID); ?></td>
-                          <td><?php echo getftype($row_utme['fee_type']); ?></td>
+                          <td><?php echo $feet; ?></td>
                           <td><?php echo ($row_utme['session']); ?></td>
                           <td><?php echo $row_utme['pay_date']; ?></td>
                          <td><?php if($countpay > 0){ echo getpaystatus($row_utme['pay_status']);}else{echo getpaystatus("0");} ?></td>

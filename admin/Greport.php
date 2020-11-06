@@ -46,12 +46,12 @@ $('#delete').tooltip('hide'); 	 $('#delete1').tooltip('hide'); $('#delete2').too
 <h1 style="color:black;font-size:35px;text-shadow: 1px 0px #0000FF;" > <center> <?php echo $schoolNe ; ?></center></h1>
 <div class="panel-heading" style="color:blue;font-size:15px;padding: 9px 6px 9px 0px;" id="ccc3"><b> <center>
 <?php 
-$cati = $_REQUEST['cat'];
-$depart = $_REQUEST['xdp'];
-$gsec=$_REQUEST['xsec'];
-$gdop= $_REQUEST['xd1']; 
-$gdop2= $_REQUEST['xd2'];
-$plevel= $_REQUEST['xlev'];
+  $cati =  isset($_REQUEST['cat']) ? $_REQUEST['cat'] : '';
+$depart = isset($_REQUEST['xdp']) ? $_REQUEST['xdp'] : '';
+$gsec= isset($_REQUEST['xsec']) ? $_REQUEST['xsec'] : '';
+$gdop=  isset($_REQUEST['xd1']) ? $_REQUEST['xd1'] : '';
+$gdop2= isset($_REQUEST['xd2']) ? $_REQUEST['xd2'] : '';
+$plevel= isset($_REQUEST['xlev']) ? $_REQUEST['xlev'] : '';
 $origDate = $gdop; $origDate2 = $gdop2;
  $date = str_replace('/', '-', $origDate );
 $newDate = date("Y-m-d", strtotime($date));

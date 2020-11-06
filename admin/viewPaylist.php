@@ -28,7 +28,7 @@ $sql_alldept="SELECT * FROM payment_tb WHERE session ='$salot_session' and depar
 $result_alldept = mysqli_query($condb,$sql_alldept);
 $num_alldept = mysqli_num_rows($result_alldept);
 if($num_alldept < 1){
-	message("No Payment Record Found for ".getdeptc($salot_dept)." Department in $salot_session , Please Try Again", "error");
+	message("Unable to Generate Photo Book for ".getdeptc($salot_dept)." Department in $salot_session because No Payment Found , Please Try Again", "error");
 		        redirect('View_Payment.php?view=v_p');
 }else{
 	$_SESSION['vsession']=$salot_session;
@@ -58,24 +58,10 @@ echo "<script>window.location.assign('exam_photobook.php?Schd=".md5($salot_dept)
                             <?php  
 
 $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//$counter=1;
-while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
-	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
-?>
-                            
-                          
-                          </select>
+while($rsblocks = mysqli_fetch_array($resultblocks)){if($_GET['loadfac'] ==$rsblocks['fac_id'] )	{
+	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";}else{
+	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}}?>
+                            </select>
                       </div>
                      
                       
@@ -99,14 +85,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
 						  	  <label for="heard">Academic Session</label>
 							   <select class="form-control"   name="session" id="session"  required="required">
   <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
-
+<?php echo fill_sec(); ?>
 </select>
                       </div>
                  <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">

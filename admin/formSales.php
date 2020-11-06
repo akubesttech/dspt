@@ -11,25 +11,14 @@ authorize($_SESSION["access3"]["fIn"]["forms"]["view"]) ||
 authorize($_SESSION["access3"]["fIn"]["forms"]["delete"]) ) {
  $status = TRUE;
 }
-$sprog2 = $_GET['xpo']; $sec1 = $_GET['xsec']; $daten 	= $_GET['xdop'];
+ $sprog2 =  isset($_GET['xpo']) ? $_GET['xpo'] : '';
+  $sec1 =  isset($_GET['xsec']) ? $_GET['xsec'] : '';
+   $daten =  isset($_GET['xdop']) ? $_GET['xdop'] : '';
+//$sprog2 = $_GET['xpo']; $sec1 = $_GET['xsec']; $daten 	= $_GET['xdop'];
 if(empty($sprog2)){ $links = "formSales.php?view=fDetails";}else{ $links = "formSales.php?view=fDetails&xpo=".$sprog2."&xsec=".$sec1."&xdop=".$daten;}
  ?>
 
-		         
-        <?php 
-if(isset($_GET['addrooms'])){
-?>
-
-<script>
-    $(document).ready(function(){
-        $('#myModal6').fadeIn('fast');
-    });
-    $(document).ready(function(){
-        $('#close').click(function(){
-            $('#myModal6').fadeOut('fast');
-            windows.location = "add_Hostel.php";})
-    })</script>
-<?php }?>	
+	
 <script type="text/javascript">
 
 $(document).ready(function() {   
@@ -49,7 +38,7 @@ message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 }
 	 ?>
-  <?php $get_RegNo= $_GET['id']; $get_RegNo2= $_GET['idroom']; ?>
+  <?php $get_RegNo= isset($_GET['id']) ? $_GET['id'] : ''; ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -152,12 +141,12 @@ if(isset($_GET['details'])){
 <?php }?>
   
  <?php
-//$user_query = mysqli_query($condb,"select * from student_tb left join olevel_tb ON olevel_tb.oapp_No = student_tb.appNo where stud_id='$_GET[userId]' ORDER BY Faculty ASC")or die(mysqli_error($condb));
-$user_query = mysqli_query($condb,"select * from fshop_tb  where  form_id ='".safee($condb,$_GET['userId'])."'")or die(mysqli_error($condb));
+$get_userid= isset($_GET['userId']) ? $_GET['userId'] : '';
+$user_query = mysqli_query($condb,"select * from fshop_tb  where  form_id ='".safee($condb,$get_userid)."'")or die(mysqli_error($condb));
 													$row_b = mysqli_fetch_array($user_query);
 												    $student_num = $row_b['stud_reg'];
 												    $app_number = $row_b['app_no'];
-$forderquery = mysqli_query($condb,"select fpay_status,fpamount from fshop_tb where fpay_status > 0 and fpamount > 0 and form_id ='$_GET[userId]' ")or die(mysqli_error($condb));
+$forderquery = mysqli_query($condb,"select fpay_status,fpamount from fshop_tb where fpay_status > 0 and fpamount > 0 and form_id ='$get_userid' ")or die(mysqli_error($condb));
 $countpay = mysqli_num_rows($forderquery);
 													?>	
 

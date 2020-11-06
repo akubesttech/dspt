@@ -31,14 +31,19 @@ if($request == 2){
 
     while( $row = mysqli_fetch_array($result) ){
         $userid = $row['stud_id'];
+        $matno = trim($row['RegNo']);
         $firstname = $row['FirstName'];
         $lastname = $row['SecondName'];
         $faculty = $row['Faculty'];
         $dept1 = $row['Department'];
+         $prog = $row['app_type'];
+         $sec = $row['Asession'];
+         $lev = $row['p_level'];
         $faculty2 = getfacultyc($row['Faculty']);
         $dept2 = getdeptc($row['Department']);
         $gender = $row['Gender'];
-    $users_arr[] = array("id" => $userid, "fname" => $firstname,"lname" => $lastname, "fac" =>$faculty, "dept1" =>$dept1,"fac2" =>$faculty2, "dept2" =>$dept2, "sex" =>$gender);
+        $cgpa = getcgpa($matno,$prog,$sec,$lev);
+    $users_arr[] = array("id" => $userid, "fname" => $firstname,"lname" => $lastname, "fac" =>$faculty, "dept1" =>$dept1, "cgpa" =>$cgpa,"fac2" =>$faculty2, "dept2" =>$dept2, "sex" =>$gender);
     }
 
     // encoding array to json format

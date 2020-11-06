@@ -6,38 +6,39 @@ $status = $_POST['status'];
 $semester = $_POST['enable2'];
 $Sstart = $_POST['Sstart'];
 $Send = $_POST['Send'];
-
-$query = mysqli_query($condb,"select * from session_tb where session_name = '".safee($condb,$session)."' ")or die(mysqli_error($condb));
+$f_prog = $_POST['f_pro'];
+$progn = getprog($f_prog);
+$query = mysqli_query($condb,"select * from session_tb where session_name = '".safee($condb,$session)."' and prog = '".safee($condb,$f_prog)."' ")or die(mysqli_error($condb));
 $count = mysqli_num_rows($query);
-$query_check = mysqli_query($condb,"select * from session_tb where action = '1'")or die(mysqli_error($condb));
+$query_check = mysqli_query($condb,"select * from session_tb where action = '1' and prog = '".safee($condb,$f_prog)."'")or die(mysqli_error($condb));
 $action = mysqli_num_rows($query_check);
 $count2 = mysqli_fetch_array($query_check);
 //$action=$count2['action'];
 if ($count > 0){ 
-message("This Session Already Exist,Try Again!", "error");
-			redirect('add_Yearofstudy.php?id='.$get_RegNo);
+message("This Session Already Added to the Selected Programm,Try Again!", "error");
+			redirect('add_Yearofstudy.php');
 	
 }else{
 if($status=="1"){
 if($action > 0){
-message("This Session Duration Has Not Expire Look at the Admin Dashboard For Verification !", "error");
-			redirect('add_Yearofstudy.php?id='.$get_RegNo);
+message("There is already Active Session for the Selected Programme, morethan one session cannot be active in the same Programme", "error");
+			redirect('add_Yearofstudy.php');
 }else{
-mysqli_query($condb,"insert into session_tb (session_name,start_date,start_end,term,action) values('".safee($condb,$session)."','".safee($condb,$Sstart)."','".safee($condb,$Send)."','".safee($condb,$semester)."','".safee($condb,$status)."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into session_tb (session_name,start_date,start_end,term,action,prog) values('".safee($condb,$session)."','".safee($condb,$Sstart)."','".safee($condb,$Send)."','".safee($condb,$semester)."','".safee($condb,$status)."','".safee($condb,$f_prog)."')")or die(mysqli_error($condb));
 
-mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Session Titled $session was Add')")or die(mysqli_error($condb)); 
+mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Session Titled $session was Add for $progn')")or die(mysqli_error($condb)); 
  ob_start();
  message("New Session [$session] was Successfully Added as Default Session!", "success");
 			redirect('add_Yearofstudy.php');
 
 }
 }else{
-mysqli_query($condb,"insert into session_tb (session_name,action) values('".safee($condb,$session)."','".safee($condb,$status)."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into session_tb (session_name,action,prog) values('".safee($condb,$session)."','".safee($condb,$status)."','".safee($condb,$f_prog)."')")or die(mysqli_error($condb));
 
-mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Session Titled $session was Add')")or die(mysqli_error($condb)); 
+mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Session Titled $session was Add for $progn')")or die(mysqli_error($condb)); 
 // ob_start();
 message("New Session [$session] was Successfully Added !", "success");
-			redirect('add_Yearofstudy.php');
+			redirect(host().'admin/');
 
 }
 }
@@ -54,6 +55,16 @@ message("New Session [$session] was Successfully Added !", "success");
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       
                       <span class="section">Add New Academic Session  </span>
+                      
+                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Program </label>
+                            	  <select name='f_pro' id="f_pro" class="form-control" required>
+                            <option value="">Select Program</option>
+                            <?php  $resultproe = mysqli_query($condb,"SELECT * FROM prog_tb   ORDER BY Pro_name  ASC");
+while($rsproe = mysqli_fetch_array($resultproe))
+{echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
+                            </select>
+                      </div>
 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 					  <label for="heard">Session </label>

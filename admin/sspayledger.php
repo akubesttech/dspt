@@ -41,9 +41,7 @@ echo "<script>window.location.assign('formSales.php?view=ledger&sreg=".($sregno)
 						  	  <label for="heard">Academic Session </label>
 							   <select class="form-control"   name="session" id="session"  >
   <option value="">Select Session</option>
-<?php  $resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){ echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?></select></div>
+<?php echo fill_sec(); ?></select></div>
        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Level </label>
                             	  <select name='level' id="status" class="form-control" >

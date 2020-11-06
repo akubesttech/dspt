@@ -13,7 +13,10 @@ authorize($_SESSION["access3"]["fIn"]["conp"]["view"]) ||
 authorize($_SESSION["access3"]["fIn"]["conp"]["delete"]) ) {
  $status = TRUE;
 }
-$dep1 = $_GET['dept1_find']; $sec1 = $_GET['session2']; $los 	= $_GET['dop'];
+$dep1 = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
+$sec1 = isset($_GET['session2']) ? $_GET['session2'] : '';
+$los =  isset($_GET['dop']) ? $_GET['dop'] : '';
+//$dep1 = $_GET['dept1_find']; $sec1 = $_GET['session2']; $los 	= $_GET['dop'];
 if(empty($dep1)){ $links = "View_Payment.php";}else{ $links = "View_Payment.php?dept1_find=".$dep1."&session2=".$sec1."&dop=".$los;}
  ?>
 	
@@ -27,8 +30,8 @@ message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 }
 	 ?>
-  <?php $get_RegNo= $_GET['userId'];
-  
+  <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : '';
+  $viewn =  isset($_GET['view']) ? $_GET['view'] : '';
   
    ?>
     <!-- page content -->
@@ -63,8 +66,8 @@ message("You don't have the permission to access this page", "error");
                 <div class="x_panel">
                   <div class="x_title">
                   
-                    <h2><?php  if($_GET['view'] == "s_p"){ echo "Search Payment Records" ;}if($_GET['view'] == ""){
-echo "List of Payment (s)";}if($_GET['view'] == "v_p"){echo "View Payment Records";} ?></h2>
+                    <h2><?php  if($viewn == "s_p"){ echo "Search Payment Records" ;}if($viewn == ""){
+echo "List of Payment (s)";}if($viewn == "v_p"){echo "View Payment Records";} ?></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -139,17 +142,17 @@ if(isset($_GET['details'])){
 <?php //if(isset($_GET['choose_patient'])){ ?>
  
     <?php
-$user_query = mysqli_query($condb,"select * from payment_tb  where trans_id ='".safee($condb,$_GET['userId'])."'")or die(mysqli_error($condb));
+$user_query = mysqli_query($condb,"select * from payment_tb  where trans_id ='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 $row_b = mysqli_fetch_array($user_query); $student_num = $row_b['stud_reg']; $app_number = $row_b['app_no'];
- $feetype = $row_b['fee_type']; $existt = imgExists($row_b['teller_img']); $encryptid = md5($_GET['userId']);
+ $feetype = $row_b['fee_type']; $existt = imgExists($row_b['teller_img']); $encryptid = md5($get_RegNo);
 if(substr($feetype,0,1) == "B"){ $feet = getfeecat($row_b['ft_cat']);}else{ $feet = getftype($row_b['fee_type']);}
 
 if(empty($student_num)){ 
 $sql2 = "SELECT * FROM new_apply1 left join payment_tb ON payment_tb.app_no = new_apply1.appNo WHERE  appNo ='".safee($condb,$app_number)."' and md5(trans_id) ='".safee($condb,$encryptid)."' ";
 }else{ $sql2 = "SELECT * FROM student_tb left join payment_tb ON payment_tb.stud_reg = student_tb.RegNo WHERE  stud_reg ='".safee($condb,$student_num)."' and md5(trans_id) ='".safee($condb,$encryptid)."' ";} 
 if(!$qsql1=mysqli_query($condb,$sql2)) { echo mysqli_error($condb); } $rsprint1 = mysqli_fetch_array($qsql1);$feecategory = $rsprint1['ft_cat'];
-$chot = $row_utme['$rsprint1'];	$facultyone = $rsprint1['Faculty']; 
-if($chot > 1){   $adep = $$rsprint1['fact_2'];   }else{ $adep = $$rsprint1['fact_2'];}					
+$chot = $row_utme['rsprint1'];	$facultyone = $rsprint1['Faculty']; 
+if($chot > 1){   $adep = $rsprint1['fact_2'];   }else{ $adep = $rsprint1['fact_2'];}					
 ?>	
 
 <div id="myModal5" class="modal dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -175,12 +178,8 @@ $existp = imgExists("../Student/".$rsprint1['images']);
 	<input type="hidden" name="insidmove" value="<?php echo $_SESSION['insidmove'];?>" />
 	<input type='hidden' name='fee_str_id[]' value='$rs[id]' >
 	<center><?php
-if($resi == 1)
-{
-
-echo "<label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label>";
-					//echo " $res";
-}
+//if($resi == 1){echo "<label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label>";
+					//echo " $res";}
 ?>
 
 </center>
@@ -206,14 +205,15 @@ echo "<label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res
                          <th> Description</th>
                           <th>Amount Paid</th></tr>
                       </thead><?php 
-      $serial=1; 
+      $serial=1; $i = 0;
 if(mysqli_num_rows($qsql1)==0){
         echo " <tr style=\"background-color:#CFF\">
           <td colspan=\"4\" height=\"30\">No payment Found For This Session</td> 
         </tr>"; }else{ //$rsprint1 = mysqli_fetch_array($qsql1);
 		 $feetp = $rsprint1['fee_type']; $transession = $rsprint1['session']; $fcate = $rsprint1['ft_cat'];  ?>
      <?php if(substr($feetp,0,1) == "B"){ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' and pstatus = '1' ");
-$serial=1;		 while($row_utme = mysqli_fetch_array($paycomponent)){ if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
+$serial=1;		 while($row_utme = mysqli_fetch_array($paycomponent)){
+    if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
 $ftypecon = $row_utme['feetype']; $amount = $row_utme['f_amount'];
 $paysession = $row_utme['session']; $feecategory = $row_utme['fcat']; $penalty = $row_utme['penalty']; if($penalty > 0){ $pens = " ( penalty inclusive).";}else{ $pens ="";} ?>
   <tr  class="<?php echo $classo1; ?>" align="center" height="30" width="30" > <td><?php echo $serial++; ?></td>

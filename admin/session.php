@@ -10,6 +10,7 @@ if (!isset($_SESSION['id']) ||(trim ($_SESSION['id']) == '')) {
 }
 $session_id=$_SESSION['id'];
 $sessionlock = $_SESSION['loggedAt2'];
+$class_ID = 0;
 $user_query = mysqli_query($condb,"select * from admin where admin_id = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
 $user_row = mysqli_fetch_array($user_query);
 $admin_username = $user_row['username'];
@@ -19,21 +20,9 @@ $Rorder = getrorder($admin_accesscheck);
 $_SESSION['alevel1'] = $user_row['access_level'];
 $admin_valid = $user_row['validate'];
 $sender_count = "0";
+ $userdept = getsdept($admin_username);
 //$_SESSION['access'] = $admin_accesscheck;
-$user_query1 = mysqli_query($condb,"select * from session_tb where action='1'")or die(mysqli_error($condb));
-$user_row2 = mysqli_fetch_array($user_query1);
-$default_session=$user_row2['session_name']; $setend=$user_row2['start_end'];
-$default_semester=$user_row2['term'];
-$date_now = new DateTime();
- $date2    = new DateTime($setend);
-$date1=date("Y/m/d");
-if ($date_now > $date2) {
-mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."'")
-or die(mysqli_error($condb));
-    }
-   $queryshoolp= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
-							  $rowp = mysqli_fetch_array($queryshoolp);
-							  $ev_actives = $rowp['emailver']; $schoolNe = $rowp['SchoolName'];
+
   
 /*
 session time out code
@@ -124,13 +113,33 @@ $pr_count=mysqli_num_rows($p_query2);
 	} 
 
 	if(isset($_SESSION["select_pro"]))
-    { foreach ($_SESSION["select_pro"] as $cart_itm){
+    { foreach ($_SESSION["select_pro"] as $cart_itm){ 
     $class_ID  = $cart_itm["pg_id"];$cnames =  $cart_itm["pro_name"]; $p_duration =  $cart_itm["p_dura"];
+    $amax =  $cart_itm["amax"]; $emax =  $cart_itm["emax"];
     }}
     	if(isset($_SESSION["s_elect2"]))
     { foreach ($_SESSION["s_elect2"] as $cart_itv){
     $elect_ID2  = $cart_itv["e_id"];$ecat =  $cart_itv["e_ecate"]; $elefacu =  $cart_itv["e_fac"]; $eleDept =  $cart_itv["e_dept"];
     }}
+    
+    $user_query1 = mysqli_query($condb,"select * from session_tb where action='1' and prog = '".$class_ID."'")or die(mysqli_error($condb));
+$user_row2 = mysqli_fetch_array($user_query1);
+$default_session=$user_row2['session_name']; $setend=$user_row2['start_end'];
+$default_semester=$user_row2['term'];
+$date_now = new DateTime();
+ $date2    = new DateTime($setend);
+$date1=date("Y/m/d");
+$nback   =	substr($default_session,5,10) + 1;
+$nfront   =	substr($default_session,0,4) + 1;
+$default_secadmin = $nfront ."/".$nback;
+if ($date_now > $date2) {
+mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."' and prog = '".$class_ID."'")
+or die(mysqli_error($condb));
+    }
+   $queryshoolp= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
+							  $rowp = mysqli_fetch_array($queryshoolp);
+							  $ev_actives = $rowp['emailver']; $schoolNe = $rowp['SchoolName'];
+                            
 ?>
 
  
