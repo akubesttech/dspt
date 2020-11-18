@@ -28,33 +28,7 @@ $sender_count = "0";
 session time out code
 */
 
-/*
-function getlevel($statnum)
-{
-  if ($statnum==100)
-  {
-     return "ND I";
-  }
-  else if($statnum==200)
-  {
-     return "ND II";
-  }
-  else if($statnum==300)
-  {
-    return "ND III";
-  }
-  else if($statnum==400)
-  {
-    return "HND I";
-  }
-   else if($statnum==500)
-  {
-    return "HND II";
-  }
-   else if($statnum==600)
-  {
-    return "HND III";
-  }} */
+
 
 function getlevelnce($statnum2)
 {
@@ -72,10 +46,18 @@ function getlevelnce($statnum2)
   }
  
 }
-function getfcate($statnum20)
-{ if ($statnum20==1){ return "Fee";} else if($statnum20==2){
-return "Dues";}else if($statnum20==3){ return "Form";
-}else if($statnum20==0){ return "Others"; } }
+
+ function getfcate($statnum20 ="",$n = "")
+{  if(empty($n)){
+if ($statnum20==1){ return "Fee";} else if($statnum20==2){
+return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
+}else if($statnum20==0){ return "Others"; }
+}else{ $output = '';  
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Others" =>"0"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;}
+  }
 
 $p_query2 = mysqli_query($condb,"select * from prog_tb where status='1'")or die(mysqli_error($condb));
 $pr_count=mysqli_num_rows($p_query2);
@@ -128,11 +110,12 @@ $default_session=$user_row2['session_name']; $setend=$user_row2['start_end'];
 $default_semester=$user_row2['term'];
 $date_now = new DateTime();
  $date2    = new DateTime($setend);
-$date1=date("Y/m/d");
-$nback   =	substr($default_session,5,10) + 1;
-$nfront   =	substr($default_session,0,4) + 1;
+$date1=date("Y/m/d"); 
+$nback   =	(int)substr($default_session,5,10) + 1;
+$nfront   =	(int)substr($default_session,0,4) + 1;
 $default_secadmin = $nfront ."/".$nback;
-if ($date_now > $date2) {
+
+if ($date_now >= $date2){
 mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."' and prog = '".$class_ID."'")
 or die(mysqli_error($condb));
     }

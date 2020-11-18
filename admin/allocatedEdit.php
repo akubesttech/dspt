@@ -65,17 +65,7 @@ message("Room allocation was Successfully Removed", "success");
 
 }
 ?>
-<?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
-	
-
-?>
+<?php //$s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;} ?>
 <div class="x_panel">
                 
              
@@ -87,7 +77,7 @@ $s=3;
                       <span class="section">Edit Hostel Allocation information <?php echo getsname($hrega); ?></span>
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Registration No</label>
+						  	  <label for="heard">Matric No</label>
                             	  <input type="text" class="form-control " name='regNo' id="regNo" value="<?php echo $hrega ; ?>" readonly>
                       </div>
     
@@ -112,13 +102,7 @@ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control" <?php echo $dayremain ; ?> >
   <option value="<?php echo $hseca ; ?>"><?php echo $hseca ; ?></option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+<?php echo fill_sec(); ?>
 </select>
                       </div>
                       
@@ -171,7 +155,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                       
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 <label for="heard">Check in Date</label>
-<input  type="text" name="cdate" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed"   readonly="readonly" style="height:32px;"  value="<?php echo $getstartdate; ?>">
+<input  type="text" name="cdate" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed"   readonly="readonly" style="height:32px;"  value="<?php echo $hallotdatea; ?>">
 </div>
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">

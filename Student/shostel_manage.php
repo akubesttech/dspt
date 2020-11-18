@@ -6,7 +6,7 @@
 
  <?php include('student_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['userId']; ?>
+    <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : '';?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">

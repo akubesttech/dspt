@@ -52,9 +52,9 @@ return $Hash;}
 $viewfee_query1 = mysqli_query($condb,"select * from  feecomp_tb where md5(Batchno)='".md5(safee($condb,$_GET['id']))."'")or die(mysqli_error($condb)); $viewcount=mysqli_num_rows($viewfee_query1);if($viewcount < 1){ redirect('apply_b.php?view=lpay'); }
 $resultsumnet=mysqli_query($condb,"select SUM(f_amount) as samount from feecomp_tb where md5(Batchno)='".md5(safee($condb,$_GET['id']))."'");
 $row_fsum = mysqli_fetch_array($resultsumnet); $Fee_amount =  $row_fsum['samount']; $cfeecheck = mysqli_num_rows($viewfee_query1);
-$row_fee = mysqli_fetch_array($viewfee_query1); $pendate = $row_fee['psdate']; $penper = $row_fee['pper'];    $Fee_level = $row_fee['level'];
+$row_fee = mysqli_fetch_array($viewfee_query1);     $Fee_level = $row_fee['level'];
 $Fee_type = $row_fee['Batchno']; $fcat =  $row_fee['fcat']; $appNoreg =  $row_fee['regno']; $paysession =  $row_fee['session']; $payprog =  $row_fee['prog'];  $feetshow = getfeecat($fcat); $_SESSION['transide'] = "";
-
+//$pendate = $row_fee['psdate']; $penper = $row_fee['pper'];
 if(isset($_POST['loadpaypreview'])){
  $Session_checker1 = $_POST["session"];
 $level = $_POST["plevel"];
@@ -132,7 +132,7 @@ $resultapp20 = mysqli_query($condb,"UPDATE feecomp_tb SET session = '".safee($co
 			$sql2=	mysqli_query($condb,"UPDATE pin_fee SET status='USED' WHERE pinnumber='$Pin'")or die(mysqli_error($condb));
 	echo "<script>alert('Your ".$feetshow." Payment was Sucessfully Submited!');</script>";
 			echo "<script>window.location.assign('paymentslip.php?p_id=".md5($transid)."');</script>";
-                                }}else{ $date1=date("Y-m-d");
+                                }}else{ $date1 = date("Y-m-d");
  $result = mysqli_query($condb,"insert into payment_tb(app_no,trans_id,email,pay_mode,fee_type,ft_cat,dueamount,pay_date,session,level,department,pay_status,stud_cat,prog)values('".safee($condb,$appNoreg)."','".safee($condb,$transid)."','".safee($condb,$payemail)."','".safee($condb,$paytype)."','".safee($condb,$Fee_type)."','".safee($condb,$fcat)."','".safee($condb,$Fee_amount)."','".safee($condb,$date1)."','".safee($condb,$paysession)."','".safee($condb,$Fee_level)."','".safee($condb,$pdepart)."','0','".safee($condb,$stud_from)."','".safee($condb,$payprog)."')")or die(mysqli_error($condb));
 $resultapp2 = mysqli_query($condb,"UPDATE feecomp_tb SET session = '".safee($condb,$Session_checker1)."' where Batchno = '".safee($condb,$_GET['id'])."'")or die(mysqli_error($condb));
  $_SESSION['transide'] = md5($transid);
@@ -152,7 +152,7 @@ redirect("apply_b.php?view=e_view");
         <div id="breadcrumbs-share">
             <section id="breadcrumbs">
                 <ul class="breadcrumb">
-                                <li><a href="index.php">Home</a> </li>
+                                <li><a href="<?php echo host(); ?>">Home</a> </li>
 
                 </ul>
             </section>
@@ -182,7 +182,7 @@ redirect("apply_b.php?view=e_view");
         	<div class="panel panel-default">
         		<div class="panel-heading">
 			    		<!-- <h3 class="panel-title">Please sign up for Bootsnipp <small>It's free!</small></h3> --!>
-			    		<h4 class="panel-title">Select Payment  Method</h4>
+			    		<h4 class="panel-title">Select Payment  Method </h4>
 			 			</div>
 			 			
 			 			<div class="panel-body">

@@ -7,16 +7,7 @@
                     
                       
                       <span class="section">Check Results Here<?php 
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
+//if($resi == 1){echo " <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>";}
 ?></span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -27,14 +18,7 @@
                        
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
-  <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+  <option value="">Select Session</option><?php echo fill_sec(); ?>
 </select>
                       </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">

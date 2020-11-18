@@ -5,10 +5,10 @@
 //if($_SESSION['insid']==$_POST['insid'])
 //{
 if(isset($_POST['Login_Reprint'])){
- $Session_checker = $_POST["session"];
-$serial = $_POST["serial"];
+ //$Session_checker = $_POST["session"];
+//$serial = $_POST["serial"];
 $nappNo21 = $_POST["nappNo21"];
-	$_SESSION['temppin']=$Pin;
+	//$_SESSION['temppin']=$Pin;
 $passwordn = $_POST['pword'];
 $password = substr(md5($passwordn.SUDO_M),14);
 $result_pinr = mysqli_query($condb,"SELECT * FROM new_apply1 WHERE appNo ='".safee($condb,$nappNo21)."' and password ='".safee($condb,$password)."'  and reg_status > 0 or JambNo ='".safee($condb,$nappNo21)."' and password ='".safee($condb,$password)."' and reg_status > 0 ")or die(mysqli_error($condb));

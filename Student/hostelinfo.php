@@ -13,7 +13,7 @@ $paystatus1=mysqli_query($condb,"SELECT * FROM hostelallot_tb WHERE studentreg =
 $paystatus12=mysqli_num_rows($paystatus1);
 $payrecordv =mysqli_fetch_array($paystatus1); $hregdate  = $payrecordv['rdate']; $hamount  = $payrecordv['amount'];
  $transref  = $payrecordv['trans_id']; $transession  = $payrecordv['session'];
-$paymenttype  = $payrecordv['pay_mode']; $paydept  = $payrecordv['dept']; $payregno  = $payrecordv['studentreg']; 
+ $paydept  = $payrecordv['dept']; $payregno  = $payrecordv['studentreg']; 
 $payemail  = $payrecordv['email']; $hlevel  = $payrecordv['level']; $hduration  = $payrecordv['duration']; $hcode  = $payrecordv['h_code'];
 $hroomno  = $payrecordv['roomno']; $hnob  = $payrecordv['no_of_bed']; $hftype  = $payrecordv['ftype']; $hprog  = $payrecordv['prog'];
  $allotdate  = $payrecordv['allotdate']; $expiredate  = $payrecordv['allotexpire']; $pstatush  = $payrecordv['paystatus']; 
@@ -213,6 +213,7 @@ if($allotstatus > 0){ ?>
 </td>
 </tr>
 <?php } ?>
+<div id="ccc2"></div>
 </tbody>
 </table>
 </div>

@@ -1,3 +1,6 @@
+   <?php $depart = $student_dept;
+$level=$_GET['level'];
+$semester= $_GET['semester']; ?>
    <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
@@ -52,13 +55,10 @@
                       </thead>
                       
                       
- <tbody>  <tr ><td colspan="9" style="text-align:justify; font-size: 15px;font-weight:bold"> First Semester</td></tr>
+ <tbody> <?php if($semester == "Second"){ $nsem = $semester; }else{ $nsem = "First"; } ?>
+ <tr ><td colspan="9" style="text-align:justify; font-size: 15px;font-weight:bold"> <?php echo $nsem."  Semester"; ?></td></tr>
                  <?php
 $sql_gradesetl = mysqli_query($condb,"select * from grade_tb where prog ='".safee($condb,$student_prog)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error($condb)); $getmg2 = mysqli_fetch_array($sql_gradesetl);    $getpassl = $getmg2['b_max'];
-                 
-$depart = $student_dept;
-$level=$_GET['level'];
-$semester= $_GET['semester'];  
 $sql1="select * from results where  total <= '".safee($condb,$getpassl)."' and student_id='".safee($condb,$student_RegNo)."' ";
 $result1=mysqli_query($condb,$sql1) or die("Could not access table".mysqli_error($condb));
 while($row1=mysqli_fetch_array($result1)){ 
@@ -90,14 +90,16 @@ $viewutme_query2 = mysqli_query($condb,"select * from courses where dept_c='".sa
 $viewutme_query = mysqli_query($condb,"select SUBSTRING(C_code, 1,3) AS ccode, C_code,C_title,semester,C_level,C_unit,c_cat from courses where dept_c='".safee($condb,$depart)."' and semester = '".safee($condb,$semester)."' and C_level ='".safee($condb,$level)."' ORDER BY FIELD(ccode, 'GSE', 'EDU') DESC,C_code, C_title")or die(mysqli_error($condb)); */
 $viewutme_query = mysqli_query($condb,"select C_code,C_title,semester,C_level,C_unit,c_cat from courses where dept_c='".safee($condb,$depart)."' and semester = '".safee($condb,$semester)."' and C_level ='".safee($condb,$level)."' ORDER BY C_code,C_title  DESC ")or die(mysqli_error($condb));
 } 
-
+$sumcunit1 = 0;
+$sumcunit2 = 0;
+$sumcunit3 = 0;
  ?>
 
   <!-- First Semester Semester Courses --!>
 <?php while($row_utme = mysqli_fetch_array($viewutme_query)){ 
 $coursstatus = $row_utme['c_cat'];
 			if($coursstatus > 0){  $cstat = "checked"; $cstat2 ="C" ;}else{  $cstat = ""; $cstat2 ="E"; }
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select * from coursereg_tb WHERE sregno = '".safee($condb,$student_RegNo)."' AND c_code = '".safee($condb,$row_utme['C_code'])."' and creg_status='1'")or die(mysqli_error($condb));
 ?> <tr> <?php if(mysqli_num_rows($viewreg_query)>0){
 							$status = 'Already Registered';
@@ -126,7 +128,7 @@ $viewreg_query = mysqli_query($condb,"select * from coursereg_tb WHERE sregno = 
 					 <?php while($row_utme = mysqli_fetch_array($viewutme_query2)){ 
 $coursstatus = $row_utme['c_cat'];
 			if($coursstatus > 0){  $cstat = "checked"; $cstat2 ="C" ;}else{  $cstat = ""; $cstat2 ="E"; }
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select * from coursereg_tb WHERE sregno = '".safee($condb,$student_RegNo)."' AND c_code = '".safee($condb,$row_utme['C_code'])."' and creg_status='1'")or die(mysqli_error($condb));
 ?> <tr> <?php if(mysqli_num_rows($viewreg_query)>0){
 							$status = 'Already Registered';

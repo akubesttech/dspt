@@ -6,12 +6,12 @@
 
  <?php include('student_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['userId']; ?>
+  <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : '';?>
   <?php if(empty($student_RegNo)){ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payment_tb where app_no = '".safee($condb,$student_appNo)."' and session ='".safee($condb,$default_session)."' and pay_status='1' and ft_cat='1' and level = '".safee($condb,$student_level)."' ");}else{
 $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payment_tb where stud_reg ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$default_session)."' and pay_status='1' and ft_cat='1' and level = '".safee($condb,$student_level)."'  ");}
 	$warning_count2=mysqli_num_rows($que_checkpay);	      
 	$warning_data=mysqli_fetch_array($que_checkpay);   $sumpay = $warning_data['samount'];
-	$pay_status = $warning_data['pay_status'];
+	//$pay_status = $warning_data['pay_status'];
 //$newSession   =	substr($warning_data['session'],5,10);
 //$que_warning2=mysqli_query($condb,"select * from payment_tb where reg_id='$regNo' and session ='$default_session'");
 	//$warning_count2=mysqli_num_rows($que_warning2);
@@ -90,33 +90,5 @@ $warning_data=mysqli_fetch_array($que_warning23);
 
 
 
-   <?php 
 
-/* function getfaculty2($get_fac2)
-{
-$query2 = @mysql_query("select fac_name from faculty where fac_id = '$get_fac2' ")or die(mysql_error());
-$count = mysqli_fetch_array($query2);
- $nameclass2=$count['fac_name'];
-return $nameclass2;
-} */
-function statusUser2()
-{
-	$userId = $_GET['userId'];	
-	$nst 	= $_GET['nst'];
-	
-	$status = $nst == 'Verified' ? 'TRUE' : 'FALSE';
-	$sql   = "UPDATE student_tb SET verify_Data = '$status' WHERE stud_id = '$userId' and verify_Data = 'FALSE'";
-
-	mysqli_query(Database::$conn,$sql);
-//	header('Location: new_apply.php');	
-
-}
-        ?>
-        <script>  function changeUserStatus2(userId, status)
-{
-	var st = status == 'FALSE' ? 'Verified' : 'Not Verified'
-	if (confirm('Your About to ' + st+' this Student Record Make Sure All Information are Correct?')) {
-	window.location.href = 'Student_Record.php?details&userId=' + userId + '&nst=' + st;
-	}
-}</script>
          <?php include('footer.php'); ?>

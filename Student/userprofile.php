@@ -1,3 +1,5 @@
+
+
 <?php
 
 if(isset($_POST['suprof'])){
@@ -56,8 +58,8 @@ mysqli_query($condb,"update student_tb  set hobbies='$hobbies',phone='$phone',e_
                 
              
                 <div class="x_content">
-	<?php $query_changes = mysqli_query($condb,"select * from student_tb where stud_id = '$session_id'")or die(mysqli_error($condb));
-$row_changes = mysqli_fetch_array($query_changes); $user_names = $row_changes['username']; $stpro = $row_changes['app_type'];
+	<?php
+$query_changes = mysqli_query($condb,"select * from student_tb where stud_id = '$session_id'")or die(mysqli_error($condb));$row_changes = mysqli_fetch_array($query_changes); $user_names = $row_changes['RegNo']; $stpro = $row_changes['app_type'];
 $existll = imgExists($row_changes['images']);
 								?>
                     		<form name="addFee1" method="post" enctype="multipart/form-data" id="addFee1">
@@ -71,9 +73,11 @@ $existll = imgExists($row_changes['images']);
                       <div class="profile_img">
                         <div id="crop-avatar">
                           <!-- Current avatar -->
-<img class="img-responsive avatar-view" src="<?php  //if ($user_row['images']==NULL ){print "./uploads/NO-IMAGE-AVAILABLE.jpg";}else{ print $user_row['images'];}
-	if ($existll > 0 ){ echo $row_changes['images'];}else{ echo "./uploads/NO-IMAGE-AVAILABLE.jpg";} 		  
-	// echo $row['adminthumbnails'];  ?>" alt="" style="width:250px;height:180px">
+                           <img class="img-responsive avatar-view" src="<?php  
+//if ($user_row['images']==NULL ){print "./uploads/NO-IMAGE-AVAILABLE.jpg";}else{ print $user_row['images'];}
+	if ($existll > 0 ){ echo $row_changes['images'];}else{ echo "./uploads/NO-IMAGE-AVAILABLE.jpg";} 
+				  
+				 // echo $row['adminthumbnails'];  ?>" alt="" style="width:250px;height:180px">
                          
                         </div>
                       </div>
@@ -274,7 +278,7 @@ $existll = imgExists($row_changes['images']);
                       </div>
                       <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Certificate inview </label>
-                        <input type="text" class="form-control " name='acctnum' id="acctnum" value="<?php echo getcertinview($row_userrecord['Cert_inview']); ?>" onkeypress="return isNumber(event);"  readonly>
+<input type="text" class="form-control " name='acctnum' id="acctnum" value="<?php echo getcertinview($row_userrecord['Cert_inview']); ?>" onkeypress="return isNumber(event);"  readonly>
                       </div>
                       
                       

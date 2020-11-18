@@ -838,10 +838,17 @@ function FeesCalc($Fees,$per,$sdate){
         $date_now =  date("Y-m-d");
         if($date_now >= $newDate2){ $late = ($per / 100) * $Fees;
             return $TotalFees = $late+$Fees;}else{ return $TotalFees = $Fees; }}
- function getfeecat($statnum)
-{if ($statnum==0){return "Others";}else if($statnum==1){return "Service Charge";}
-else if($statnum==3){return "Form";}else if($statnum==2){return "Dues";}else if($statnum==4){return "Acceptance";}}
-
+ function getfeecat($statnum20 ="",$n = ""){
+ if(empty($n)){
+if ($statnum20==1){ return "School Fee(s)";} else if($statnum20==2){
+return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
+}else if($statnum20==0){ return "Others"; }
+}else{ $output = '';  
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Others" =>"0"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;}
+  }
 function getappname($subid){$query2 = mysqli_query(Database::$conn,"select FirstName,SecondName,Othername from new_apply1 where appNo = '$subid' ")or die(mysqli_error($condb));
 $count = mysqli_fetch_array($query2);$nameclass2=$count['FirstName']." ".$count['SecondName']." ".$count['Othername'];return $nameclass2;}
 
@@ -963,6 +970,13 @@ $amt = $shareamount - $diffcharge;
  $smartamount =  $actualcharge + $amt ;
 if ($var==1){ return $schshare; }else if($var==2){return $benamt;}else if($var==3){return $amountp;}else{ return $smartamount;}
 }
+//get default commission 1 and 2
+ function getcomm($statnum,$camt2 = 0)
+{ if(empty($camt2)){ if ($statnum==0){return 0;}else if($statnum==1){return 4000;}
+else if($statnum==3){return 200;}else if($statnum==2){return 0;}else if($statnum==4){return 500;}else if($statnum==5){return 0;} }else{
+if ($statnum==0){return 0;}else if($statnum==1){return 1000;}
+else if($statnum==3){return 0;}else if($statnum==2){return 0;}else if($statnum==4){return 0;}else if($statnum==4){return 0;}    
+}}
 // // time zone manager
 /*if(!isset($_SESSION['timezone']))
 {if(!isset($_REQUEST['offset']))

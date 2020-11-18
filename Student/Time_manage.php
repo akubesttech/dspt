@@ -6,7 +6,7 @@
 
  <?php include('student_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['userId']; ?>
+   <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : '';?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -69,18 +69,4 @@
         <!-- /page content -->
         
   
-
-
-
-   <?php 
-
-
-        ?>
-        <script>  function changeUserStatus2(userId, status)
-{
-	var st = status == 'FALSE' ? 'Verified' : 'Not Verified'
-	if (confirm('Your About to ' + st+' this Student Record Make Sure All Information are Correct?')) {
-	window.location.href = 'Student_Record.php?details&userId=' + userId + '&nst=' + st;
-	}
-}</script>
          <?php include('footer.php'); ?>

@@ -27,7 +27,10 @@ if(isset($_GET['addrooms'])){
 
  <?php include('admin_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['id']; $get_RegNo2= $_GET['idroom']; ?>
+  <?php //$get_RegNo= $_GET['id']; $get_RegNo2= $_GET['idroom'];
+  $get_RegNo = isset($_GET['id']) ? $_GET['id'] : ''; 
+ $get_RegNo2 = isset($_GET['idroom']) ? $_GET['idroom'] : '';
+   ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -227,7 +230,7 @@ echo "
                              <select name='ftype' id="ftype" class="form-control" required>
                             <option value="">Select Fee Type</option>
                           <?php 
-$resultfee = mysqli_query($condb,"SELECT * FROM ftype_db where status = '0' and f_category = '1'  ORDER BY f_type  ASC");
+$resultfee = mysqli_query($condb,"SELECT * FROM ftype_db where  f_category = '5'  ORDER BY f_type  ASC");
 while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'>$rsfee[f_type]</option>";}?>
                         <!--    <option value="Others">Other Fees</option> -->
                           

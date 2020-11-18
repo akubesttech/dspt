@@ -14,15 +14,17 @@ $paystatus1=mysqli_query($condb,"SELECT * FROM hostelallot_tb WHERE trans_id ='"
 $paystatus12=mysqli_num_rows($paystatus1);
 $payrecordv =mysqli_fetch_array($paystatus1); $hregdate  = $payrecordv['rdate']; $hamount  = $payrecordv['amount'];
  $transref  = $payrecordv['trans_id']; $transession  = $payrecordv['session'];
-$paymenttype  = $payrecordv['pay_mode']; $paydept  = $payrecordv['dept']; $payregno  = $payrecordv['studentreg']; 
+ $paydept  = $payrecordv['dept']; $payregno  = $payrecordv['studentreg']; 
 $payemail  = $payrecordv['email']; $hlevel  = $payrecordv['level']; $hduration  = $payrecordv['duration']; $hcode  = $payrecordv['h_code'];
 $hroomno  = $payrecordv['roomno']; $hnob  = $payrecordv['no_of_bed']; $hftype  = $payrecordv['ftype']; $hprog  = $payrecordv['prog'];
+ $payrec=mysqli_query($condb,"SELECT * FROM payment_tb WHERE trans_id ='".safee($condb,$_SESSION['transide'])."' ");
+$payrecord2 =mysqli_fetch_array($payrec);  $fee_cat  = $payrecord2['ft_cat'];
 ?>
 <div class="x_panel">
                 <!-- <form name="register2" action="https://voguepay.com/pay/" method="post" enctype="multipart/form-data" id="register2"> --!>
                 <form name="register2" action="hinitialize.php" method="post" enctype="multipart/form-data" id="register2">
             <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
-			<input type='hidden' name='v_merchant_id' value='demo' /> <!-- 9919-0054594 --!>
+		<input type='hidden' name='ft_cat' value='<?php echo $fee_cat;?>' /> <!-- 9919-0054594 --!>
 			
 			<input type='hidden' name='merchant_ref2' value='<?php echo $transref;?>' />
 		<!--	<input type='hidden' name='notify_url' value='http://www.ucnettechnologies.net/notification.php' />
@@ -153,7 +155,7 @@ $hroomno  = $payrecordv['roomno']; $hnob  = $payrecordv['no_of_bed']; $hftype  =
 
 </td>
 </tr>
-
+<div id="ccc2"></div>
 
 
                       <script type="text/javascript">
@@ -164,7 +166,7 @@ $hroomno  = $payrecordv['roomno']; $hnob  = $payrecordv['no_of_bed']; $hftype  =
 	                                            </script>
                        
 <?php
-$cnt=$cnt+1;
+//$cnt=$cnt+1;
 //} ?>
 </tbody>
 </table>

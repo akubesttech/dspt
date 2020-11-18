@@ -35,8 +35,6 @@ $h_code = $_POST['h_code'];
 $h_cat = $_POST['h_cat'];
 $h_status = $_POST['h_status'];
 $h_desc = $_POST['h_desc'];
-
-
 $query_hoste = mysqli_query($condb,"select * from hostedb where h_name = '".safee($condb,$h_name)."'")or die(mysqli_error($condb));
 //$row = mysqli_fetch_array($query);
 $row_hoste = mysqli_num_rows($query_hoste);
@@ -62,17 +60,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 }
 }
 ?>
-<?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
-	
-
-?>
+<?php //$s=3; while($s>0){ $AppNo .= rand(0,9); $s-=1;} ?>
 <div class="x_panel">
                 
              
@@ -85,36 +73,14 @@ $s=3;
 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 					  <label for="heard">Hostel Name</label>
-                      
-                          <input type="text" class="form-control "  name='h_name' id="h_name"  value=""  required="required"> </div>
-                          
-                          <?php  
-						   
-$tran=mysqli_query($condb,"select max(h_code) from hostedb");
-
-while($tid = mysqli_fetch_array($tran, MYSQL_BOTH))
-{
-if($tid[0] == null)
-{
-$tmax="100";
-}
-else
-{
-$tmax=$tid[0]+1;
-}
-}
-
-echo "
-
-<div class=\"col-md-6 col-sm-6 col-xs-12 form-group has-feedback\">
-					  <label for=\"heard\">Hostel Code </label>
-                      
-                          <input type=\"text\" class=\"form-control \" name=\"h_code\" id=\"h_code\" maxlength=\"3\"  value=\"$tmax\" onkeypress=\"return isNumber(event);\"   required=\"required\"> </div>
-";
- ?>
-                          
-                          
- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                      <input type="text" class="form-control "  name='h_name' id="h_name"  value=""  required="required"> </div>
+                          <?php  $tran=mysqli_query($condb,"select max(h_code) from hostedb");
+while($tid = mysqli_fetch_array($tran, MYSQLI_BOTH)){
+if($tid[0] == null){ $tmax="100";}else{$tmax=$tid[0]+1;}}
+echo " <div class=\"col-md-6 col-sm-6 col-xs-12 form-group has-feedback\"> <label for=\"heard\">Hostel Code </label>
+<input type=\"text\" class=\"form-control \" name=\"h_code\" id=\"h_code\" maxlength=\"3\"  value=\"$tmax\" onkeypress=\"return isNumber(event);\"   required=\"required\"> </div>
+"; ?>
+<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Hostel Category</label>
                             	  <select name='h_cat' id="h_cat"  class="form-control" required>
                             <option value="">Select Category</option>

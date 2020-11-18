@@ -49,17 +49,17 @@ userID.value = sname1+number;
 
 if(isset($_POST['Login_Reprint'])){
  $Session_checker1 = $_POST["session"];
-$level = $_POST["plevel"];
-$paytype = $_POST['paytype'];
+//$level = $_POST["plevel"];
+//$paytype = $_POST['paytype'];
 $nappNo21 = $_POST["nappNo21"];
 $Pin = $_POST["pin"];
 $transid = createRandomPassword();
 $paidamt = $_POST["paidamt"];
 $date = $_POST["end_date"];
-$bank = $_POST["bank"];
+//$bank = $_POST["bank"];
 	//$_SESSION['sessionpay']=$Session_checker1;
 
-	$sql_load="SELECT * FROM new_apply1 WHERE Asession ='".safee($condb,$Session_checker1)."' AND appNo ='".safee($condb,$nappNo21)."' or JambNo ='".safee($condb,$nappNo21)."' and adminstatus ='1'";$result_load = mysqli_query($condb,$sql_load);
+/*	$sql_load="SELECT * FROM new_apply1 WHERE Asession ='".safee($condb,$Session_checker1)."' AND appNo ='".safee($condb,$nappNo21)."' or JambNo ='".safee($condb,$nappNo21)."' and adminstatus ='1'";$result_load = mysqli_query($condb,$sql_load);
 $num_pinr = mysqli_num_rows($result_load);
 $find_student = mysqli_fetch_array($result_load);
 $c_cho= $find_student['course_choice'];
@@ -81,11 +81,12 @@ $paystatus1=mysqli_query($condb,"SELECT * FROM payment_tb WHERE app_no ='$nappNo
 $paystatus12=mysqli_num_rows($paystatus1);$paystatus13=mysqli_fetch_array($paystatus1); $appnop =$paystatus13['app_no'];
 $paystatuspin=mysqli_query($condb,"SELECT * FROM payment_tb WHERE pin ='$Pin' and app_no ='".safee($condb,$nappNo21)."' AND session='".safee($condb,$Session_checker1)."' AND level ='".safee($condb,$level)."'  ");
 $paystatus13 =mysqli_num_rows($paystatuspin);
+*/
 $sql_appNo_check = mysqli_query($condb,"SELECT * FROM new_apply1 WHERE appNo='".safee($condb,$nappNo21)."' and adminstatus ='1' or JambNo='".safee($condb,$nappNo21)."' ");
 $appNo_check = mysqli_num_rows($sql_appNo_check);
 $sql_session_check = mysqli_query($condb,"SELECT Asession FROM new_apply1 WHERE  appNo='".safee($condb,$nappNo21)."' and Asession ='".safee($condb,$Session_checker1)."' or JambNo ='".safee($condb,$nappNo21)."'");
 $session_check = mysqli_num_rows($sql_session_check);
-$_SESSION['tempserial']=$num_serialNo;
+//$_SESSION['tempserial']=$num_serialNo;
 		if ($appNo_check < 1){ 
 		message("ERROR: Your ".$nappNo21." Number is Incorrect or Not Admitted please Comfirm and try Again", "error");
 		        redirect('apply_b.php?view=M_P');
@@ -169,14 +170,7 @@ $_SESSION['spayid'] = $nappNo21;
 			    					<div class="form-group">
 			    					<select class="form-control input-sm"   name="session" id="session"  required="required">
   <option value="">Select Session</option>
-  
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+<?php echo fill_sec(); ?>
 </select>
 			    					</div>
 			    				</div>

@@ -37,7 +37,8 @@ function createRandomPassword($qtd){
 
     return $Hash;
 }
-$viewfee_query1 = mysqli_query($condb,"select * from fee_db where md5(fee_id)='".safee($condb,$_GET['id'])."'")or die(mysqli_error($condb));
+  $feeid = isset($_GET['id']) ? $_GET['id'] : '';
+$viewfee_query1 = mysqli_query($condb,"select * from fee_db where md5(fee_id)='".safee($condb,$feeid)."'")or die(mysqli_error($condb));
 $cfeecheck = mysqli_num_rows($viewfee_query1);
 $row_fee = mysqli_fetch_array($viewfee_query1); $Fee_amount = $row_fee['f_amount']; $Fee_type = $row_fee['feetype'];
 $Fee_level = $row_fee['level'];
@@ -60,6 +61,7 @@ $startdaten = $_POST["cdate"];
 $total = $amtMonth * $duration;
 $transid = createRandomPassword(10);
 $roomftype = getroomftype($roomnumber);
+$roomfcate = getftcat($roomftype);
 //$num = "+".$duration." months";
 //$date = strtotime($startdate2);
  //echo $actuald = date("Y/m/d",$date)." ".$num;
@@ -95,13 +97,13 @@ redirect('shostel_manage.php?view=H_info');
 if($paystatus13 > 0){
 $sql2_up=	mysqli_query($condb,"UPDATE hostelallot_tb SET trans_id='".safee($condb,$transid)."',studentreg ='".safee($condb,$student_RegNo)."',email = '".safee($condb,$pemail1)."',dept = '".safee($condb,$student_dept)."',prog = '".safee($condb,$student_prog)."',session = '".safee($condb,$Session_checker1)."',level = '".safee($condb,$level)."',duration = '".safee($condb,$duration)."',h_code = '".safee($condb,$hostelname)."',roomno = '".safee($condb,$roomnumber)."',no_of_bed = '0',ftype = '".safee($condb,$roomftype)."',amount = '".safee($condb,$total)."',rdate = NOW(),allotdate = '".safee($condb,$startdate2)."', rchange = '1'  WHERE studentreg ='".safee($condb,$student_RegNo)."' AND validity = '0'")or die(mysqli_error($condb));
 
-$sql2_pay=	mysqli_query($condb,"UPDATE payment_tb SET pay_date=NOW(),email='".safee($condb,$pemail1)."',session='".safee($condb,$Session_checker1)."',paid_amount='".safee($condb,$total)."',trans_id='".safee($condb,$transid)."',fee_type='".safee($condb,$roomftype)."',level='".safee($condb,$level)."',ft_cat='',prog='".safee($condb,$student_prog)."' WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$Session_checker1)."' AND pay_status = '0' AND fee_type='".safee($condb,$roomftype)."'")or die(mysqli_error($condb));
+$sql2_pay=	mysqli_query($condb,"UPDATE payment_tb SET pay_date=NOW(),email='".safee($condb,$pemail1)."',session='".safee($condb,$Session_checker1)."',dueamount='".safee($condb,$total)."',trans_id='".safee($condb,$transid)."',fee_type='".safee($condb,$roomftype)."',level='".safee($condb,$level)."',ft_cat='".safee($condb,$roomfcate)."',prog='".safee($condb,$student_prog)."' WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$Session_checker1)."' AND pay_status = '0' AND fee_type='".safee($condb,$roomftype)."'")or die(mysqli_error($condb));
 $_SESSION['transide'] = $transid;
 $_SESSION['in_time'] = time();
 }else{   
 $result = mysqli_query($condb,"insert into hostelallot_tb (trans_id,studentreg,email,dept,prog,session,level,duration,h_code,roomno,no_of_bed,ftype,amount,rdate,rchange,allotdate)values('".safee($condb,$transid)."','".safee($condb,$student_RegNo)."','".safee($condb,$pemail1)."','".safee($condb,$student_dept)."','".safee($condb,$student_prog)."','".safee($condb,$Session_checker1)."','".safee($condb,$level)."','".safee($condb,$duration)."','".safee($condb,$hostelname)."','".safee($condb,$roomnumber)."','0','".safee($condb,$roomftype)."','".safee($condb,$total)."',NOW(),'1','".safee($condb,$startdate2)."')")or die(mysqli_error($condb));
-$resultpay = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,paid_amount,pay_date,session,level,department,pay_status,prog) 
-			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','Online','".safee($condb,$roomftype)."','".safee($condb,$total)."',NOW(),'".safee($condb,$Session_checker1)."','".safee($condb,$level)."','".safee($condb,$student_dept)."','0','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
+$resultpay = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,ft_cat,dueamount,pay_date,session,level,department,pay_status,prog) 
+			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','Online','".safee($condb,$roomftype)."','".safee($condb,$roomfcate)."','".safee($condb,$total)."',NOW(),'".safee($condb,$Session_checker1)."','".safee($condb,$level)."','".safee($condb,$student_dept)."','0','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
 $_SESSION['transide'] = $transid;
  $_SESSION['in_time'] = time();
 }
@@ -157,15 +159,7 @@ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";
                        
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
-  <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
-</select>
+  <option value="">Select Session</option><?php echo fill_sec(); ?></select>
                       </div>
                       
                    

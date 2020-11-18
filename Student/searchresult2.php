@@ -16,12 +16,7 @@
                        
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
-  <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-?>
+  <option value="">Select Session</option><?php echo fill_sec(); ?>
 </select>
                       </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">

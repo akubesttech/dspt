@@ -1,8 +1,7 @@
 
 <?php 
 if($_SESSION['transide'] == ""){
-//echo "<script>alert('Access Not Granted To This User Please Contact System Administrator!');</script>";
-		redirect("Spay_manage.php?view=a_p");
+redirect("Spay_manage.php?view=a_p");
 }
 $query_school= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row_sch = mysqli_fetch_array($query_school);
@@ -12,14 +11,14 @@ $paystatus12=mysqli_num_rows($paystatus1);
 $payrecordv =mysqli_fetch_array($paystatus1); $transdate  = $payrecordv['pay_date']; $amountdue  = $payrecordv['dueamount'];
 $feetype  = $payrecordv['fee_type']; $transref  = $payrecordv['trans_id']; $transession  = $payrecordv['session'];
 $paymenttype  = $payrecordv['pay_mode']; $paydept  = $payrecordv['department']; $payregno  = $payrecordv['stud_reg']; 
-$payemail  = $payrecordv['email'];
+$payemail  = $payrecordv['email']; $fee_cat  = $payrecordv['ft_cat'];
 
 ?>
 <div class="x_panel">
                 <!-- <form name="register2" action="https://voguepay.com/pay/" method="post" enctype="multipart/form-data" id="register2"> --!>
                 <form name="register2" action="initialize.php" method="post" enctype="multipart/form-data" id="register2">
             <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
-			<input type='hidden' name='v_merchant_id' value='demo' /> <!-- 9919-0054594 --!>
+			<input type='hidden' name='ft_cat' value='<?php echo $fee_cat;?>' /> <!-- 9919-0054594 --!>
 			
 			<input type='hidden' name='merchant_ref3' value='<?php echo $transref;?>' />
 		<!--	<input type='hidden' name='notify_url' value='http://www.ucnettechnologies.net/notification.php' />

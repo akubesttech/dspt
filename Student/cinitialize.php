@@ -5,26 +5,47 @@
 include('../admin/lib/dbcon.php'); 
 dbcon(); 
 $curl = curl_init();
-
+$scom = getcomm($_POST['ft_cate']);
 $email = $_POST['emailx'];
 $amountn = $_POST['total'];  //the amount in kobo. This value is actually NGN 300
-//$amount = $_POST['total'] * 100;  //the amount in kobo. This value is actually NGN 300
-$tcharge = getptcharge($amountn,1.5); $amountp = $amountn + $tcharge; $amount = $amountp * 100;
-
+$amount =  getsplit($amountn,1.523,1.5,15,$scom,0,3) * 100; //amount to pay
+$amountsa =  getsplit($amountn,1.526,1.5,15,$scom,0,1) * 100;
+$amountsb =  getsplit($amountn,1.526,1.5,15,$scom,0,2) * 100;
 // url to go to after payment
-//$callback_url = 'myapp.com/pay/callback.php';  
 $callback_url = host().'Student/ccallback.php'; 
-
 curl_setopt_array($curl, array(
   CURLOPT_URL => "https://api.paystack.co/transaction/initialize",
   CURLOPT_RETURNTRANSFER => true,
+   CURLOPT_ENCODING => "",
+   CURLOPT_MAXREDIRS => 10,
+   CURLOPT_TIMEOUT => 30,
+   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_POSTFIELDS => json_encode([
     'amount'=>$amount,
     'email'=>$email,
-     "reference" => $_POST['merchant_ref2'],
-    'callback_url' => $callback_url
-  ]),
+//'subaccount' => "ACCT_75h80jr5xt2ktfa",
+    //'transaction_charge' => $smartamount,
+    //'bearer' => "subaccount",
+    "reference" => $_POST['merchant_ref2'],
+    'callback_url' => $callback_url,
+     "split" => ([
+      "type" => "flat",
+      "bearer_type" => "account",
+      "subaccounts" => [
+                  [
+                  "subaccount" => t_ACCTS,//school account
+                  "share" => $amountsa
+                  ],
+                  [
+                  "subaccount" => t_ACCTB,//bisapp account
+                  "share" => $amountsb
+                  ],
+                         ]
+                   ]) ,
+                  
+                  ]),
+
   CURLOPT_HTTPHEADER => [
     //"authorization: Bearer sk_test_07a04bc4d12ea7c4640ba82055729ff1175def5a",
     "authorization: Bearer ".t_gate,

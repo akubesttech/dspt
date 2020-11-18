@@ -23,13 +23,7 @@ return null;
 
 
 <?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
+//$s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;}
 //	if($_SESSION['insidroom']==$_POST['insidroom'])
 //{
 	if(isset($_GET['delid'])){
@@ -57,17 +51,7 @@ echo "<script>alert('Room ".$room_found." was sucessfully Deleted..');</script>"
 	<input type="hidden" name="insidroom" value="<?php echo $_SESSION['insidroom'];?> " />
                       
                       <span class="section">Select Hostel to view Rooms <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$resroom</font></label></center>
-			 
-			  ";
-}
-?> </span>
+//if($resi == 1){echo "<center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$resroom</font></label></center>";}?> </span>
 
 
                           
@@ -75,32 +59,15 @@ echo "<script>alert('Room ".$room_found." was sucessfully Deleted..');</script>"
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Hostel Name</label>
                              <?php
-
 echo"<select name='l_hostel'   onchange='accountDisplay(this.name);return false;' id='l_hostel' class='form-control'  required>";
-
 echo"<option value='-1'>Select Hostel</option>";
-
 $resultblocks = mysqli_query($condb,"SELECT * FROM hostedb where h_status='1'");
-//$counter=1;
 while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['blockid'] ==$rsblocks['h_code'] )
-	{
-	echo "<option value='$rsblocks[h_code]' selected>$rsblocks[h_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[h_code]'>$rsblocks[h_name]</option>";
-	//$counter=$counter+1;
-	}
-}
-
+{if($_GET['blockid'] ==$rsblocks['h_code'] ){
+echo "<option value='$rsblocks[h_code]' selected>$rsblocks[h_name]</option>";
+}else{ echo "<option value='$rsblocks[h_code]'>$rsblocks[h_name]</option>";}}
 echo "</select>";
-
 echo "<div class='imgHolder' id='imgHolder'><img src='uploads/tabLoad.gif'></div>";
-//echo " <input type='text' value='$rsblocks[h_code]'>";
-
 ?>
                       </div>
                     

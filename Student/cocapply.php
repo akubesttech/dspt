@@ -40,7 +40,7 @@ function createRandomPassword($qtd){
 $viewfee_query1 = mysqli_query($condb,"select * from fee_db where program ='".safee($condb,$student_prog)."' and ft_cat ='0' and Cat_fee = '0'")or die(mysqli_error($condb));
 $cfeecheck = mysqli_num_rows($viewfee_query1);
 $row_fee = mysqli_fetch_array($viewfee_query1); $Fee_amount = $row_fee['f_amount']; $Fee_type = $row_fee['feetype'];
-
+$fcat = $row_fee['ft_cat'];
 $totalamt = $Fee_amount;
 $Fee_level = $row_fee['level'];
 $pemail1 = getsemail($student_RegNo);
@@ -56,7 +56,7 @@ $cfac = $_POST["cfac"];
 $cdept = $_POST["cdept"];
 $newfac = $_POST["fac1"];
 $newdept = $_POST["dept1"];
-$transid = createRandomPassword(10);
+$transid = createRandomPassword(12);
 
 $paystatus1 = mysqli_query($condb,"SELECT ct.sid,ct.a_app,ct.chod_app,ct.nhod_app,ct.pay_status FROM payment_tb pt LEFT JOIN coc_tb ct ON  ct.trans_id = pt.trans_id WHERE ct.sid ='".safee($condb,$studid)."'  AND ct.a_app > 0 AND ct.chod_app > 0 AND ct.nhod_app > 0 AND ct.pay_status = '1'") or die(mysqli_error($condb));
 //$paystatus1=mysqli_query($condb,"SELECT * FROM coc_tb WHERE sid ='".safee($condb,$studid)."'  AND a_app > 0 AND chod_app > 0 AND nhod_app > 0 AND pay_status = '1'");
@@ -74,14 +74,14 @@ redirect('changeofcourse_m.php?view=c_info');
 if($paystatus13 > 0){
 $sql2_up=	mysqli_query($condb,"UPDATE coc_tb SET trans_id ='".safee($condb,$transid)."',c_matno ='".safee($condb,$student_RegNo)."',c_fac = '".safee($condb,$cfac)."',c_dept = '".safee($condb,$cdept)."',n_fac = '".safee($condb,$newfac)."',n_dept = '".safee($condb,$newdept)."',prog = '".safee($condb,$prog)."',a_app = '0',chod_app = '0',nhod_app = '0',pay_status = '0',date = NOW(),pamount = '".safee($condb,$totalamt)."',ftype ='".safee($condb,$Fee_type)."'  WHERE sid ='".safee($condb,$studid)."'")or die(mysqli_error($condb));
 
-$sql2_pay=	mysqli_query($condb,"UPDATE payment_tb SET pay_date=NOW(),email='".safee($condb,$pemail1)."',session='".safee($condb,$s_session)."',dueamount='".safee($condb,$totalamt)."',trans_id='".safee($condb,$transid)."',fee_type='".safee($condb,$Fee_type)."',level='".safee($condb,$level)."',ft_cat='',prog='".safee($condb,$student_prog)."' WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$s_session)."' AND pay_status = '0' AND fee_type='".safee($condb,$Fee_type)."'")or die(mysqli_error($condb));
+$sql2_pay=	mysqli_query($condb,"UPDATE payment_tb SET pay_date=NOW(),email='".safee($condb,$pemail1)."',session='".safee($condb,$s_session)."',dueamount='".safee($condb,$totalamt)."',trans_id='".safee($condb,$transid)."',fee_type='".safee($condb,$Fee_type)."',ft_cat = '".safee($condb,$fcat)."',level='".safee($condb,$level)."',ft_cat='',prog='".safee($condb,$student_prog)."' WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$s_session)."' AND pay_status = '0' AND fee_type='".safee($condb,$Fee_type)."'")or die(mysqli_error($condb));
 $_SESSION['transide'] = $transid;
 $_SESSION['in_time'] = time();
 }else{   
 $result = mysqli_query($condb,"insert into coc_tb (sid,trans_id,c_matno,c_fac,c_dept,n_fac,n_dept,prog,a_app,chod_app,nhod_app,pay_status,pamount,ftype,date)
 values('".safee($condb,$studid)."','".safee($condb,$transid)."','".safee($condb,$student_RegNo)."','".safee($condb,$cfac)."','".safee($condb,$cdept)."','".safee($condb,$newfac)."','".safee($condb,$newdept)."','".safee($condb,$prog)."','0','0','0','0','".safee($condb,$totalamt)."','".safee($condb,$Fee_type)."',NOW())")or die(mysqli_error($condb));
-$resultpay = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,dueamount,pay_date,session,level,department,pay_status,prog) 
-			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','Online','".safee($condb,$Fee_type)."','".safee($condb,$totalamt)."',NOW(),'".safee($condb,$s_session)."','".safee($condb,$level)."','".safee($condb,$student_dept)."','0','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
+$resultpay = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,ft_cat,dueamount,pay_date,session,level,department,pay_status,prog) 
+			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','Online','".safee($condb,$Fee_type)."','".safee($condb,$fcat)."','".safee($condb,$totalamt)."',NOW(),'".safee($condb,$s_session)."','".safee($condb,$level)."','".safee($condb,$student_dept)."','0','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
 $_SESSION['transide'] = $transid;
  $_SESSION['in_time'] = time();
 }

@@ -11,7 +11,8 @@ $femail = $dform_get2['email']; $fphone = $dform_get2['phone']; $fprog = $dform_
 $feetp = $dform_get2['fee_type']; $famount  = $dform_get2['dueamount']; $dategen  = $dform_get2['dategen']; $Pmode  = $dform_get2['pay_mode'];
 $date20 = str_replace('/', '-', $dform_get2['pay_date'] );  $newDate20 = date("Y-m-d", strtotime($date20));
    $timestamp = strtotime($newDate20); $datetime	= date('l, jS F Y', $timestamp);
-$paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' "); $serial=1;		
+$paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' "); $serial=1;
+	
 ?>
    <section id="content" role="document">
         <main style="min-height: 168px;">
@@ -40,8 +41,9 @@ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".s
                 <div class="col-xs-12">
             <h3><font size="4"><?php if(empty($_GET['id'])){ ?> Payment Information Preview <?php }else{ ?>
 		<?php if(substr($dform_get2['fee_type'],0,1) == "B"){echo strtoupper($ptitle); }else{  echo strtoupper($ptitle2); } }
-		if(strlen($matno) > 0){
-		$note = " Your Matric No : <strong>".$matno."</strong>  <br>also Note that your Matric No Has been Mailed to you. "; }else{ $note = "";}
+		if(strlen($matno) > 0){ //$smartcharge = 4000 ;
+		$note = " Your Matric No : <strong>$matno</strong>  <br>also Note that your Matric No Has been Mailed to you. "; }else{ $note = ""; //$smartcharge = 500 ;
+        }
 		?>
 			</font> </h3>
         </div>
@@ -79,9 +81,10 @@ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".s
              <input type='hidden' name='fail_url' value='http://www.ucnettechnologies.net/failed.php' /> --!>
             <input type='hidden' name='emailx' value='<?php echo $femail;?>' /> 
 			<input type='hidden' name='total' value='<?php echo $famount ;?>' />
+            <input type='hidden' name='ft_cat' value='<?php echo $feename;?>' />
 			<div class="form_box">
 			 <div class="clear" style="overflow: auto;">
-        <table  border="1"><?php  if(strlen($matno) > 0){ ?>
+        <table  border="1"><?php if(strlen($matno) > 0){ ?>
        <tr class="row1"><td width="20%" colspan="1" height="15"><strong> Matric Number:</strong></td>
     <td width="31%" colspan="4"><?php echo $matno; ?></td></tr><?php }else{ ?>
     <tr class="row1"><td width="20%" colspan="1" height="15"><strong> Application Number:</strong></td>

@@ -15,8 +15,9 @@ if($states == $student_s){ $scan = "1";}else{ $scan = "0";}
 $qfcompn=mysqli_query($condb,"select * from feecomp_tb where  prog = '".safee($condb,$sprog)."' and fcat = '1' and level ='".safee($condb,$entrymodel)."' and regno = '".safee($condb,$apno1)."'") or die(mysqli_error($condb));  $countcmp = mysqli_num_rows($qfcompn);
 
 $querycomp = mysqli_query($condb,"select * from fee_db where ft_cat ='1' and level= '".safee($condb,$entrymodel)."' and program='".safee($condb,$sprog)."' and cat_fee ='".safee($condb,$scan)."' and status = '1'") or die(mysqli_error($condb));
- $nocomp = mysqli_num_rows($querycomp);
+ $nocomp = mysqli_num_rows($querycomp); $Bno = 0;
 $s=8;while($s>0){ $Bno .= rand(0,9);$s-=1; } $batchno = "B".$Bno;
+
 if (isset($_POST['addpayment'])){ $date_now =  date("Y-m-d");
 	 if(empty($_POST['selector'])){
 				message("You have not selected any Payment Component !", "error");
@@ -38,9 +39,15 @@ $queryin = mysqli_query($condb,"insert into feecomp_tb(regno,feetype,prog,level,
 }
 
  redirect('apply_b.php?view=opay&id='.$batchno); }}}
+ // check if paid acceptance
+ $sql_cstudent = mysqli_query($condb,"SELECT * FROM student_tb WHERE appNo = '".safee($condb,$apno1)."'");
+$contstate = mysqli_num_rows($sql_cstudent);
 //-----------------------------------------------load fees
- $viewfee_query = mysqli_query($condb,"select * from fee_db where  Cat_fee = '".safee($condb,$scan)."' and level = '".safee($condb,$entrymodel)."' and program = '".safee($condb,$sprog)."'  order by feetype DESC ")or die(mysqli_error($condb));
- ?>
+ $fee_query = "select * from fee_db where level = '".safee($condb,$entrymodel)."' and program = '".safee($condb,$sprog)."' and status = '1'  ";
+  if($contstate < 1){$fee_query .= " and ft_cat = '4'";}else{ $fee_query .= " and Cat_fee = '".safee($condb,$scan)."' and ft_cat = '1'"; }
+  $fee_query .= "order by feetype DESC ";
+  $viewfee_query = mysqli_query($condb,$fee_query)or die(mysqli_error($condb));
+?>
 <div class="row">
     <div class="col-xs-12">
         <div id="breadcrumbs-share">
@@ -58,7 +65,12 @@ $queryin = mysqli_query($condb,"insert into feecomp_tb(regno,feetype,prog,level,
             <h3>Payment Panel For Newly Admitted Students  </h3>
         </div>
         <div class="col-xs-12 primary-content link-icons">
-<p class="first-paragraph">Please Select the Fee (s) you which to pay and Click <strong> Add Payment </strong> Button to continue. <br> Note that Checked Payment(s) are required to proceed. </p>
+<p class="first-paragraph"><?php  if($contstate > 0){ ?>
+Please Select the Fee (s) you which to pay and Click <strong> Add Payment </strong> Button to continue.
+<br> Note that Checked Payment(s) are required to proceed. <?php }else{ ?>
+You'ar About to Pay acceptance Fee to Validated your Admission, Click <strong> Add Payment </strong> Button to continue.<?php } ?>
+ <br> Note that Once Acceptance Fee is Successful you can pay other FEES</p>
+
                 </div>
                 
         <div class="margin-md-top row cards section-cards">
@@ -90,9 +102,9 @@ $queryin = mysqli_query($condb,"insert into feecomp_tb(regno,feetype,prog,level,
 //$user_query = mysqli_query($condb,"select * from form_db where f_end >='".$date_now."' Order by session ASC")or die(mysqli_error($condb)); 
 if(mysqli_num_rows($viewfee_query) > 0)
     {
-$number = 1;$sumcredit=0;
-while($row_s = mysqli_fetch_array($viewfee_query)){
-$Fee_type1 = $row_s['feetype'];  $Fee_cat = $row_s['ft_cat']; if($Fee_cat == "1"){ $check_c =" Checked";  }else{ $check_c ="";  }
+$number = 1;$sumcredit = 0;
+while($row_s = mysqli_fetch_array($viewfee_query)){ 
+$Fee_type1 = $row_s['feetype'];  $Fee_cat = $row_s['ft_cat']; if($Fee_cat == "1" OR $contstate < 1 ){ $check_c =" Checked";  }else{ $check_c ="";  }
 $paysid = $row_s['fee_id']; $dperc = $row_s['pper']; 
 $psdate = $row_s['psdate']; $famount =$row_s['f_amount'];
 $date20 = str_replace('/', '-', $psdate );  $newDate20 = date("Y-m-d", strtotime($date20));  $date_now =  date("Y-m-d");
@@ -126,7 +138,7 @@ $status ="Not Paid"; //'<a rel="tooltip"  title="Click to Conutinue Payment" id=
     <td><?php echo number_format($namount,2); ?></td>
     <td><?php echo $status; ?></td>
     </tr> 
-   <?php $number++;  $sumcredit += $namount; }  }else{ ?>
+   <?php $number++;  $sumcredit += $namount; }  }else{ $sumcredit = 0; ?>
     <tr><td colspan="5">No School Payment (s) Found at this time Please Check back later! </td></tr>
    <?php  } ?>
    <tr><td colspan="3"><strong>Total Amount: </strong></td>

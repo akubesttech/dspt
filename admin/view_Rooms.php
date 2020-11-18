@@ -39,8 +39,8 @@ message("You don't have the permission to access this page", "error");
 }
  ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['id']; 
-  $get_Room= $_GET['idroom'];
+  <?php  $get_RegNo = isset($_GET['id']) ? $_GET['id'] : ''; 
+ $get_Room = isset($_GET['idroom']) ? $_GET['idroom'] : '';
   ?>
     <!-- page content -->
         <div class="right_col" role="main">
@@ -57,17 +57,9 @@ message("You don't have the permission to access this page", "error");
               <div class="col-md-12">
                 
 				 <!-- /Organization Setup Form -->
-				
-					<?php 
-					$num=$get_RegNo;
-		if ($num!==null){ include('edit_Hostel.php'); }else{ include('viewRooms.php'); 
-		}?>
-				
-                   <!-- /Organization Setup Form End -->
-                 
-                  
-                  
-                </div>
+				<?php if (empty($get_RegNo)){ include('viewRooms.php');}else{ include('edit_Hostel.php');}?>
+				<!-- /Organization Setup Form End -->
+</div>
               </div>
             </div>
 
@@ -252,17 +244,7 @@ redirect('view_Rooms.php?editrooms&idroom='.$get_Room);
 					<input type="hidden" name="insidroom" value="<?php echo $_SESSION['insidroom'];?> " />
                       
                       <span class="section" style="text-shadow:-1px 1px 1px #000;"><font color='darkblue'>Room Number : <?php echo ucfirst($room_num) ;?> </font> <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$resroom</font></label></center>
-			 
-			  ";
-}
-?> </span>
+  //if($resi == 1){ echo "<center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$resroom</font></label></center>";}?> </span>
 
 <div class="col-sm-12">
 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
@@ -297,7 +279,7 @@ redirect('view_Rooms.php?editrooms&idroom='.$get_Room);
                              <select name='ftype' id="ftype" class="form-control" required>
                             <option value="<?php echo $feetyp; ?>"><?php echo getftype($feetyp); ?></option>
                           <?php 
-$resultfee = mysqli_query($condb,"SELECT * FROM ftype_db where status = '0' and f_category = '1'  ORDER BY f_type  ASC");
+$resultfee = mysqli_query($condb,"SELECT * FROM ftype_db where  f_category = '5'  ORDER BY f_type  ASC");
 while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'>$rsfee[f_type]</option>";}?>
                         <!--    <option value="Others">Other Fees</option> -->
                           
@@ -326,14 +308,11 @@ while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'
 
 </div>
 </div>
-
-						
-		</div>
+</div>
 			
-					<div class="modal-footer">
-					<a href="view_Rooms.php" class="btn btn-default"><i class="fa fa-remove"></i>&nbsp;Close</a>
-                  
-                         <button  name="editroom2" class="btn btn-primary"><i class="fa fa-pencil icon-large"></i> Edit Room</button>
+<div class="modal-footer">
+<a href="view_Rooms.php" class="btn btn-default"><i class="fa fa-remove"></i>&nbsp;Close</a>
+<button  name="editroom2" class="btn btn-primary"><i class="fa fa-pencil icon-large"></i> Edit Room</button>
                         </div>
 					
 					</form>

@@ -19,12 +19,14 @@ $payemail  =  getsemail($payregno);
   $hprog  = $payrecordv['prog'];
  $nfac  = $payrecordv['n_fac']; $ndept  = $payrecordv['n_dept'];
  $ftype  = $payrecordv['ftype']; $pstart  = $payrecordv['pay_status'];
+ $payrec=mysqli_query($condb,"SELECT * FROM payment_tb WHERE trans_id ='".safee($condb,$_SESSION['transide'])."' ");
+$payrecord2 =mysqli_fetch_array($payrec);  $fee_cat  = $payrecord2['ft_cat'];
 ?>
 <div class="x_panel">
                 <!-- <form name="register2" action="https://voguepay.com/pay/" method="post" enctype="multipart/form-data" id="register2"> --!>
                 <form name="register2" action="cinitialize.php" method="post" enctype="multipart/form-data" id="register2">
             <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
-			<input type='hidden' name='v_merchant_id' value='demo' /> <!-- 9919-0054594 --!>
+			<input type='hidden' name='ft_cat' value='<?php echo $fee_cat;?>' /> <!-- 9919-0054594 --!>
 			
 			<input type='hidden' name='merchant_ref2' value='<?php echo $transref;?>' />
 		
