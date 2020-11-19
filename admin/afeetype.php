@@ -61,8 +61,8 @@ $row_ft = mysqli_fetch_array($query_ft); //$cpenalty= $row_ft['penalty'];
   <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" >
 					    <label for="heard">Fee Category</label>
 						  	  <select  name="fcate" id="fcate" class="form-control" ><?php if ($fID > 0) { ?>
-<option value="<?php echo $row_ft['f_category']; ?>"><?php echo getfcate($row_ft['f_category']); ?></option><?php }else{ ?> <option value="">Select Category</option><?php } ?>
-		<?php echo getfcate("",1); ?>
+<option value="<?php echo $row_ft['f_category']; ?>"><?php echo getfeecat($row_ft['f_category']); ?></option><?php }else{ ?> <option value="">Select Category</option><?php } ?>
+		<?php echo getfeecat("",1); ?>
             </select>
                       </div>
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">

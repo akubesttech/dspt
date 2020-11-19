@@ -46,7 +46,7 @@
              <td width="10"><input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>"></td>
             <td id="ftypea_val<?php echo $row_f['id'];?>" ><?php echo $row_f['f_type']; ?></td>
                 <td id="fdesca_val<?php echo $row_f['id'];?>"><?php echo $row_f['d_desc']; ?></td>
-                <td id="fcate_val<?php echo $row_f['id'];?>"><?php echo getfcate($row_f['f_category']); ?></td>
+                <td id="fcate_val<?php echo $row_f['id'];?>"><?php echo getfeecat($row_f['f_category']); ?></td>
               <td id="status_val<?php echo $row_f['id'];?>"><?php if($row_f['status'] =="1"){echo "compulsory";}else{ echo "Optional";} ?></td>
                           
                           
