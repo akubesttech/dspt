@@ -20,11 +20,14 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 //ini_set('display_errors', 1);
 //if($_SESSION['insid']==$_POST['insid'])
 //{
+    $crsl = isset($_POST['chkresult']) ? $_POST['chkresult'] : '';
+    $sql_gradesetl = mysqli_query($condb,"select * from grade_tb where prog ='".safee($condb,$class_ID)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error($condb)); 
+    $getmg2 = mysqli_fetch_array($sql_gradesetl);    $getpassl = $getmg2['b_max'];
 if(isset($_POST['printtrans'])){
- $Session_checker = $_POST["session2"];
-$department = $_POST["dept1_find"];
-$matno = $_POST["matno"];$programType = $_POST["prog"]; $currenty = date("Y");
-	//$_SESSION['temppin']=$Pin;
+ $Session_checker = $_POST["yoe"];
+$department = $_POST["dept"];
+$matno = $_POST["matno"];$programType = $class_ID; $currenty = date("Y");
+$cresult = $crsl;
 $result_pinr=mysqli_query($condb,"SELECT * FROM student_tb WHERE yoe ='".safee($condb,$Session_checker)."' AND RegNo ='".safee($condb,$matno)."' AND Department ='".safee($condb,$department)."' AND app_type='".safee($condb,$class_ID)."'");
 $num_pinr = mysqli_num_rows($result_pinr);
 $num_serialr = mysqli_fetch_array($result_pinr);
@@ -33,8 +36,8 @@ $yearofgraguation = $num_serialr['yog'];$programdb = $num_serialr['app_type'];
 
 $sql_appNo_check = mysqli_query($condb,"SELECT * FROM student_tb WHERE RegNo ='".safee($condb,$matno)."'  LIMIT 1");
 $appNo_check = mysqli_num_rows($sql_appNo_check);
-//$sql_JambNo_check = mysqli_query($condb,"SELECT * FROM new_apply1 WHERE JambNo='$nappNo21' LIMIT 1");
-//$JambNo_check = mysqli_num_rows($sql_JambNo_check);
+$sql_fail_check = mysqli_query($condb,"SELECT * FROM results WHERE student_id ='".safee($condb,$matno)."' AND exam > 0 AND total >= '".safee($condb,$getpassl)."' ");
+$fail_check = mysqli_num_rows($sql_fail_check);
 $sql_session_check = mysqli_query($condb,"SELECT Asession FROM student_tb WHERE  RegNo ='".safee($condb,$matno)."' and yoe ='".safee($condb,$Session_checker)."'");
 $session_check = mysqli_num_rows($sql_session_check);
 //$sub_user = $num_pinn2['reg_status'];
@@ -48,20 +51,21 @@ $session_check = mysqli_num_rows($sql_session_check);
 }elseif($session_check < 1){
 				message("ERROR: Incorrect Year Of Entry please Comfirm and try Again.", "error");
 		       redirect('Student_Record.php?view=s_tra');
+               }elseif($fail_check < 1){
+				message("ERROR: Outstanding Course(s) Found and transcript cannot be generated.", "error");
+		       redirect('Student_Record.php?view=s_tra');
 //}elseif($programdb != $programType){
 				//message("ERROR:  Incorrect Program Type please Comfirm and try Again.", "error");
 		       //redirect('Student_Record.php?view=s_tra');
-}elseif($currenty < $yearofgraguation){
-	message("Transcript Not Available For $matno, Please Confirm Student Year Of Graguation.", "error");
-		       redirect('Student_Record.php?view=s_tra');
+//}elseif($currenty < $yearofgraguation){
+	//message("Transcript Not Available For $matno, Please Confirm Student Year Of Graguation.", "error");
+		      // redirect('Student_Record.php?view=s_tra');
        // $res="<font color='Red'><strong>Transcript Not Available For $matno, Please Confirm Student Year Of Graguation.</strong></font><br>"; $resi=1;
 }else{
-			//	header("location:apply_b.php?view=N_1");
-				//echo "<script>alert('Your Application was Sucessfully Submited!');</script>";
-	echo "<script>window.location.assign('Transcript.php?transid=".($matno)."&sec=".($Session_checker)."&depo=".($department)."');</script>";
-	//echo "<script>window.location.assign('Transcript.php?transid=".$matno."');</script>";
-		//$_SESSION['deptrans']=$department; $_SESSION['esession']=$Session_checker;$_SESSION['progty']=$programType;
-			}
+if(empty($cresult)){ redirect('Transcript.php?transid='.($matno)."&sec=".($Session_checker)."&depo=".($department));
+	//echo "<script>window.location.assign('Transcript.php?transid=".($matno)."&sec=".($Session_checker)."&depo=".($department)."');</script>";
+    }else{ redirect('Finalresult.php?transid='.($matno)."&sec=".($Session_checker)."&depo=".($department));
+    }}
 
 }//}$_SESSION['insid'] = rand();
 ?>
@@ -73,69 +77,53 @@ $session_check = mysqli_num_rows($sql_session_check);
              
                 <div class="x_content">
 	                <form method="post" class="form-horizontal"  action="" enctype="multipart/form-data">
-                    <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
-                      
-                      <span class="section">Generate  Student Transcript</span>
+  <input type="hidden" name="facn" id="facn" tabindex="2" />
+    <input type="hidden" name="dept" id="dept" tabindex="3" />
+    <input type="hidden" name="yoe" id="yoe" tabindex="4" />
+    
+   
+<span class="section">Generate  Student Transcript / Final Result</span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
-          Note: That this will enable Admin to Generate Student Transcript. 
+          Note: That this will enable Admin to Generate Student Transcript / Final Result. 
                   </div>
-   <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+   <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard" id="c_title">Mat No./Reg No:</label>
-                     
-                          <input type="text" class="form-control " name='matno' id="matno"  value=""  required="required"> </div>
-                          
-					    <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" >
-					    
-						  	  <label for="heard"><?php echo $SCategory; ?> </label>
-						  	  
-                            	  <select name='fac1' id="fac1" onchange='loadDept(this.name);return false;' class="form-control" >
+<input type="text" class="form-control " name="matno" id="matno"  value=""  onkeyup="getname2(this.value);" onblur="getname2(this.value);" tabindex="1"  required="required"> </div>
+    <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+					  <label for="heard" id="c_title">Student Full Name:</label>
+                     <input type="text" class="form-control " name='fullname' id="fullname"  value=""   tabindex="6" readonly  > </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard" id="c_title">Academic Status:</label>
+                     <input type="text" class="form-control " name='acad' id="acad"  value=""   tabindex="5" readonly > </div>
+                      <?php   if (authorize($_SESSION["access3"]["stMan"]["trans"]["view"])){ ?>   <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
+		<label for="chkPenalty"> </label><div class="form-group"><br>
+    <label class="chkPenalty"><input type="checkbox" id="chkresult"   name="chkresult" value="1" /> Show Final Result </label></div></div> <?php } ?>
+    
+                                               
+					    <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;" > 
+<label for="heard"><?php echo $SCategory; ?> </label>
+<select name='fac1' id="fac1" onchange='loadDept(this.name);return false;' class="form-control" >
                             <option value="">Select <?php echo $SCategory; ?></option>
-                            <?php  
-
-$resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//$counter=1;
+                            <?php $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
 while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
-	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
-?>
-                            
-                          
-                          </select>
-                      </div>
-                     
-                      
-                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-                       
-						  	  <label for="heard"><?php echo $SGdept1; ?></label>
-                            	  <select name='dept1_find' id="dept1" required="required" class="form-control"  >
+{if($_GET['loadfac'] ==$rsblocks['fac_id'] ){echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
+}else{echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}}?>
+</select></div>
+<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;">
+<label for="heard"><?php echo $SGdept1; ?></label>
+                            	  <select name='dept1_find' id="dept1"  class="form-control"  >
                            <option value=''>Select <?php echo $SGdept1; ?></option>
                           </select>
                       </div>
                       
-                       <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-                       
-						  	  <label for="heard">Year of Entry</label>
-                            <select name="session2" id="session2"  required="required" class="form-control">
+                       <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;">
+<label for="heard">Year of Entry</label>
+                            <select name="session2" id="session2"   class="form-control">
   <option value="">Select Year</option>
-<?php  
-//$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-//$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
-for($x=2016;$x<2036;$x++){
-	echo '<option value="'.$x.'">'.$x.'</option>';
-	}
+<?php while($rssec = mysqli_fetch_array($resultsec)){echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
+for($x=2016;$x<2036;$x++){ echo '<option value="'.$x.'">'.$x.'</option>';}
 ?>
 </select>
                       </div>

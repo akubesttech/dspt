@@ -71,12 +71,12 @@ $query_d2form = mysqli_query($condb,"select * from role where role_rolecode ='".
                 	<div class="form-group">
                 	 <input type="text" class="form-control "    name='roledesc' id="roledesc"  placeholder="Example : Administartor" value="<?php echo $row_upform['role_desc']; ?> " ></div></div>
                    <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Role Order *</label>
+						  	  <label for="heard">Role Category *</label>
                             	  	 <select class="form-control" name="order" id="order" required="required">
-<option value="">Select Role Order</option>
-<?php for($x=1;$x<11;$x++){
-	echo '<option value="'.$x.'">'.$x.'</option>';
-	} ?>
+<option value="<?php echo $row_upform['roleorder'];?>"><?php echo getRolecategory($row_upform['roleorder']);?></option>
+<?php //for($x=1;$x<11;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
+echo getRolecategory(0,1);
+ ?>
  </select>
                       </div>
                

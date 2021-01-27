@@ -1,5 +1,5 @@
 <?php
-
+ ob_start();
 //session_start();
 include('lib/dbcon.php'); 
 dbcon();
@@ -109,5 +109,5 @@ $p_assess = $CA2." ".$pmaxn." %";
      
     		echo $output;
     //	}
-     
+       ob_end_flush();
     ?>

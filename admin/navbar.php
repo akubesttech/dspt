@@ -154,6 +154,11 @@ $num2=mysqli_num_rows($getusersonline24);
 				?>
 		
 <li role="presentation" class="dropdown">
+                  <a href="javascript:;" onClick="window.location.href='user_Private.php?view=user_guide';" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user"></i>
+                    User Guide 
+                  </a></li>
+                  <li role="presentation" class="dropdown">
                   <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-user"></i>
                     <span class="badge bg-green"><?php echo $num + $num1 + $num2; ?></span>Users Online 

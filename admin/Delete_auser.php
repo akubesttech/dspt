@@ -8,6 +8,7 @@ for($i=0; $i < $N; $i++)
 {
 	$result = mysqli_query($condb,"DELETE FROM admin where admin_id='$id[$i]'");
 }
-header("location: add_Users.php");
+//header("location: add_Users.php?view=");
+redirect('add_Users.php?view=addUser');
 }
 ?>

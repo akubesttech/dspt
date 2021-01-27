@@ -50,6 +50,11 @@ function copyImage($srcFile, $destFile, $w, $h, $quality = 75)
        $dest      = imagecreatetruecolor($w, $h);
        imageantialias($dest, TRUE);
     }elseif ($tmpDest['extension'] == "png") {
+        //$destFile  = substr_replace($destFile, 'jpg', -3);
+       $dest = imagecreatetruecolor($w, $h);
+       imageantialias($dest, TRUE); 
+       }elseif ($tmpDest['extension'] == "jpeg") {
+        $destFile  = substr_replace($destFile, 'jpg', -4);
        $dest = imagecreatetruecolor($w, $h);
        imageantialias($dest, TRUE);
     } else {
@@ -66,12 +71,16 @@ function copyImage($srcFile, $destFile, $w, $h, $quality = 75)
            break;
        case 3:       //PNG
            $src = imagecreatefrompng($srcFile);
+           imagealphablending($dest, false);
+                $colorTransparent = imagecolorallocatealpha($dest, 0, 0, 0, 0x7fff0000);
+                imagefill($dest, 0, 0, $colorTransparent);
+                imagesavealpha($dest, true);
            break;
        default:
            return false;
            break;
     }
-
+//imagecopyresampled($destimg,$srcimg,0,0,0,0,$new_width,$new_height,imagesX($srcimg),imagesY($srcimg))
     imagecopyresampled($dest, $src, 0, 0, 0, 0, $w, $h, $size[0], $size[1]);
 
     switch($size[2])
@@ -82,6 +91,10 @@ function copyImage($srcFile, $destFile, $w, $h, $quality = 75)
            break;
        case 3:
            imagepng($dest,$destFile);
+            break;
+       default:
+           return false;
+           break;
     }
     return $destFile;
 
@@ -160,9 +173,9 @@ function uploadProductImage($inputName, $uploadDir)
 
 		// make sure the image width does not exceed the
 		// maximum allowed width
-		$result    = createThumbnail($image['tmp_name'], $uploadDir . $imagePath, MAX_USER_IMAGE_WIDTH);
+		//$result    = createThumbnail($image['tmp_name'], $uploadDir . $imagePath, MAX_USER_IMAGE_WIDTH);
 		if (LIMIT_USER_WIDTH && $width > MAX_USER_IMAGE_WIDTH) {
-			//$result    = createThumbnail($image['tmp_name'], $uploadDir . $imagePath, MAX_USER_IMAGE_WIDTH);
+			$result    = createThumbnail($image['tmp_name'], $uploadDir . $imagePath, MAX_USER_IMAGE_WIDTH);
 			$imagePath = $result;
 		} else {
 			$result = move_uploaded_file($image['tmp_name'], $uploadDir . $imagePath);
@@ -170,8 +183,8 @@ function uploadProductImage($inputName, $uploadDir)
 		
 		if ($result) {
 			// create thumbnail
-			$thumbnailPath =  substr(number_format(time() * rand(),0,'',''),0,10).".$ext";
-			//$result2 = createThumbnail($uploadDir . $imagePath, $uploadDir . $thumbnailPath, THUMBNAIL_WIDTH);
+			$thumbnailPath = substr(number_format(time() * rand(),0,'',''),0,10)."New.$ext";
+			$result = createThumbnail($uploadDir . $imagePath, $uploadDir . $thumbnailPath, THUMBNAIL_WIDTH);
 			
 			// create thumbnail failed, delete the image
 		//	if (!$result2) {

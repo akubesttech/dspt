@@ -1,5 +1,7 @@
 <?php
-
+//error_reporting(E_ALL);
+//ini_set("display_errors", 1);
+ ob_start();
 //session_start();
 include('lib/dbcon.php'); 
 dbcon(); 
@@ -11,7 +13,7 @@ $depart2 =  substr($depart,0,8);
 $c_choice = $_GET['c_choice'];
 $table = 'new_apply1';
 $depget = getdeptc($depart2);
-$replacedept    = str_replace(" ",_,  $depget);
+$replacedept    = str_replace(" ","_",$depget);
 /*
 if($c_choice=='1'){
 $query = "select DISTINCT JambNo as 'Jamb Reg Number', FirstName as 'First Name', SecondName as 'Second Name',first_Choice as 'First Choice', J_score as 'Jamb Score', post_uscore as 'Post UTME Exam Score' from $table where first_Choice = '$depart' && Asession = '$session' && reg_status = '1' && verify_apply = 'TRUE' and app_type ='".safee($condb,$class_ID)."' ";
@@ -80,12 +82,13 @@ print "$header\n$data";
 
 
     <?php
-    	header("Content-Type: application/xls"); 
-	header("Content-Disposition: attachment; filename='$session'_'".$replacedept."'_Entrance_Exam_Template.xls");  
+    	header("Content-Type: application/xls");
+   header("Content-Disposition: attachment; filename='$session'_'".$replacedept."'_Entrance_Exam_Template.xls");  
     	//header("Content-Disposition: attachment; filename=download.xls");  
     	header("Pragma: no-cache"); 
     	header("Expires: 0");
-     
+      header('Cache-Control: must-revalidate');
+        header('Pragma: public');
     	//include('../admin/lib/dbcon.php'); 
 //dbcon();
      
@@ -150,5 +153,5 @@ $query = mysqli_query($condb,"select appNo , FirstName , SecondName ,Second_Choi
      
     		echo $output;
     //	}
-     
+     ob_end_flush();
     ?>

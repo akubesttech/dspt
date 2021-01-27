@@ -10,6 +10,7 @@ authorize($_SESSION["access3"]["adm"]["nsp"]["view"]) ||
 authorize($_SESSION["access3"]["adm"]["nsp"]["delete"]) ) {
  $status = TRUE;
 }
+$facn1 = isset($_GET['fac1']) ? $_GET['fac1'] : '';
 $dep1 = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $sec1 = isset($_GET['session2']) ? $_GET['session2'] : '';
 $los =  isset($_GET['c_choice']) ? $_GET['c_choice'] : '';
@@ -21,10 +22,25 @@ $los =  isset($_GET['c_choice']) ? $_GET['c_choice'] : '';
 
  <?php include('admin_slidebar.php'); ?>
     <?php include('navbar.php');
-     $queryapp = "SELECT * FROM new_apply1 WHERE adminstatus = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."'";
+$queryapp = "SELECT * FROM new_apply1 WHERE adminstatus = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
 if($Rorder > 2){ $queryapp .= " AND Department = '$userdept'";}
  $queryapp .= "order by stud_id DESC "; $qeryno = mysqli_query($condb,$queryapp)or die(mysqli_error($condb));
     $clearno = mysqli_num_rows($qeryno);
+     $querydirect = "SELECT * FROM new_apply1 WHERE adminstatus = '0' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
+if($Rorder > 2){ $querydirect .= " AND Department = '$userdept'";}
+ $querydirect .= "order by stud_id DESC "; $qerydirect = mysqli_query($condb,$querydirect)or die(mysqli_error($condb));
+ $directno = mysqli_num_rows($qerydirect);
+ $queryNO = "SELECT * FROM new_apply1 WHERE reg_status = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'FALSE'";
+if($Rorder > 2){ $queryNO .= " AND Department = '$userdept'";}
+ $queryNO .= "order by stud_id DESC "; $queryNO1 = mysqli_query($condb,$queryNO)or die(mysqli_error($condb));
+ $countappno = mysqli_num_rows($queryNO1);
+ 
+ $qedate = "SELECT * FROM utmedate WHERE prog = '".safee($condb,$class_ID)."'";
+if($dep1 > 0){ $qedate .= " AND dept = '$dep1'";}
+if($facn1 > 0){ $qedate .= " AND fac = '$facn1'";}
+$qerydate = mysqli_query($condb,$qedate)or die(mysqli_error($condb));
+$countd = mysqli_num_rows($qerydate);
+
 	if ($status === FALSE) {
 //die("You dont have the permission to access this page");
 message("You don't have the permission to access this page", "error");
@@ -147,7 +163,7 @@ $msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
     Please Come with A Copy of your Application Slip!\n
     
     This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
-    For inquiry and complaint please email info@smartdelta.com.ng \n
+    For inquiry and complaint please email inquiry@deltasmartcity.ng \n
 	
 	Thank You Admin!\n\n");
 
@@ -155,9 +171,50 @@ $subject= getprog($app_type)." Entrance Exam Invitation";
 //define the body of the message.
 ob_start(); //Turn on output buffering
 $mail_data = array('to' => $e_address, 'sub' => $subject, 'msg' => 'Notify','body' => $msg, 'srname' => $comn);
-	send_email($mail_data);
+if($countd > 0 ){	send_email($mail_data);  $mesg = " Applicant(s) information  Successfully Verified and Screening invite mailed.";}
+$mesg = " Applicant(s) information  Successfully Verified. ";
 $resultapp = mysqli_query($condb,"UPDATE new_apply1 SET verify_apply ='TRUE' where stud_id = '$id[$i]'");}
-	message(" Applicant(s) information  Successfully Verified .", "success");
+	message(" ".$mesg." ", "success");
+	redirect($links); }}
+    
+    //Direct Admission processing
+    if (isset($_POST['Directadd'])){
+	 if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect('new_apply.php');
+			}elseif(empty($_POST['selector'])){
+				message("Select at least one applicant to proceed !", "error");
+		        redirect($links);
+				}else{ $id=$_POST['selector'];  $N = count($id);
+for($i=0; $i < $N; $i++){
+$sql2="select * from new_apply1 where stud_id ='".$id[$i]."' AND verify_apply ='TRUE' ";
+				$result2=mysqli_query($condb,$sql2) or die(mysqli_error($condb));
+                $account = mysqli_num_rows($result2);
+				$row=mysqli_fetch_array($result2); extract($row); $urllogin = host(); $los = 1;
+                $e_address = $e_address; $app_type = $app_type; $adminstatus = $adminstatus;
+$subject= getprog($app_type)." Admission Notification"; $fulname = $FirstName." ". $SecondName." ".$Othername;
+if($los == "1"){ $adfac = $fact_1; $addept = $first_Choice; $cho = 1; }else{ $adfac = $fact_2; $addept = $Second_Choice; $cho = 2; } 
+$import = "UPDATE new_apply1 set post_uscore ='0',average_score='0',adminstatus = '1',course_choice = '".$cho."',afac = '".safee($condb,$adfac)."' ,adept='".safee($condb,$addept)."' where stud_id ='".$id[$i]."' ";
+				mysqli_query($condb,$import) or die (mysqli_error($condb));
+$msg = nl2br("Congratulations! ".$fulname.",.\n
+	
+	This is To Inform you that you have been giving Admission into ".getdeptc($addept)." in ".$schoolNe.",\n
+	Kindly Login to: ".$urllogin."apply_b.php?view=C_R"." with you Application Number and password to Comfirm \n
+    To Comfirm your Admission your required to Pay Acceptance Fee @: ".$urllogin."apply_b.php?view=M_P"." with you Application Number \n
+	.............................................................................................................................\n
+    Note That This Admission will be withdrawn if you Violate The Terms and Condition of your Admission!\n
+    
+    This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
+    For inquiry and complaint please email inquiry@deltasmartcity.ng \n
+	
+	Thank You Admin!\n\n");
+ 
+//define the body of the message.
+ob_start(); //Turn on output buffering
+$mail_data = array('to' => $e_address, 'sub' => $subject, 'msg' => 'Notify','body' => $msg, 'srname' => $comn);
+	send_email($mail_data);
+    }
+	message($account." Applicant(s) was Successfully Admitted .", "success");
 	redirect($links); }}
 ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -192,7 +249,8 @@ $resultapp = mysqli_query($condb,"UPDATE new_apply1 SET verify_apply ='TRUE' whe
 		            
 		            case 'nlist' :
 		            $content    = 'nlist.php';
-					$pageTitle = 'List of New Application';		
+					$pageTitle = 'List of New Application';
+     //if($countd < 1 && $countappno > 0 ){message("Please Note that You Have not Schedule Entance/PUTME Date and invite would not be mailed to applicant (s) once verification Button is clicked!", "error");} 		
 		            break;
                     
                      case 'imp_a' :

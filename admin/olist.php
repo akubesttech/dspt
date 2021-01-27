@@ -16,10 +16,12 @@ message("You don't have the permission to access this page", "error");
                   message("ERROR:  No Programme Select,Please Select a Programme and continue.", "error");
 		       redirect('Student_Record.php?view=opro');
 						}
+                       
 //$depart = $_GET['dept1_find'];
 //$session=$_GET['session2'];
 //$pro_level= $_GET['los'];
-						?>
+					
+                    	?>
                           
                   <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -27,10 +29,11 @@ message("You don't have the permission to access this page", "error");
            This Page will Enable Admin To Verify Student Information,Update student Information,New Student Clearance and Generate Matric Number For New Students. 
                   </div>
                   
-                    <form action="" method="post">
+                    <form action="" method="post" enctype="multipart/form-data">
                     
                      <table id="datatable-responsive" class="table table-striped table-bordered">
-<?php   if (authorize($_SESSION["access3"]["stMan"]["srv"]["delete"])){ ?><button class="btn btn-danger" name="delete_student" title="Click to Delete Un Verified / inactive Student(s) Record Selected" id="delete"><i class="fa fa-trash icon-large"></i> Delete </button>
+<?php   if (authorize($_SESSION["access3"]["stMan"]["srv"]["delete"])){ ?>
+<button class="btn btn-danger" name="delete_student" title="Click to Delete Un Verified / inactive Student(s) Record Selected" id="delete"><i class="fa fa-trash icon-large"></i> Delete </button>
 				   <?php } ?>
                    <button class="btn btn-info" name="vegrecord" title="Select Appropriate Record to Verify Student (s) / Generate Matric No for New Students" id="vegrecord"><i class="fa fa-check"></i> Verify Student (s)</button>
 						
@@ -39,12 +42,20 @@ message("You don't have the permission to access this page", "error");
                     		<a href="javascript:void(0);" onclick="window.open('Student_Record.php?view=Clearance','_self')" data-placement="top" title="Click to Review Clearance files"    id="delete"  class="btn btn-info" name=""  ><i class="fa fa-file icon-large"> Review Clearance files <span class="badge bg-yellow"><?php echo $clearno; ?></span> </i></a>
                             <?php if(empty($depart) AND empty($session)){  }else{?>
 				<?php if(!empty($depart) AND !empty($session)){	?>	
-      <a 	href="javascript:void(0);" onClick="window.location.href='Print_students.php?Schd=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>';" class="btn btn-info"  id="papp" data-placement = "right" title="Click to Print Student(s) Class List" ><i class="fa fa-print icon-large"></i>  Print Student(s) list</a>
-<a 	href="javascript:void(0);" onClick="window.location.href='exportslist.php?Schd=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>';" class="btn btn-info"  id="exp_excel" data-placement = "right" title="Click to export student record to Excel Format" ><i class="fa fa-file-excel-o"></i>  Export Student(s)</a>
- 					
+      <a 	href="javascript:void(0);" onclick="window.location.href='Print_students.php?Schd=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>';" class="btn btn-info"  id="papp" data-placement = "right" title="Click to Print Student(s) Class List" ><i class="fa fa-print icon-large"></i>  Print Student(s) list</a>
+<a 	href="javascript:void(0);" onclick="window.location.href='exportslist.php?Schd=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>';" class="btn btn-info"  id="exp_excel" data-placement = "right" title="Click to export student record to Excel Format" ><i class="fa fa-file-excel-o"></i>  Export Student(s)</a>
+ 		<label class="chkPenalty"><input type="checkbox" id="chkPenalty"  onclick="ShowHideDiv2(this)" name="chkPenalty" value="1" /> Upload Student Record(s) CSV </label>
+    				
                     <?php } ?>
-                        <a href="javascript:void(0);" onclick="window.open('Student_Record.php?view=l_s','_self')"
-                         class="btn btn-info"  id="delete2" data-placement="right" title="Click to Go back to previous Page" ><i class="fa fa-file icon-large"></i>  Go Back</a><?php } ?>
+<a href="javascript:void(0);" onclick="window.open('Student_Record.php?view=l_s','_self')"
+                         class="btn btn-info"  id="delete2" data-placement="right" title="Click to Go back to previous Page" ><i class="fa fa-file icon-large"></i>  Go Back</a>
+                         <a href="javascript:void(0);" onclick="window.open('download.php?ids=1&dept1_find=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>','_self')"
+                         class="btn btn-info"  id="penper" data-placement="right" title="Click to Download CSV template for Student Record upload" ><i class="fa fa-download icon-large"></i>  CSV Template</a>
+                         <?php } ?>
+                             <div style="display:none; " id="changestatus"> <br><label for="heard">Upload CSV file here: </label>
+<input name="fileNames" class="input-file uniform_on" id="fileNames" type="file" readonly="readonly" >
+<button type="submit" name="importstudent"  id="import" data-placement="right" class="btn btn-primary" title="Click To Import Student Details" ><i class="glyphicon glyphicon-upload"></i> Upload</button>
+                        <br> </div> 
 									<script type="text/javascript">
 									 $(document).ready(function(){
 									 $('#delete').tooltip('show'); $('#delete1').tooltip('show'); $('#delete2').tooltip('show');$('#vegrecord').tooltip('show');
@@ -53,7 +64,7 @@ message("You don't have the permission to access this page", "error");
 									 });
 									</script>
 										<?php include('modal_delete.php'); ?>
-                                        
+                                                  
                       <thead>
                         <tr>
                          <th><input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');"></th>

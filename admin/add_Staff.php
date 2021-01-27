@@ -21,13 +21,13 @@ authorize($_SESSION["access3"]["sMan"]["aes"]["delete"]) ) {
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 } ?>
-  <?php $get_RegNo= $_GET['id']; ?>
+  <?php $get_RegNo=  isset($_GET['id']) ? $_GET['id'] : ''; ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
           <div class="page-title">
 <div class="title_left">
-<h3>Staff Employment Details
+<h3>Staff Record Management
 </h3>
 </div>
 </div><div class="clearfix"></div>
@@ -37,20 +37,7 @@ message("You don't have the permission to access this page", "error");
               <div class="col-md-12">
                 
 				 <!-- /Organization Setup Form -->
-				
-					<?php 
-					
-					$num=$get_RegNo;
-				if ($num!==null){
-			include('editStaff.php');
-			}else{
-			
-				include('addStaff.php');
-				//statusUser();
-				//
-				 }?>
-				
-                   <!-- /Organization Setup Form End -->
+				   <!-- /Organization Setup Form End -->
                  
                   
                   
@@ -58,13 +45,79 @@ message("You don't have the permission to access this page", "error");
               </div>
             </div>
 
+					<?php 
+if(isset($_POST['delete_staff'])){
+if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect("add_Staff.php?view=Employeelist");
+			}elseif(empty($_POST['selector'])){
+				message("Select at least One Student Record to proceed !", "error");
+		       redirect("add_Staff.php?view=Employeelist");
+				}else{ $id=$_POST['selector']; $N = count($id);
+for($i=0; $i < $N; $i++)
+{$row = mysqli_fetch_array(mysqli_query($condb,"select * from staff_details where staff_id ='".$id[$i]."' "));
+	extract($row); $userimage = imgExists($image); $staffsign = imgExists($sign_img); $usern = $usern_id;
+	mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Staff Details of $sname $oname with staff username ".$usern_id."  was Deleted by ". $admin_username.". ')")or die(mysqli_error($condb));
+	$result = mysqli_query($condb,"DELETE FROM staff_details where staff_id='$id[$i]'");
+	if(!empty($userimage)){unlink("$image");}if(!empty($staffsign)){unlink("$sign_img");}
+    $result = mysqli_query($condb,"DELETE FROM admin where admin_id='$usern[$i]'");
+}
+message("Employee Record Successfuly Deleted", "error");
+redirect("add_Staff.php?view=Employeelist");
+}}
+
+                        // Student record upload in CSV
+   if(isset($_POST['importstaff'])){
+if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+      redirect("add_Staff.php?view=Employeelist");}else{
+    		//check if input file is empty
+    		if(!empty($_FILES['fileNames']['name'])){
+    			$filename = $_FILES['fileNames']['tmp_name'];
+    			$fileinfo = pathinfo($_FILES['fileNames']['name']);
+     //check file extension
+    			if(strtolower($fileinfo['extension']) == 'csv'){
+    				//check if file contains data
+    				if($_FILES['fileNames']['size'] > 0){
+     $file = fopen($filename, 'r'); $flag = true;  $k = 0; $s=10; $appnum = 0;
+while(($impData = fgetcsv($file, 1000, ',')) !== FALSE){ 
+ if($flag) { $flag = false; continue; } 
+  $k++; if ( $k > 1 ) {
+    //$fn = strtoupper(substr($impData[1],0,1)); $sn = strtoupper(substr($impData[2],0,1));
+    if(!empty($impData[0])) {
+ $empid = trim($impData[0]); $email = trim($impData[6]); 
+ //$appnum = $fn.$sn.$studentRegno;
+  //$state = trim($impData[5]); $yoe = trim($impData[8]); $yog = $yoe + $p_duration;
+ $Qyrec = mysqli_query($condb,"select * from staff_details where usern_id = '".safee($condb,$empid)."' OR email = '".safee($condb,$email)."' ")or die(mysqli_error($condb));
+ if(mysqli_num_rows($Qyrec)>0){
+    		mysqli_query($condb,"update staff_details  set verify_Data='TRUE',reg_status = '1',
+            sname='".safee($condb,$impData[1])."',mname ='".safee($condb,$impData[2])."', oname = '".safee($condb,$impData[3])."',Gender = '".safee($condb,$impData[4])."',phone = '".safee($condb,$impData[5])."',email ='".safee($condb,$impData[6])."',r_status = '2' where usern_id = '".safee($condb,$empid)."' ")or die(mysqli_error($condb));
+			}else{
+   $query = mysqli_query($condb,"INSERT INTO staff_details (usern_id,sname,mname,oname,Gender,phone,email,r_status) 
+   VALUES ('".safee($condb,$empid)."','".safee($condb,$impData[1])."','".$impData[2]."', '".trim($impData[3])."', '".$impData[4]."','".safee($condb,$impData[5])."','".safee($condb,$impData[6])."','2')")or die(mysqli_error($condb)); //$query = mysqli_query($condb,$sql);
+     if($query){ message("Data imported successfully.", "success");
+		        redirect("add_Staff.php?view=Employeelist");
+    						}else{ message("Cannot import data. Something went wrong.", "error");
+		        redirect("add_Staff.php?view=Employeelist"); }  }
+                      }  }}}else{ message("File contains empty data", "error");
+		    redirect("add_Staff.php?view=Employeelist"); }
+     }else{ message("Please upload CSV files only", "error");
+		           redirect("add_Staff.php?view=Employeelist");}
+  }else{ message("File empty", "error");
+		           redirect("add_Staff.php?view=Employeelist");}
+} } 
+				?>
+				
+                
 
 
              <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
                   
-                    <h2>List of Staff</h2>
+                    <h2><?php  if($_GET['view'] == "addStaff"){ echo "Add Employee Information" ;}if($_GET['view'] == "editStaff"){
+echo "Edit Employee Information";}if($_GET['view'] == "Employeelist"){echo "List Of Employees";}
+  ?></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -75,86 +128,26 @@ message("You don't have the permission to access this page", "error");
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <p class="text-muted font-13 m-b-30">
-                  
-                    </p>
-                    <form action="Delete_staff.php" method="post">
+                 
                     
-                    <table id="datatable-buttons" class="table table-striped table-bordered">
-                      <!-- <table id="datatable" class="table table-striped table-bordered"> --!>
-                    	<a data-placement="right" title="Click to Delete check item"   data-toggle="modal" href="#Delete_staff" id="delete"  class="btn btn-danger" name=""  ><i class="fa fa-trash icon-large"> Delete</i></a>
-									<script type="text/javascript">
-									 $(document).ready(function(){
-									 $('#delete').tooltip('show');
-									 $('#delete').tooltip('hide');
-									 });
-									</script>
-										<?php include('modal_delete.php'); ?>
-                      <thead>
-                        <tr>
-                         <th><input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');"></th>
-                          <th>Staff Name</th>
-                          <th>Gender</th>
-                          <th>Mobile Number</th>
-                          <th>Email Address</th>
-                          <th>State</th>
-                          <th>Job Description</th>
-                          <th>Department</th>
-                           <th>Access Level</th>
-                            <th>Action</th>
-                         <!-- <th>Info</th> --!>
-                          <th>View</th>
-                        </tr>
-                      </thead>
+                     <?php 
+						$view = (isset($_GET['view']) && $_GET['view'] != '') ? $_GET['view'] : '';
+					switch ($view) {
+                	case 'addStaff' :
+		            $content    = 'addStaff.php';
+					break;
+					case 'editStaff' :
+		            $content    = 'editStaff.php';
+					break;
+                    case 'Employeelist' :
+		            $content    = 'Staff_records.php';
+					break;
+		            default :
+		            $content    = 'Staff_records.php';
+                            }
+                     require_once $content;
+					?>
 
-
-                      <tbody>
-                      <?php
-													$user_query = mysqli_query($condb,"select * from staff_details ORDER by sname ASC ")or die(mysqli_error());
-													while($row = mysqli_fetch_array($user_query)){
-													$id = $row['staff_id'];
-														$id3 = $row['staff_id'];
-												      $is_active = $row['u_display'];
-												      $picget = $row['image'];
-								 $exists = imgExists($picget);
-													?>
-                        <tr>
-                        	<td width="30">
-												<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
-												</td>
-                          <td>
-						   <img src="<?php 
-											  if ($exists > 0 ){
-	print $picget;
-	}else{ print "./uploads/NO-IMAGE-AVAILABLE.jpg";}
- ?>" class="avatar" alt="user image">&nbsp;
-						  <a rel="tooltip"  title="View User Details" id="<?php echo $new_a_id; ?>"  onclick="window.open('?details&id2=<?php echo $id;?> ','_self')" data-toggle="modal" class="clickable2-row"><?php echo $row['sname'].'  '.$row['mname'].' '.$row['oname']; ?> </a></td>
-                          <td><?php echo $row['Gender']; ?></td>
-                          <td><?php echo $row['phone']; ?></td>
-                          <td><?php echo $row['email']; ?></td>
-                          <td><?php echo $row['state']; ?></td>
-                          <td><?php echo $row['job_desc']; ?></td>
-                          <td><?php echo getdeptc($row['s_dept']); ?></td>
-                          <td><?php echo getstatus($row['access_level2']); ?></td>
-                          	<td width="120">
-												<a rel="tooltip"  title="Edit School Details" id="<?php echo $id; ?>" href="add_Staff.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-success"><i class="fa fa-pencil icon-large"> Edit Record</i></a>
-												</td>
-												
-										<!--		<td width="90">
-			<a rel="tooltip"  title="View User Details" id="<?php echo $id; ?>" href="?details&id2=<?php echo $id;?>"
-												
-											
-												  data-toggle="modal" class="btn btn-info"><i class="fa fa-file icon-large"> Info</i></a>
-												</td> --!>
-												<td width="90">
-		<a href="javascript:changeUserStatus5(<?php echo $id3; ?>, '<?php echo $is_active; ?>');" class="btn btn-info" ><i class="fa fa-eye"></i>&nbsp;<?php echo $is_active == 'FALSE'? 'Show' : 'Hide'; ?></a>
-												</td>
-                        </tr>
-                     
-                        <?php } ?>
-                      </tbody>
-                      	</form>
-                    </table>
                   </div>
                 </div>
               </div>
@@ -181,7 +174,7 @@ if(isset($_GET['details'])){
     $(document).ready(function(){
         $('#close').click(function(){
             $('#myModal5').fadeOut('fast');
-            windows.location = "add_Staff.php";
+            windows.location = "add_Staff.php?view=Employeelist";
         })
     })
 
@@ -199,7 +192,7 @@ if(isset($_GET['details'])){
 
  <div class="modal-header">
                           
-                          <a href="add_Staff.php" class="close"><span aria-hidden="true"></i>x</span> </a>
+                          <a href="#" onclick="window.open('add_Staff.php?view=Employeelist','_self')" class="close"><span aria-hidden="true"></i>x</span> </a>
                           </button>
                           <h4 class="modal-title" id="myModalLabel">Staff Profile </h4>
                         </div>
@@ -231,7 +224,7 @@ if(isset($_GET['details'])){
 <p><strong>Email Address: </strong> <?php echo $row_b['email'] ;?><strong>&nbsp;&nbsp;&nbsp;Postal Address: </strong> <?php echo $row_b['paddress'] ;?></p>
 
 <p><strong>Contact Address: </strong> <?php echo $row_b['caddress'] ;?><strong>&nbsp;&nbsp;&nbsp;Home Address: </strong> <?php echo $row_b['town'] ;?></p>
-<p><strong>State: </strong> <?php echo $row_b['state'] ;?><strong>&nbsp;&nbsp;&nbsp;Local Government: </strong> <?php echo $row_b['lga'] ;?><strong>&nbsp;&nbsp;&nbsp;Nationality: </strong> <?php echo $row_b['nation'] ;?></p>
+<p><strong>State: </strong> <?php echo $row_b['state'] ;?><strong>&nbsp;&nbsp;&nbsp;Local Government : </strong> <?php echo $row_b['lga'] ;?><strong>&nbsp;&nbsp;&nbsp;Nationality: </strong> <?php echo $row_b['nation'] ;?></p>
 
 <p><strong>Highest Education Qualification: </strong> <?php echo $row_b['heq'] ;?><strong>&nbsp;&nbsp;&nbsp;Course Studed: </strong> <?php echo $row_b['cos'] ;?><strong>&nbsp;&nbsp;&nbsp;Department: </strong> <?php echo getdeptc($row_b['s_dept']) ;?></p>
 
@@ -257,7 +250,7 @@ if(isset($_GET['details'])){
 		</div>
 			
 					<div class="modal-footer">
-					<a href="add_Staff.php" class="btn btn-default"><i class="fa fa-remove"></i>&nbsp;Close</a>
+					<a href="#" onclick="window.open('add_Staff.php?view=Employeelist','_self')" class="btn btn-default"><i class="fa fa-remove"></i>&nbsp;Close</a>
                   
                          <!-- <button  name="change" class="btn btn-primary"><i class="fa fa-check icon-large"></i>Yes</button> --!>
                         </div>

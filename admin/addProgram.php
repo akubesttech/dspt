@@ -1,6 +1,7 @@
 
 <?php
 if(isset($_POST['addpro'])){
+$incate = $_POST['incate'];
 $pname = ucfirst($_POST['pname']);
 $pdesc = ucfirst($_POST['pdesc']);
 $pduration = $_POST['dura'];
@@ -24,14 +25,14 @@ if($count_dura > 0){
 message("The Program Duration  Already Exist Try Again", "error");
 			redirect('add_Program.php?id='.$get_RegNo); 
 }else{
-mysqli_query($condb,"insert into prog_tb (Pro_name,pro_desc,pro_dura,assmax,exammax,certinview,status) values('".safee($condb,$pname)."','".safee($condb,$pdesc)."','".safee($condb,$neworder1)."','".safee($condb,$amax)."','".safee($condb,$exmax)."','".safee($condb,$certinview)."','".safee($condb,$status)."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into prog_tb (Pro_name,pro_desc,pro_dura,assmax,exammax,certinview,status,scate) values('".safee($condb,$pname)."','".safee($condb,$pdesc)."','".safee($condb,$neworder1)."','".safee($condb,$amax)."','".safee($condb,$exmax)."','".safee($condb,$certinview)."','".safee($condb,$status)."','".safee($condb,$incate)."')")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Fee Titled $pname was Add')")or die(mysqli_error($condb)); 
  ob_start();
  message("New Program [$pname] was Successfully Added", "success");
 			redirect('add_Program.php');}
 }else{
-mysqli_query($condb,"insert into prog_tb (Pro_name,pro_desc,pro_dura,assmax,exammax,certinview,status) values('".safee($condb,$pname)."','".safee($condb,$pdesc)."','".safee($condb,$pduration)."','".safee($condb,$amax)."','".safee($condb,$exmax)."','".safee($condb,$certinview)."','".safee($condb,$status)."')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into prog_tb (Pro_name,pro_desc,pro_dura,assmax,exammax,certinview,status,scate) values('".safee($condb,$pname)."','".safee($condb,$pdesc)."','".safee($condb,$pduration)."','".safee($condb,$amax)."','".safee($condb,$exmax)."','".safee($condb,$certinview)."','".safee($condb,$status)."','".safee($condb,$incate)."')")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Ptogram Titled $pname was Add')")or die(mysqli_error($condb)); 
 // ob_start();
@@ -50,19 +51,24 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       
                       <span class="section">Add New Program </span>
-
-<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Program Name </label>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Institution Category * </label>
+                            	  <select name='incate' id="incate" class="form-control" required="required" >
+                            <option value="">Select Category</option>
+                           <?php echo getincate(0,1);?></select>
+                      </div>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Program Name * </label>
                       
                           <input type="text" class="form-control " name='pname' id="pname"  value=""  required="required"> </div>
                           
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Program Description </label>
+					  <label for="heard">Program Description * </label>
                       
                           <input type="text" class="form-control " name='pdesc' id="pdesc"  value=""  required="required"> </div>
                           
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Duration</label>
+						  	  <label for="heard">Duration *</label>
 						  	   <select  name="dura"  id="dura" onchange = "ShowHideDiv20()"  class="form-control" required="required" >
                             <option value="">Select Duration</option><?php //round($rspro['pro_dura'])."".getys(round($rspro['pro_dura'])) 
 $resultpro = mysqli_query($condb,"SELECT DISTINCT pro_dura FROM prog_tb  ORDER BY pro_dura  ASC");
@@ -86,14 +92,14 @@ while($rspro = mysqli_fetch_array($resultpro)){echo "<option value='$rspro[pro_d
                              </select>
                       </div>
                 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Certificate in View </label>
+					  <label for="heard">Certificate in View * </label>
                       
                           <input type="text" class="form-control " name='certv' id="certv"  value=""  required="required"> </div>
                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-					  <label for="heard">Max Assessment Score </label><input type="text" class="form-control " name='assmax' id="assmax"   placeholder="eg.Assessment (30%)" onkeypress="return isNumber(event);" required="required"> </div>
+					  <label for="heard">Max Assessment Score * </label><input type="text" class="form-control " name='assmax' id="assmax"   placeholder="eg.Assessment (30%)" onkeypress="return isNumber(event);" required="required"> </div>
                           
                           <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-					  <label for="heard">Max Exam Score  </label><input type="text" class="form-control " name='exammax' id="exammax"   placeholder="eg.Exam (70%)" onkeypress="return isNumber(event);" required="required"> </div>
+					  <label for="heard">Max Exam Score *  </label><input type="text" class="form-control " name='exammax' id="exammax"   placeholder="eg.Exam (70%)" onkeypress="return isNumber(event);" required="required"> </div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                         

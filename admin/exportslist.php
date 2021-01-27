@@ -1,5 +1,5 @@
 <?php
-
+ob_start();
 /**
  * @author lolkittens
  * @copyright 2020
@@ -52,5 +52,5 @@ $countt = mysqli_num_rows($viewutme_query);
      echo $output;
     //}
 	
-
+ ob_end_flush();
 ?>

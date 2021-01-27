@@ -19,7 +19,7 @@ authorize($_SESSION["access3"]["sConfig"]["adep"]["delete"]) ) {
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 } ?>
-  <?php $get_RegNo= $_GET['id']; ?>
+  <?php $get_RegNo = isset($_GET['id']) ? $_GET['id'] : '';  ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -38,11 +38,8 @@ message("You don't have the permission to access this page", "error");
 				
 					<?php 
 					$num=$get_RegNo;
-				if ($num!==null){
-			include('editDept.php');
-			}else{
-			
-				include('addDept.php'); }?>
+                    if(!empty($get_RegNo)){
+				include('editDept.php');}else{ include('addDept.php'); }?>
 				
                    <!-- /Organization Setup Form End -->
                  

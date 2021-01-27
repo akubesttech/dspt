@@ -5,24 +5,72 @@
 include('./admin/lib/dbcon.php'); 
 dbcon(); 
 $curl = curl_init();
-
+$scom = getcomm($_POST['ft_cat']);
+//$scom2 = getcomm($_POST['ft_cat'],$_POST['ft_cat']);
 $email = $_POST['emailx'];
-$amountn = $_POST['total'] ;  //the amount in kobo. This value is actually NGN 300
-$tcharge = getptcharge($amountn,1.5); $amountp = $amountn + $tcharge; $amount = $amountp * 100;
+$amountn = $_POST['total'] ;  //the amount in kobo. This value is actually NGN 300 for 30,000kobo
+$amount =  getsplit($amountn,1.523,1.5,15,$scom,0,3) * 100; //amount to pay
+$amountsa =  getsplit($amountn,1.523,1.5,15,$scom,0,1) * 100;
+$amountsb =  getsplit($amountn,1.523,1.5,15,$scom,0,2) * 100;
+$bassamount = getsplit($amountn,1.523,1.5,15,$scom,0,0) * 100;
 // url to go to after payment
-//$callback_url = 'myapp.com/pay/callback.php';  
-$callback_url = host().'callback.php'; 
-
-curl_setopt_array($curl, array(
+$callback_url = host().'callback.php';
+$urllogin = host();
+if(empty($scom)){
+     curl_setopt_array($curl, array(
   CURLOPT_URL => "https://api.paystack.co/transaction/initialize",
   CURLOPT_RETURNTRANSFER => true,
+   CURLOPT_ENCODING => "",
+   CURLOPT_MAXREDIRS => 10,
+   CURLOPT_TIMEOUT => 30,
+   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_POSTFIELDS => json_encode([
     'amount'=>$amount,
     'email'=>$email,
-     "reference" => $_POST['merchant_ref1'],
-    'callback_url' => $callback_url
-  ]),
+  //'bearer' => "subaccount",
+    "reference" => $_POST['merchant_ref1'],
+    'callback_url' => $callback_url,
+    'subaccount' => t_ACCTS,//school account
+    'transaction_charge' => $bassamount,
+   ]),
+CURLOPT_HTTPHEADER => [
+    //"authorization: Bearer sk_test_07a04bc4d12ea7c4640ba82055729ff1175def5a", //replace this with your own test key
+    "authorization: Bearer ".t_gate,
+    "content-type: application/json",
+    "cache-control: no-cache"
+  ],
+)); 
+    }else{
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://api.paystack.co/transaction/initialize",
+  CURLOPT_RETURNTRANSFER => true,
+   CURLOPT_ENCODING => "",
+   CURLOPT_MAXREDIRS => 10,
+   CURLOPT_TIMEOUT => 30,
+   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode([
+    'amount'=>$amount,
+    'email'=>$email,
+    "reference" => $_POST['merchant_ref1'],
+    'callback_url' => $callback_url,
+     "split" => ([
+      "type" => "flat",
+      "bearer_type" => "account",
+      "subaccounts" => [
+                  [
+                  "subaccount" => t_ACCTS,//school account
+                  "share" => $amountsa
+                  ],
+                  [
+                  "subaccount" => t_ACCTB,//bisapp account
+                  "share" => $amountsb
+                  ],
+                         ]
+                   ]) ,
+                
+                  ]),
   CURLOPT_HTTPHEADER => [
     //"authorization: Bearer sk_test_07a04bc4d12ea7c4640ba82055729ff1175def5a", //replace this with your own test key
     "authorization: Bearer ".t_gate,
@@ -30,7 +78,7 @@ curl_setopt_array($curl, array(
     "cache-control: no-cache"
   ],
 ));
-
+}
 $response = curl_exec($curl);
 $err = curl_error($curl);
 
@@ -44,6 +92,7 @@ $tranx = json_decode($response, true);
 if(!$tranx->status){
   // there was an error from the API
   print_r('API returned error: ' . $tranx['message']);
+  print_r("<a href=".$urllogin."apply_b.php?view=f_select class='button' target='_self'><br>if this page still display after 30 sec ..<br> Click Here to <strong> GO Back </strong> to Initiate the Payment Again. </a></strong>"); 
 }
 
 // comment out this line if you want to redirect the user to the payment page

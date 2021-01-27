@@ -47,40 +47,40 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 
                     		<form name="register" method="post" enctype="multipart/form-data" id="register">
 <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
-<input type="hidden" class="form-control fac"    name='fac' id="fac_1"  placeholder="<?php echo $SCategory; ?>" >
-<input type="hidden" class="form-control dept1"    name='dept1' id="dept1_1"  placeholder="" >
-<input type="hidden" class="form-control prog"    name='prog' id="prog_1"  placeholder="" >
-<input type="hidden" class="form-control prog"    name='acs2' id="acs2_1"  placeholder="" >
+<input type="hidden" class="form-control "    name='fac' id="fac" tabindex="3"  placeholder="<?php echo $SCategory; ?>" >
+<input type="hidden" class="form-control "    name='dept1' id="dept1" tabindex="6"  placeholder="" >
+<input type="hidden" class="form-control "    name='prog' id="prog" tabindex="7"  placeholder="" >
+<input type="hidden" class="form-control "    name='acs2' id="acs2" tabindex="14"  placeholder="" >
 
 
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
-Enter Matric Number and Click Sujested Matric No To Edit/View Student Academic Status. <?php  //echo getAcastatus()  ; ?>
+Enter Matric Number To Edit/View Student Academic Status,Make Comments and Date of Graduation. <?php  //echo getAcastatus()  ; ?>
                   </div>
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Matric Number*</label>
-<div class="form-group"><input type="text" class="form-control matno" id='matno_1' name='matno'  placeholder=" Matric No" required="required" > </div></div>
+<div class="form-group"><input type="text" class="form-control "  name="matno1" id="matno1"  onkeyup="getacastatus2(this.value);" onblur="getacastatus2(this.value);" tabindex="1" placeholder=" Matric No" required="required" > </div></div>
 
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
  <label for="name">Student Full Name (Surname First)</label>
-<div class="form-group"><input type="text" class="form-control fname"    name='fname' id="fname_1"  placeholder="Student Full Name" readonly></div></div>
+<div class="form-group"><input type="text" class="form-control "    name='fname' id="fname" tabindex="2"  placeholder="Student Full Name" readonly></div></div>
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Programme</label>
-<div class="form-group"><input type="text" class="form-control progn"    name='progn' id="progn_1"  placeholder="Programme of Study" readonly></div></div>
+<div class="form-group"><input type="text" class="form-control "    name='progn' id="progn" tabindex="8" placeholder="Programme of Study" readonly></div></div>
 
 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback"  >
  <label for="email"><?php echo $SCategory; ?></label>
-<div class="form-group"><input type="text" class="form-control fac2"    name='fac2' id="fac2_1" required="required" placeholder="<?php echo $SCategory; ?>" readonly ></div></div>
+<div class="form-group"><input type="text" class="form-control "    name='fac2' id="fac2" required="required" placeholder="<?php echo $SCategory; ?>" tabindex="5" readonly ></div></div>
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Department</label>
-<div class="form-group"><input type="text" class="form-control dept2"    name='dept2' id="dept2_1" required="required" placeholder="" readonly ></div></div>
+<div class="form-group"><input type="text" class="form-control "    name='dept2' id="dept2" required="required" placeholder="" readonly ></div></div>
  
  <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback"  style="display:block; " id="penper"  >
  <label for="email">Academic Status</label>
-<div class="form-group"><input type="text" class="form-control acs"    name='acs' id="acs_1"  placeholder="" readonly ></div></div>
+<div class="form-group"><input type="text" class="form-control "    name='acs' id="acs" tabindex="13"  placeholder="" readonly ></div></div>
  
  <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback" style="display:none; " id="changestatus"><label for="heard">Academic Status</label>
 <div class="form-group"><select name='changestatus' id="changestatus"    class="form-control"   >
@@ -93,20 +93,20 @@ Enter Matric Number and Click Sujested Matric No To Edit/View Student Academic S
     
  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Academic Session</label>
-<div class="form-group"><input type="text" class="form-control "    name='sec' id="sec_1" readonly></div></div> 
+<div class="form-group"><input type="text" class="form-control "    name='sec' id="sec" tabindex="12" readonly></div></div> 
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
  <label for="email">Sessional CGPA</label>
-<div class="form-group"><input type="text" class="form-control "    name='scgpa' id="scgpa_1"   readonly></div></div> 
+<div class="form-group"><input type="text" class="form-control "    name='scgpa' id="scgpa" tabindex="9"  readonly></div></div> 
 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
  <label for="email">Date of Graduation</label>
-<div class="form-group">  <input type="text" name='dog' id="dog_1" class="input-large w8em format-d-m-y highlight-days-67 range-middle-today form-control"  required   placeholder = "Date Created" readonly>
+<div class="form-group">  <input type="text" name='dog' id="dog" class="input-large w8em format-d-m-y highlight-days-67 range-middle-today form-control" tabindex="10"  required   placeholder = "Date Created" readonly>
                                           </div></div> 
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  ><label for="email">Comments</label>
                                           <div class="form-group">
                                           
-                                          <textarea name='comm' id="comm_1" class="span7" placeholder = "Comments" style="width:220px;"></textarea>
+                                          <textarea name='comm' id="comm" class="span7" placeholder = "Comments" tabindex="11" style="width:220px;"></textarea>
                                           </div>
                                         </div>
 

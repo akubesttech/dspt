@@ -38,10 +38,10 @@ if(isset($_GET['stu_mat'])){
 if(isset($_POST['st_mat'])){
     //$f_data = $_POST['form_data'];
     $st_mat = $_POST['st_mat'];
-    $up[]= update_status($condb,$_POST['id_status'],$st_mat,"Local Government",$_POST['ld_rem']??null);
-    $up[]= update_status($condb,$_POST['at_status'],$st_mat,"attest",$_POST['at_rem']??null);
-    $up[]= update_status($condb,$_POST['ol_status'],$st_mat,"O level Result",$_POST['ol_rem']??null);
-    $up[]= update_status($condb,$_POST['bc_status'],$st_mat,"Birth Certificate",$_POST['bc_rem']??null);
+    $up[]= update_status($condb,$_POST['id_status'],$st_mat,"Local Government",$_POST['ld_rem']);
+    $up[]= update_status($condb,$_POST['at_status'],$st_mat,"attest",$_POST['at_rem']);
+    $up[]= update_status($condb,$_POST['ol_status'],$st_mat,"O level Result",$_POST['ol_rem']);
+    $up[]= update_status($condb,$_POST['bc_status'],$st_mat,"Birth Certificate",$_POST['bc_rem']);
 
     echo json_encode(array('res'=>$up));
 

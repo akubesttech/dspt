@@ -1,6 +1,7 @@
 
 <?php
 if(isset($_POST['addpro'])){
+$incate = $_POST['incate'];
 $pname = ucfirst($_POST['pname']);
 $pdesc = ucfirst($_POST['pdesc']);
 $pduration = $_POST['dura'];
@@ -25,7 +26,7 @@ if($pduration=="Others"){
 if($count_dura > 1){ 
 message("The Program Duration  Already Exist Try Again", "error");
 			redirect('add_Program.php?id='.$get_RegNo);}else{
-mysqli_query($condb,"update  prog_tb set Pro_name='".safee($condb,$pname)."',pro_desc='".safee($condb,$pdesc)."',pro_dura='".safee($condb,$neworder1)."',status='".safee($condb,$status)."',assmax = '".safee($condb,$amax)."',exammax = '".safee($condb,$exmax)."' where pro_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
+mysqli_query($condb,"update  prog_tb set Pro_name='".safee($condb,$pname)."',pro_desc='".safee($condb,$pdesc)."',pro_dura='".safee($condb,$neworder1)."',status='".safee($condb,$status)."',assmax = '".safee($condb,$amax)."',exammax = '".safee($condb,$exmax)."',scate = '".safee($condb,$incate)."' where pro_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Fee Titled $pname was Add')")or die(mysqli_error($condb)); 
  ob_start();
@@ -33,7 +34,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 			redirect('add_Program.php');}
 
 }else{
-mysqli_query($condb,"update  prog_tb set Pro_name='".safee($condb,$pname)."',pro_desc='".safee($condb,$pdesc)."',pro_dura='".safee($condb,$pduration)."',certinview='".safee($condb,$certinview)."',status='".safee($condb,$status)."',assmax = '".safee($condb,$amax)."',exammax = '".safee($condb,$exmax)."' where pro_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
+mysqli_query($condb,"update  prog_tb set Pro_name='".safee($condb,$pname)."',pro_desc='".safee($condb,$pdesc)."',pro_dura='".safee($condb,$pduration)."',certinview='".safee($condb,$certinview)."',status='".safee($condb,$status)."',assmax = '".safee($condb,$amax)."',exammax = '".safee($condb,$exmax)."',scate = '".safee($condb,$incate)."' where pro_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Ptogram Titled $pname was Add')")or die(mysqli_error($condb)); 
 // ob_start();
@@ -51,24 +52,30 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <?php
 								$query_d = mysqli_query($condb,"select * from prog_tb where pro_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
 								$row_p = mysqli_fetch_array($query_d);
+                                
 								?>
                     		<form name="addFee1" method="post" enctype="multipart/form-data" id="addFee1">
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       
                       <span class="section">Edit  Program  </span>
-
-<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Program Name </label>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Institution Category * </label>
+                            	  <select name='incate' id="incate" class="form-control" required="required" >
+                            <option value=" <?php echo getincate($row_p['scate']);?>"> <?php echo getincate($row_p['scate']);?></option>
+                           <?php echo getincate(0,1);?></select>
+                      </div>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Program Name * </label>
                       
                           <input type="text" class="form-control " name='pname' id="pname"  value="<?php echo $row_p['Pro_name']; ?>"  required="required"> </div>
                           
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Program Description </label>
+					  <label for="heard">Program Description * </label>
                       
                           <input type="text" class="form-control " name='pdesc' id="pdesc"  value="<?php echo $row_p['pro_desc']; ?>"  required="required"> </div>
                           
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Duration</label>
+						  	  <label for="heard">Duration *</label>
                             	  <select name="dura" onchange = "ShowHideDiv20()" id="dura" class="form-control"  required>
                             <option value="<?php echo $row_p['pro_dura']; ?>"><?php echo getys($row_p['pro_dura'])." ".getfra($row_p['pro_dura']); ?></option>
                            
@@ -105,14 +112,14 @@ echo "<option value='$rspro[pro_dura]'>".getys($rspro['pro_dura'])." ".getfra($r
                              </select>
                       </div>
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">Certificate in View </label>
+					  <label for="heard">Certificate in View *</label>
                       
                           <input type="text" class="form-control " name='certv' id="certv"  value="<?php echo $row_p['certinview']; ?>"  required="required"> </div>
                   <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-					  <label for="heard">Max Assessment Score </label><input type="text" class="form-control " name='assmax' id="assmax"  value="<?php echo $row_p['assmax']; ?>" placeholder="eg.Assessment (30%)" onkeypress="return isNumber(event);"  required="required"> </div>
+					  <label for="heard">Max Assessment Score * </label><input type="text" class="form-control " name='assmax' id="assmax"  value="<?php echo $row_p['assmax']; ?>" placeholder="eg.Assessment (30%)" onkeypress="return isNumber(event);"  required="required"> </div>
                           
                           <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-					  <label for="heard">Max Exam Score  </label><input type="text" class="form-control " name='exammax' id="exammax" onkeypress="return isNumber(event);"  value="<?php echo $row_p['exammax']; ?>" placeholder="eg.Exam (70%)" required="required"> </div>
+					  <label for="heard">Max Exam Score * </label><input type="text" class="form-control " name='exammax' id="exammax" onkeypress="return isNumber(event);"  value="<?php echo $row_p['exammax']; ?>" placeholder="eg.Exam (70%)" required="required"> </div>
 					  
                       <div class="form-group">
                       <div class="col-md-6 col-md-offset-3">

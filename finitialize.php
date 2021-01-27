@@ -78,7 +78,7 @@ curl_setopt_array($curl, array(
     "cache-control: no-cache"
   ],
 ));
-
+}
 $response = curl_exec($curl);
 $err = curl_error($curl);
 

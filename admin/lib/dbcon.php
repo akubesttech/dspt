@@ -73,13 +73,14 @@ function hRoot(){
 	$url = $_SERVER['DOCUMENT_ROOT']."/";
 	return $url;
 }
-global $from ,$replyto,$SCategory,$comn,$SGdept1,$SGdept2;
+global $from ,$replyto,$SCategory,$comn,$SGdept1,$SGdept2,$CA2,$infomail;
 $from = "support@deltasmartcity.ng";
 $replyto = "ifennalue2018@gmail.com";
 $SCategory = "School";
 $SGdept1 = "Department"; $SGdept2 = "SUBJECT_COMB";
 $comn="Delta state Smart Education DSPT";
-
+$CA2="Pratical";
+$infomail = "inquiry@deltasmartcity.ng" ;
 //parse string
 function gstr(){
     $qstr = $_SERVER['QUERY_STRING'];
@@ -143,8 +144,7 @@ function getpaystatus($statnum)
      
   function getggroup($statnum)
 {if ($statnum==01){return "General";
-  }else if($statnum==02){return "Entrance Exam";}}
-  
+  }else if($statnum==02){return "Entrance Exam";}else if($statnum==03){return "Promotion Status";}}
    function getcateg($statnum)
 { global $SCategory; if ($statnum==3){return "General";}else if($statnum==2){return $SCategory;}else if($statnum==1){return "Department";}}
 
@@ -677,9 +677,13 @@ $nameclass22=$count_hod['mcode']; return $nameclass22;}
 // function to student payment status for the section
 function getpayn($mat,$sec,$prog,$lev,$sh){ $conn = 0; //$sh = 0;
     $getstd = $viewutme_query = mysqli_query(Database::$conn,"select * from student_tb WHERE stud_id = '".safee($conn,$mat)."' ")or die(mysqli_error($conn));
-$fetstd = mysqli_fetch_array($getstd); $matno = $fetstd['RegNo']; $appno = $fetstd['appNo']; $state = $fetstd['state']; 
+$fetstd = mysqli_fetch_array($getstd); $matno = $fetstd['RegNo']; $appno = $fetstd['appNo']; $state = $fetstd['state']; $acad = $fetstd['acads'];
     if($state == "Delta"){ $scan = "1";}else{ $scan = "0";}
-    $qcompamtd = mysqli_query(Database::$conn,"select * from fee_db where ft_cat ='1' and level= '".safee($conn,$lev)."' and program='".safee($conn,$prog)."' and status = '1' and Cat_fee = '".safee($conn,$scan)."' ") or die(mysqli_error($conn)); $sumcreditm=0;
+    $qcompamt = "select * from fee_db where  level= '".safee(Database::$conn,$lev)."' and program='".safee(Database::$conn,$prog)."' and status = '1' and Cat_fee = '".safee(Database::$conn,$scan)."' ";            
+if($acad == 8){ $qcompamt.= " and ft_cat ='6' ";}else{$qcompamt.= " and ft_cat ='1' ";}
+$qcompamtd = mysqli_query(Database::$conn,$qcompamt) or die(mysqli_error(Database::$conn));
+//$qcompamtd = mysqli_query(Database::$conn,"select * from fee_db where ft_cat ='1' and level= '".safee($conn,$lev)."' and program='".safee($conn,$prog)."' and status = '1' and Cat_fee = '".safee($conn,$scan)."' ") or die(mysqli_error($conn));
+     $sumcreditm=0;
 while($row_camt = mysqli_fetch_array($qcompamtd)){ 
 $paysidm = $row_camt['fee_id']; $dpercm = $row_camt['pper']; 
 $psdatem = $row_camt['psdate'];  $famountm =$row_camt['f_amount'];
@@ -687,10 +691,12 @@ $date20m = str_replace('/', '-', $psdatem );  $newDate20m = date("Y-m-d", strtot
 $penaltysumm = FeesCalc($famountm,$dpercm,$newDate20m); $difpm = $penaltysumm - $famountm ;
 if($dpercm > 0 and $date_nowm >= $newDate20m){  $namountm = $penaltysumm; }else{  $namountm = $famountm; }
 $sumcreditm += $namountm;  }
-$nocompm = mysqli_num_rows($qcompamtd); if($sumcreditm > 0){   $com_payamt = $sumcreditm; }else{ $com_payamt = 0; } 
-if(empty($matno)){
-$querycompamount = mysqli_query(Database::$conn,"select * from feecomp_tb where fcat ='1' and level= '".safee($conn,$lev)."' and prog='".safee($conn,$prog)."' and pstatus = '1' and session = '".safee($conn,$sec)."' and regno = '".safee($conn,$appno)."' ") or die(mysqli_error($conn));}else{
-$querycompamount = mysqli_query(Database::$conn,"select * from feecomp_tb where fcat ='1' and level= '".safee($conn,$lev)."' and prog='".safee($conn,$prog)."' and pstatus = '1' and session = '".safee($conn,$sec)."' and regno = '".safee($conn,$matno)."'") or die(mysqli_error($conn));} $sumcredito=0;
+$nocompm = mysqli_num_rows($qcompamtd); if($sumcreditm > 0){   $com_payamt = $sumcreditm; }else{ $com_payamt = 0; }
+$qamt = "select * from feecomp_tb where level= '".safee(Database::$conn,$lev)."' and prog='".safee(Database::$conn,$prog)."' and pstatus = '1' and session = '".safee(Database::$conn,$sec)."' ";
+if(empty($matno)){ $qamt.= " and regno = '".safee(Database::$conn,$appno)."' ";}else{$qamt.= " and regno = '".safee(Database::$conn,$matno)."' ";}
+if($acad == 8){ $qamt.= " and fcat ='6' ";}else{$qamt.= " and fcat ='1' ";}
+$querycompamount = mysqli_query(Database::$conn,$qamt) or die(mysqli_error(Database::$conn));
+$sumcredito=0;
 $nocomp = mysqli_num_rows($querycompamount); while($row_camount = mysqli_fetch_array($querycompamount)){ $famountc =$row_camount['f_amount'];
 $sumcredito += $famountc;   }
 if($sumcredito > 0){   $com_amount = $sumcredito; }else{ $com_amount = 0; }
@@ -704,6 +710,7 @@ $que_checkpay=mysqli_query(Database::$conn,"select SUM(paid_amount) as samount f
  Payment Status : Not Paid &nbsp;&nbsp;&nbsp;&nbsp;&nbsp";$pstatus2 = 0; }
 if($sh > 0){ return $pstatus2; }else{ return $pstatus;}
 }
+
 
 function send_email($data) {
 	$email = $data['to'];
@@ -840,11 +847,11 @@ function FeesCalc($Fees,$per,$sdate){
             return $TotalFees = $late+$Fees;}else{ return $TotalFees = $Fees; }}
  function getfeecat($statnum20 ="",$n = ""){
  if(empty($n)){
-if ($statnum20==1){ return "School Fee(s)";} else if($statnum20==2){
+if ($statnum20==1){ return "Service Charge";} else if($statnum20==2){
 return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
-}else if($statnum20==0){ return "Others"; }
+}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==0){ return "Others"; }
 }else{ $output = '';  
-	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Others" =>"0"); 
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Others" =>"0"); 
 foreach($arr as $val => $nvalue)
 	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
  return $output;}
@@ -890,19 +897,56 @@ $count_fac = mysqli_fetch_array($query2_fac);
  $nameclass2=$count_fac['FirstName']." ".$count_fac['SecondName']." ".$count_fac['Othername'];
 return $nameclass2;
 }
-//sessional CGPA
-function getcgpa($s_id,$prog,$sess,$lev){ $tp = 0; $cu = 0; $tp2 =0; $cu2 =0;
-$queryf = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'First' and exam > 0  ") or die(mysqli_error($conn)); $gp=0;
- $querys = mysqli_query(Database::$conn,"Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' and session = '".$sess."' and level ='".$lev."' and semester = 'Second' and exam > 0  ") or die(mysqli_error($conn)); $gp2=0;
-while($row_camt = mysqli_fetch_array($queryf)){
+//sessional/final CGPA
+function getcgpa($s_id,$prog,$sess="",$lev=""){ $tp = 0; $cu = 0; $cgpa = "0.00";
+$sqlGRD = mysqli_query(Database::$conn,"select * from grade_tb where prog ='".safee(Database::$conn,$prog)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error(Database::$conn)); 
+    $getmg2 = mysqli_fetch_array($sqlGRD);    $getpassl = $getmg2['b_max'];
+$queryf = "Select Distinct course_code,c_unit,session,semester,total from results WHERE student_id = '".trim($s_id)."' "; 
+if(!empty($sess)){$queryf .= " and session = '".$sess."'";}
+    if(!empty($lev)){$queryf .= " and level ='".$lev."'";}
+ $queryf .= "and exam > 0 and total >= '".safee(Database::$conn,$getpassl)."'";
+ $queryresult = mysqli_query(Database::$conn,$queryf) or die(mysqli_error(Database::$conn));
+while($row_camt = mysqli_fetch_array($queryresult)){
     $gp1 = gradpoint($row_camt['total'],$prog) * $row_camt['c_unit']; $tp += $gp1 ; $cu += $row_camt['c_unit'];
   }
-  if($tp != 0){ $gp = round($tp/$cu,2); }else{ $gp = 0.00;}
-    while($row_camts = mysqli_fetch_array($querys)){
-    $gp2 = gradpoint($row_camts['total'],$prog) * $row_camts['c_unit']; $tp2 += $gp2 ; $cu2 += $row_camts['c_unit'];
-    }
-    if($tp2 != 0){ $gp2 = round($tp2/$cu2,2); }else{ $gp2 = 0.00;}  
-    if($gp2  > 0){ return $cgpa = round($gp + $gp2 / 2,2); }else{ return $cgpa = $gp; }
+ if($tp  > 0){ return $cgpa = round($tp/$cu,2,2); }else{ return $cgpa = "0.00"; }
+}
+//institution category
+ function getincate($statnum ="",$loaddropdown = "")
+{  if(empty($loaddropdown)){
+    if ($statnum==1){ return "University"; }else if($statnum==2){return "Polytechnics";
+  }else if($statnum==3){ return "College";}
+  }else{ $output = '';  
+	$arr = array("University" =>"1","Polytechnics" =>"2","College" =>"3"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;}
+  }
+  //get institution
+  function getinstitution($get_RegNo){$conn="";  $query2_fac = mysqli_query(Database::$conn,"select scate from prog_tb where pro_id = '".safee($conn,$get_RegNo)."' ")or die(mysqli_error($conn));
+$count_fac = mysqli_fetch_array($query2_fac);
+ $nameclass2=$count_fac['scate'];
+return $nameclass2;
+}
+//role Category
+ function getRolecategory($statnum ="",$loaddropdown = "")
+{  if(empty($loaddropdown)){
+    if ($statnum==1){ return "Super Admin"; }else if($statnum==2){return "Administrator";
+  }else if($statnum==3){ return "School Heads";}else if($statnum==4){ return "Asst School Heads";}else if($statnum==5){ return "Deans";}
+  else if($statnum==6){ return "HOD";}else if($statnum==7){ return "Registrar";}else if($statnum==8){ return "Bursar";}else if($statnum==9){ return "Librarian";
+  }else if($statnum==10){ return "Academic Staff";}else if($statnum==11){ return "Non Academic Staff";}
+  }else{ $output = '';  
+	$arr = array("Super Admin" =>"1","Administrator" =>"2","School Heads" =>"3","Asst School Heads" =>"4","Deans" =>"5","HOD" =>"6","Registrar" =>"7","Bursar" =>"8","Librarian" =>"9","Academic Staff" =>"10","Non Academic Staff" =>"11"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;}
+  }
+  //get sign/Authorizer view
+  function getAuthview($statnum ="")
+{ if ($statnum==1){ return "FALSE"; }else if($statnum==2){return "FALSE";
+  }else if($statnum==3){ return "TRUE";}else if($statnum==4){ return "FALSE";}else if($statnum==5){ return "FALSE";}
+  else if($statnum==6){ return "FALSE";}else if($statnum==7){ return "TRUE";}else if($statnum==8){ return "FALSE";}else if($statnum==9){ return "FALSE";
+  }else if($statnum==10){ return "FALSE";}else if($statnum==11){ return "FALSE";}
 }
 
   function getAcastatus($statnum ="",$n = "")

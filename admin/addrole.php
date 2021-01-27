@@ -48,17 +48,7 @@ message("Role Was Successfully Added", "success");
 
 }
 ?>
-<?php
 
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
-	
-
-?>
 <div class="x_panel">
                 
              
@@ -83,12 +73,11 @@ $s=3;
                 	 <input type="text" class="form-control "    name='roledesc' id="roledesc"  placeholder="Example : Administartor" >
 			    					</div></div>
                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Role Order *</label>
+						  	  <label for="heard">Role Category *</label>
                             	  	 <select class="form-control" name="order" id="order" required="required">
-<option value="">Select Role Order</option>
-<?php for($x=1;$x<11;$x++){
-	echo '<option value="'.$x.'">'.$x.'</option>';
-	} ?>
+<option value="">Select Role Category</option><?php //for($x=1;$x<11;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
+echo getRolecategory(0,1);
+ ?>
  </select>
                       </div>
                    

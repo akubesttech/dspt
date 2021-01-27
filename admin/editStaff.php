@@ -11,33 +11,15 @@ userID.value.changeToUpperCase();
 }
 </script>
 
-</script>
-
-<script type="text/javascript">
-
-</script>
-
 <script type="text/javascript">   
-$(document).ready(function() {   
-$('#jdesc').change(function(){   
-if($('#jdesc').val() === 'Others')   
-   {   
-   $('#addjob0').show(); 
-      $('#addjob').show();    
-   }   
-else 
-   {   
-   $('#addjob0').hide(); 
-      $('#addjob').hide();      
-   }   
-});   
-});   
+
 </script>
 
 <?php
 								$query_staff = mysqli_query($condb,"select * from staff_details where staff_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
-								$row_staff = mysqli_fetch_array($query_staff);   $picget = $row_staff['image'];
-								 $exists = imgExists($picget);
+								$row_staff = mysqli_fetch_array($query_staff);   
+                                $picget = $row_staff['image']; $signimg = $row_staff['sign_img'];
+								 $exists = imgExists($picget); $exists_sign = imgExists($signimg);
 								?>
 <?php
 if(isset($_POST['addStaff'])){
@@ -49,9 +31,9 @@ $jdesc = $_POST['jdesc'] ; $addjob = $_POST['addjob'] ; $heq = $_POST['heq'] ; $
 $doe = $_POST['doe'] ; $acctnum = $_POST['acctnum'] ; $fac1 = $_POST['fac2'] ; $dept1 = $_POST['dept1'];
 $moe = $_POST['moe'] ; $bname = $_POST['bname'] ;$acctname = $_POST['acctname'] ; $scode = $_POST['scode'] ; $sid = $_POST['sid'];
  $o_qual = $_POST['o_qual'] ; $title = $_POST['stitle']; $s_posi = $_POST['s_posi'] ;
-$image_find = $_POST['pic'] ; $Cverify = $_POST['Cverify'] ; $time=date('l jS \of F Y h:i:s A');
+ $Cverify = $_POST['Cverify'] ; $time=date('l jS \of F Y h:i:s A');
 $webaddress=$_SERVER['HTTP_HOST'];
-
+if($jdesc=="Others"){ $jobn = $addjob;}else{$jobn = $jdesc;}
 
 //$from = "support@edu.smartdelta.ng";
 $query = mysqli_query($condb,"select * from staff_details where usern_id = '$sid' ")or die(mysqli_error($condb));
@@ -67,20 +49,23 @@ $config = mysqli_fetch_array(mysqli_query($condb,"SELECT * FROM schoolsetuptd ")
 
 	
 if ($count > 1){ 
-	message("ERROR: This Staff Record Already Exist,Try Again!", "error");
+	message("ERROR: This Employee Username Already Exist,Try Again!", "error");
 		       redirect('add_Staff.php?id='.$get_RegNo);
 }elseif(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $eaddress)){
 		message("ERROR: Please! Provide a valid Email Address!", "error");
 		      redirect('add_Staff.php?id='.$get_RegNo);
 			}elseif ($email_check > 1){ 
 				message("ERROR:  This Email Address is already in use inside our system. Please try another!", "error");
-		      redirect('add_Staff.php?id='.$get_RegNo);
+		      redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
 			}	elseif ($phone_check > 1){ 
 		message("ERROR:  This Phone Number is already in use inside our system. Please try another.!", "error");
-		        redirect('add_Staff.php?id='.$get_RegNo);
+		        redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
 }else{
-
-if ($exists > 0) {
+$ppic     = $_FILES['pic']['name'];
+$spic     = $_FILES['signimg']['name'];
+$extn = strtolower(pathinfo($ppic, PATHINFO_EXTENSION));
+$extn2 = strtolower(pathinfo($spic, PATHINFO_EXTENSION));
+if ($exists > 0){
 if($_FILES['pic']['size'] == Null){ $thumbnail = $picget; }else{
 unlink($picget);
 $images = uploadProductImage('pic','./uploads/');
@@ -90,11 +75,21 @@ if($_FILES['pic']['size'] == Null){ $thumbnail = ''; }else{
 $images = uploadProductImage('pic','./uploads/');
 $thumbnail = "uploads/".$images['thumbnail'];
 } }
+// sign image remove 
+if ($exists_sign > 0){
+if($_FILES['signimg']['size'] == Null){ $thumbnail2 = $signimg; }else{
+unlink($signimg);
+$images2 = uploadProductImage('signimg','./signimg/');
+$thumbnail2 = "signimg/".$images2['thumbnail'];}
+}else{
+if($_FILES['signimg']['size'] == Null){ $thumbnail2 = ''; }else{
+$images2 = uploadProductImage('signimg','./signimg/');
+$thumbnail2 = "signimg/".$images2['thumbnail'];
+} }
 
 
 
-
-if($ev_actives == '1') {
+if($ev_actives == '1'){
 
 $msg2 = nl2br("Dear $title $sname $mname $oname,.\n
 	This Message was Sent  From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
@@ -105,7 +100,7 @@ $msg2 = nl2br("Dear $title $sname $mname $oname,.\n
 	Date: ".$time."\n
 	
 	..................................................................\n
-	For inquiry and complaint please email admin@smartdelta.com.ng \n
+	For inquiry and complaint please email ".$infomail." \n
 	Thank You Admin!\n\n");
     
 //$random_hash = md5(date('r', time()));
@@ -122,29 +117,35 @@ $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                    'X-Mailer: PHP/' . phpversion(); */
  //define the body of the message.
 ob_start(); //Turn on output buffering
-if($images['thumbnail'] == '1'){
-message("ERROR:  Image width should not be less than 180px .", "error");
-		        redirect('add_Staff.php?id='.$get_RegNo);
+if(!in_array($extn, array('jpg','jpeg','png','gif')) && $_FILES['pic']['tmp_name']!='' ){
+ 	message("Invalid Pics file type. Only  JPG, GIF and PNG types are accepted", "error");
+		        redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
+                	}elseif(!in_array($extn2, array('jpg','jpeg','png','gif'))  && $_FILES['signimg']['tmp_name']!=''){
+message("Invalid sign file type. Only  JPG, GIF and PNG types are accepted", "error");
+		        redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
 }else{
 //@mail($eaddress, $subject, $msg, $headers);
 $mail_data = array('to' => $eaddress, 'sub' => $subject, 'msg' => 'Notify','body' => $msg2, 'srname' => $comn);
 	send_email($mail_data);
-mysqli_query($condb,"update staff_details  set title='".safee($condb,$title)."',position='".safee($condb,$s_posi)."',oder_quali='".safee($condb,$o_qual)."',sname='".safee($condb,$sname)."',mname='".safee($condb,$mname)."',oname='".safee($condb,$oname)."',mstatus='".safee($condb,$Mstatus)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',height='".safee($condb,$sheight)."',phone='".safee($condb,$phone)."',email='".safee($condb,$eaddress)."',paddress='".safee($condb,$paddress)."',caddress='".safee($condb,$caddress)."',town='".safee($condb,$stown)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',job_desc='".safee($condb,$jdesc)."',heq='".safee($condb,$heq)."',cos='".safee($condb,$Cstudy)."',s_fac='".safee($condb,$fac1)."',s_dept='".safee($condb,$dept1)."',doe='".safee($condb,$doe)."',e_mode='".safee($condb,$moe)."',b_name='".safee($condb,$bname)."',b_acct_name='".safee($condb,$acctname)."',b_acct_num='".safee($condb,$acctnum)."',b_sort='".safee($condb,$scode)."',usern_id='".safee($condb,$sid)."',r_status='".safee($condb,$Cverify)."',image ='".safee($condb,$thumbnail)."' where staff_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
+mysqli_query($condb,"update staff_details  set title='".safee($condb,$title)."',position='".safee($condb,$s_posi)."',oder_quali='".safee($condb,$o_qual)."',sname='".safee($condb,$sname)."',mname='".safee($condb,$mname)."',oname='".safee($condb,$oname)."',mstatus='".safee($condb,$Mstatus)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',height='".safee($condb,$sheight)."',phone='".safee($condb,$phone)."',email='".safee($condb,$eaddress)."',paddress='".safee($condb,$paddress)."',caddress='".safee($condb,$caddress)."',town='".safee($condb,$stown)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',job_desc='".safee($condb,$jobn)."',heq='".safee($condb,$heq)."',cos='".safee($condb,$Cstudy)."',s_fac='".safee($condb,$fac1)."',s_dept='".safee($condb,$dept1)."',doe='".safee($condb,$doe)."',e_mode='".safee($condb,$moe)."',b_name='".safee($condb,$bname)."',b_acct_name='".safee($condb,$acctname)."',b_acct_num='".safee($condb,$acctnum)."',b_sort='".safee($condb,$scode)."',usern_id='".safee($condb,$sid)."',r_status='".safee($condb,$Cverify)."',image ='".safee($condb,$thumbnail)."',sign_img ='".safee($condb,$thumbnail2)."' where staff_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Staff Details of $sname $oname with staff id $sid  was Updated')")or die(mysqli_error($condb)); 
 // ob_start();
-	message("Staff Record of [$title $sname $mname $oname ] was Successfully Updated !", "success");
-		        redirect('add_Staff.php');
+	message("Staff Record of [$title $sname $mname $oname ] was Successfully Updated !"." a".$thumbnail." b".$thumbnail2, "success");
+		        redirect('add_Staff.php?view=Employeelist');
 }
 				}else{
-				if($images['thumbnail'] == '1'){
-message("ERROR:  Image width should not be less than 180px .", "error");
-		        redirect('add_Staff.php?id='.$get_RegNo);
+if(!in_array($extn, array('jpg','jpeg','png','gif'))&& $_FILES['pic']['tmp_name']!='' ){
+ 	message("Invalid Pics file type. Only  JPG, GIF and PNG types are accepted", "error");
+		        redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
+                	}elseif(!in_array($extn2, array('jpg','jpeg','png','gif'))&& $_FILES['signimg']['tmp_name']!=''){
+message("Invalid sign file type. Only  JPG, GIF and PNG types are accepted", "error");
+		        redirect('add_Staff.php?view=editStaff&id='.$get_RegNo);
 }else{
-mysqli_query($condb,"update staff_details  set title='".safee($condb,$title)."',position='".safee($condb,$s_posi)."',oder_quali='".safee($condb,$o_qual)."',sname='".safee($condb,$sname)."',mname='".safee($condb,$mname)."',oname='".safee($condb,$oname)."',mstatus='".safee($condb,$Mstatus)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',height='".safee($condb,$sheight)."',phone='".safee($condb,$phone)."',email='".safee($condb,$eaddress)."',paddress='".safee($condb,$paddress)."',caddress='".safee($condb,$caddress)."',town='".safee($condb,$stown)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',job_desc='".safee($condb,$jdesc)."',heq='".safee($condb,$heq)."',cos='".safee($condb,$Cstudy)."',s_fac='".safee($condb,$fac1)."',s_dept='".safee($condb,$dept1)."',doe='".safee($condb,$doe)."',e_mode='".safee($condb,$moe)."',b_name='".safee($condb,$bname)."',b_acct_name='".safee($condb,$acctname)."',b_acct_num='".safee($condb,$acctnum)."',b_sort='".safee($condb,$scode)."',usern_id='".safee($condb,$sid)."',r_status='".safee($condb,$Cverify)."',image ='".safee($condb,$thumbnail)."' where staff_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
+mysqli_query($condb,"update staff_details  set title='".safee($condb,$title)."',position='".safee($condb,$s_posi)."',oder_quali='".safee($condb,$o_qual)."',sname='".safee($condb,$sname)."',mname='".safee($condb,$mname)."',oname='".safee($condb,$oname)."',mstatus='".safee($condb,$Mstatus)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',height='".safee($condb,$sheight)."',phone='".safee($condb,$phone)."',email='".safee($condb,$eaddress)."',paddress='".safee($condb,$paddress)."',caddress='".safee($condb,$caddress)."',town='".safee($condb,$stown)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',job_desc='".safee($condb,$jobn)."',heq='".safee($condb,$heq)."',cos='".safee($condb,$Cstudy)."',s_fac='".safee($condb,$fac1)."',s_dept='".safee($condb,$dept1)."',doe='".safee($condb,$doe)."',e_mode='".safee($condb,$moe)."',b_name='".safee($condb,$bname)."',b_acct_name='".safee($condb,$acctname)."',b_acct_num='".safee($condb,$acctnum)."',b_sort='".safee($condb,$scode)."',usern_id='".safee($condb,$sid)."',r_status='".safee($condb,$Cverify)."',image ='".safee($condb,$thumbnail)."',sign_img ='".safee($condb,$thumbnail2)."' where staff_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Staff Details of $sname $oname with staff id $sid  was Updated')")or die(mysqli_error($condb)); 
 // ob_start();
-	message("Staff Record of [$title $sname $mname $oname ] was Successfully Updated !", "success");
-		        redirect('add_Staff.php');
+	message("Staff Record of [$title $sname $mname $oname ] was Successfully Updated !"." ".$thumbnail." ".$thumbnail2, "success");
+		        redirect('add_Staff.php?view=Employeelist');
 }}
 
 
@@ -165,17 +166,14 @@ $resultdep = mysqli_query($condb,"SELECT DISTINCT d_name FROM dept where fac_did
  }
 ?>
 <?php
-$myreturn=explode(";",$_COOKIE['return']);
+//$myreturn=explode(";",$_COOKIE['return']);
 ?>
-<div class="x_panel">
-                
-             
-                <div class="x_content">
+
 
                     <form id="form_name"   method="post" enctype="multipart/form-data" data-parsley-validate >
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       
-                      <span class="section">Edit Staff Information </span>
+                      
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard">Title:</label>
                       
@@ -198,7 +196,7 @@ $myreturn=explode(";",$_COOKIE['return']);
                       </div>
                       
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Middle Name </label>
+						  	  <label for="heard">First Name </label>
                             	  <input type="text" class="form-control " name='mname' id="mname"  required="required" value="<?php echo $row_staff['mname']; ?>">
                       </div>
                       
@@ -323,22 +321,19 @@ $myreturn=explode(";",$_COOKIE['return']);
                       
                        <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Job Description </label>
-                            	 <select name='jdesc' id="jdesc" class="form-control" required>
+                            	 <select name='jdesc' id="jdesc" class="form-control" onchange="showjobedit(this.value)" required>
                             <option value="<?php echo $row_staff['job_desc']; ?>"><?php echo $row_staff['job_desc']; ?></option>
-                          
-                                                        <?php  
-$resultpro = mysqli_query($condb,"SELECT DISTINCT job_desc FROM staff_details ORDER BY job_desc  ASC");
-while($rspro = mysqli_fetch_array($resultpro))
-{
-echo "<option value='$rspro[job_desc]'>$rspro[job_desc]</option>";	
-}
-?>
-                            
-                          
-                          </select> 
+<?php  $resultpro = mysqli_query($condb,"SELECT DISTINCT job_desc FROM staff_details where job_desc <> ''   ORDER BY job_desc  ASC");
+while($rspro = mysqli_fetch_array($resultpro)){ echo "<option value='$rspro[job_desc]'>$rspro[job_desc]</option>";	}?>
+        <option value="Others">Add Job Description</option>                    
+</select> 
                       </div>
                       
-                      
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" style="display: none;" id="addjob0" >
+						  	  <label for="heard" >Add Job Description</label>
+                            	  <input type="text" class="form-control " name='addjob' id="addjob" style="display: none;"  >
+                            	  
+                      </div>
 					  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Highest Education Qualification</label>
                             	  <select name='heq' id="heq" class="form-control" >
@@ -443,14 +438,14 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                             <option value="Dean of Studies">Dean of Studies</option>
                             <option value="Senior Lecturer">Senior Lecturer</option>
                              <option value="Lecturer I">Lecturer I</option>
-                             <option value="Lecturer I1">Lecturer II</option>
+                             <option value="Lecturer II">Lecturer II</option>
                           
                           </select>
                       </div>
                       
                           <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Staff Id</label>
-                            	  <input type="text" class="form-control " name='sid' id="sid" value="<?php echo $row_staff['usern_id']; ?>" readonly >
+						  	  <label for="heard">Employee Username</label>
+                            	  <input type="text" class="form-control " name='sid' id="sid" value="<?php echo $row_staff['usern_id']; ?>" required >
                       </div>
 						  
 					
@@ -468,25 +463,29 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                           
                           </select> </div>
                           
-               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+               <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Upload Staff Photo </label>
                             	<input name="pic" class="input-file uniform_on" id="fileInput" type="file" >
                       </div>
-                      
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Upload Employee Signature </label>
+                            	<input name="signimg" class="input-file uniform_on" id="fileInput" type="file" >
+                      </div>
                       <div  class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback>
                         <div class="col-md-6 col-md-offset-3">
                          <br> <?php   if (authorize($_SESSION["access3"]["sMan"]["aes"]["edit"])){ ?> 
                         <button type="submit" name="addStaff"  id="save" data-placement="right" class="btn btn-primary col-md-4" title="Click Here to Update Details" ><i class="fa fa-sign-in"></i> Update</button>
-                        
-                        <script type="text/javascript">
+                    		<script type="text/javascript">
 	                                            $(document).ready(function(){
 	                                            $('#save').tooltip('show');
 	                                            $('#save').tooltip('hide');
 	                                            });
 	                                            </script> <?php } ?>
+                                                <a href="#" onclick="window.open('add_Staff.php?view=Employeelist','_self')" class="btn btn-info"  id="delete2" data-placement="right" title="Click to Go back" ><i class="fa fa-backward icon-large"></i> Go back</a>
+						
 	                                              <div class='imgHolder2' id='imgHolder2'><img src='uploads/tabLoad.gif'></div>
                         </div>
-                      </div>
+           
                     </form>
-                  </div>
+                  
                   

@@ -48,7 +48,9 @@
 		            case 'add_form' :
 		            $content    = 'addform.php';		
 		            break;
-		            
+		            case 'user_guide' :
+		            $content    = 'userguide.php';		
+		            break;
 	                default :
 		            $content    = 'userprofile.php';
 				

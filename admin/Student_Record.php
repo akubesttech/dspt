@@ -9,12 +9,13 @@ authorize($_SESSION["access3"]["stMan"]["srv"]["delete"]) ) {
  $status = TRUE;
 }*/
 //
+$fac = isset($_GET['fac1']) ? $_GET['fac1'] : '';
 $depart = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $session = isset($_GET['session2']) ? $_GET['session2'] : '';
 $pro_level =  isset($_GET['los']) ? $_GET['los'] : '';
 $return_url = isset($_GET['return_urlx']) ? $_GET['return_urlx'] : '';
  if(empty($depart)){ $links = "Student_Record.php"; $return_url = "";}else{ $return_url 	= base64_decode($return_url);
-    $links = "Student_Record.php?dept1_find=".$depart."&session2=".$session."&los=".$pro_level;}
+    $links = "Student_Record.php?dept1_find=".$depart."&session2=".$session."&los=".$pro_level."&fac1=".$fac;}
     //$links = "Student_Record.php?dept1_find=".$dep1."&session2=".$sec1."&los=".$los;
  ?>
 	
@@ -167,6 +168,54 @@ mysqli_query(Database ::$conn,"insert into activity_log (date,username,action) v
 }}
 message("Student(s) Change of Course was Successfully Validated .", "success");
 	redirect("Student_Record.php?view=coc"); }}
+    
+    // Student record upload in CSV
+   if(isset($_POST['importstudent'])){
+
+if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+         //if(mysqli_num_rows($resultcheck)>0){ message("Courses already uploaded for ".getdeptc($dept_c), "error");
+         redirect($links);}else{
+    		//check if input file is empty
+    		if(!empty($_FILES['fileNames']['name'])){
+    			$filename = $_FILES['fileNames']['tmp_name'];
+    			$fileinfo = pathinfo($_FILES['fileNames']['name']);
+     //check file extension
+    			if(strtolower($fileinfo['extension']) == 'csv'){
+    				//check if file contains data
+    				if($_FILES['fileNames']['size'] > 0){
+     $file = fopen($filename, 'r'); $flag = true;  $k = 0; $s=10; $appnum = 0;
+while(($impData = fgetcsv($file, 1000, ',')) !== FALSE){ 
+ if($flag) { $flag = false; continue; } 
+  
+   $k++; if ( $k > 1 ) {
+    if(!empty($impData[0])) {
+    $fn = strtoupper(substr($impData[1],0,1)); $sn = strtoupper(substr($impData[2],0,1));
+ $studentRegno = trim($impData[0]); $pass_word = substr(md5($studentRegno.SUDO_M),14);
+ $appnum = $fn.$sn.$studentRegno;
+  $state = trim($impData[5]); $yoe = trim($impData[8]); $yog = $yoe + $p_duration;
+ $Qyrec = mysqli_query($condb,"select * from student_tb where RegNo = '".safee($condb,$studentRegno)."' and app_type = '".safee($condb,$class_ID)."' ")or die(mysqli_error($condb));
+ if(mysqli_num_rows($Qyrec)>0){
+    		mysqli_query($condb,"update student_tb  set verify_Data='TRUE',reg_status = '1',
+            FirstName='".safee($condb,$impData[1])."',SecondName ='".safee($condb,$impData[2])."', Othername = '".safee($condb,$impData[3])."',Gender = '".safee($condb,$impData[4])."',state = '".safee($condb,$state)."',Faculty ='".safee($condb,$fac)."',Department='".safee($condb,$depart)."',Asession='".safee($condb,$session)."',
+            e_address='".safee($condb,$impData[6])."',phone='".safee($condb,$impData[7])."',app_type='".safee($condb,$class_ID)."',yoe = '".$yoe."',yog='".safee($condb,$yog)."',p_level='".safee($condb,$pro_level)."',password='".safee($condb,$pass_word)."',prog_dura = '".$p_duration."' where RegNo = '".safee($condb,$impData[0])."' ")or die(mysqli_error($condb));
+			}else{
+   $query = mysqli_query($condb,"INSERT INTO student_tb (RegNo,appNo,FirstName,SecondName,Othername,Gender,state,Faculty,Department,Asession,e_address,phone,app_type,dateofreg,yoe,yog,p_level,password,verify_Data,reg_status,prog_dura) 
+   VALUES ('".safee($condb,$studentRegno)."','".safee($condb,$appnum)."','".$impData[1]."', '".trim($impData[2])."', '".$impData[3]."','".safee($condb,$impData[4])."','".safee($condb,$state)."','".safee($condb,$fac)."','".safee($condb,$depart)."','".safee($condb,$session)."','".$impData[6]."','".$impData[7]."',
+   '".safee($condb,$class_ID)."',NOW(),'".$yoe."','".safee($condb,$yog)."','".safee($condb,$pro_level)."','".$pass_word."','TRUE','1','".$p_duration."')")or die(mysqli_error($condb)); //$query = mysqli_query($condb,$sql);
+     if($query){ message("Data imported successfully.", "success");
+		        redirect($links);
+    						}else{ message("Cannot import data. Something went wrong.", "error");
+		        redirect($links); }  }
+                      }  }
+                        }}else{ message("File contains empty data", "error");
+		     redirect($links); }
+     }else{ message("Please upload CSV files only", "error");
+		           redirect($links);}
+  }else{ message("File empty", "error");
+		           redirect($links);}
+} } 
+
  ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">

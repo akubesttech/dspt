@@ -58,7 +58,7 @@
             
             //getstudentacademic status
             
-            $(document).on('keydown', '.matno', function() {
+         /*  $(document).on('keydown', '.matno', function() {
                 
                 var id = this.id;
                 var splitid = id.split('_');
@@ -131,7 +131,7 @@
                 });
             });
             // Add more
-          
+          */
         }); 
 		
 		
@@ -531,12 +531,12 @@ if (window.ActiveXObject)
 return null;
 }
 
-function changeUserStatus(userId, status)
+function changeUserStatus(userId, status, dep, sec, cho)
 { 	
 	var st = status == 'FALSE' ? 'Approve' : 'Cancel Approval'
 	if (confirm('Your About to ' + st+' this Application Make Sure All Information are Correct?')) {
-	//window.location.href = 'new_apply.php?details&userId=' + userId + '&nst=' + st;
-	window.location.href = 'process.php?action=status&userId=' + userId + '&nst=' + st;
+	//window.location.href = 'process.php?action=status&userId=' + userId + '&nst=' + st;
+    window.location.href = 'process.php?action=status&userId=' + userId + '&dep=' + dep + '&sec='+ sec +'&cho='+ cho +'&nst=' + st;
 	}
 }
 function changeUserStatus2(userId, status)
@@ -619,6 +619,15 @@ function changeaccept(userId, status, dept,staff)
 	if (confirm('Your About to ' + st+' this Student Make Sure All Information are Correct?')) {
 window.location.href = 'process.php?action=status14&userId=' + userId + '&dep='+ dept + '&stf='+ staff + '&nst=' + st;
 }}
+//enable application edit
+function enableappedit(userId, status, dep, sec, cho)
+{ 	
+	var st = status == '0' ? 'Disable Edit' : 'Enable Edit'
+	if (confirm('Your About to ' + st+' of this Application do you wish to Continue?')) {
+	//window.location.href = 'process.php?action=status&userId=' + userId + '&nst=' + st;
+    window.location.href = 'process.php?action=status15&userId=' + userId + '&dep=' + dep + '&sec='+ sec +'&cho='+ cho +'&nst=' + st;
+	}
+}
 setTimeout(popup, 3000);// Setting time 3s to popup login form
             function popup() {
             $('#myModalat42').modal({
@@ -731,7 +740,7 @@ function ShowHideDiv2(chkPenalty){
     $('#show').click(function() {
       $('.menu').toggle("slide");
     });
-});
+});   
 
 function check(e, value) {
       //Check Charater
@@ -775,3 +784,161 @@ function check(e, value) {
 	}
 	request.send();
 }
+
+ function getname2(val) {
+            $.ajax({
+                url: 'gettrans.php',
+                type: 'POST',
+                data: 'matno='+val,
+                dataType: 'json',
+                success:function(data){
+                    var len = data.length;
+                    if(len > 0){
+                        var id = data[0]['RegNo'];
+                          var fullname = data[0]['fullname'];
+                        var name = data[0]['facn'];
+                        var gdept = data[0]['dept'];
+                        var yoe = data[0]['yoe'];
+                        var acad = data[0]['acad'];
+                        document.getElementById('fullname').value = fullname;
+                        document.getElementById('facn').value = name;
+                        document.getElementById('dept').value = gdept;
+                        document.getElementById('yoe').value = yoe;
+                        document.getElementById('acad').value = acad;     
+                    }else{document.getElementById('fullname').value = "";
+                        document.getElementById('facn').value = "";
+                     document.getElementById('dept').value = "";
+                        document.getElementById('yoe').value = "";
+                        document.getElementById('acad').value = "";
+                    }     //alert(name);
+                } 
+            });
+        }
+        
+        function getemployee(val) {
+            $.ajax({
+                url: 'gettrans.php',
+                type: 'POST',
+                data: 'searchuser='+val,
+                dataType: 'json',
+                success:function(data){
+                    var len = data.length;
+                    if(len > 0){
+                        var id = data[0]['staff_uid'];
+                          var sname = data[0]['s_name'];
+                        var fname = data[0]['f_name'];
+                        var email = data[0]['s_email'];
+                        var phone = data[0]['s_mobile'];
+                        var post = data[0]['post'];
+                        document.getElementById('staff_uid').value = id;
+                        document.getElementById('s_name').value = sname;
+                        document.getElementById('f_name').value = fname;
+                        document.getElementById('s_email').value = email;
+                        document.getElementById('s_mobile').value = phone;
+                        document.getElementById('post').value = post;     
+                    }else{document.getElementById('staff_uid').value = "";
+                        document.getElementById('s_name').value = "";
+                        document.getElementById('f_name').value = "";
+                     document.getElementById('s_email').value = "";
+                        document.getElementById('s_mobile').value = "";
+                        document.getElementById('post').value = "";
+                    }     //alert(sname);
+                } 
+            });
+        }
+        
+        // get student Academic status for gragutation
+        function getacastatus2(val) {
+            $.ajax({
+                url: 'gettrans.php',
+                type: 'POST',
+                data: 'matno1='+val, 
+                dataType: 'json',
+                success:function(data){
+                    var len = data.length;
+                    if(len > 0){
+                        var id = data[0]['RegNo'];
+                                    var fname = data[0]['fname'];
+                                   var fac = data[0]['fac'];
+                                  var deptn = data[0]['dept1'];
+                                    var fac2 = data[0]['fac2'];
+                                    var deptn2 = data[0]['dept2'];
+                                      var prog = data[0]['prog'];
+                                    var progn = data[0]['progn'];
+                                    var scgpa = data[0]['scgpa'];
+                                    var dog = data[0]['dog'];
+                                    var comm = data[0]['comm'];
+                                    var sec = data[0]['sec'];
+                                    var acs = data[0]['acs'];
+                                    var acs2 = data[0]['acs2'];
+                                    //document.getElementById('RegNo').value = id;
+                                    document.getElementById('fname').value = fname;
+                                    
+                                    document.getElementById('fac').value = fac;
+                                  document.getElementById('dept1').value = deptn;
+                                        document.getElementById('fac2').value = fac2;
+                                    document.getElementById('dept2').value = deptn2;
+                                     
+                                       document.getElementById('prog').value = prog;
+                                      document.getElementById('progn').value = progn;
+                                      document.getElementById('scgpa').value = scgpa;
+                                      document.getElementById('dog').value = dog;
+                                      document.getElementById('comm').value = comm;
+                                      document.getElementById('sec').value = sec;
+                                      document.getElementById('acs').value = acs;
+                                      document.getElementById('acs2').value = acs2;   
+                    }else{
+                        document.getElementById('fname').value = "";
+                       document.getElementById('fac').value = "";
+                                    document.getElementById('dept1').value = "";
+                                        document.getElementById('fac2').value = "";
+                                    document.getElementById('dept2').value = "";
+                                     document.getElementById('prog').value = "";
+                                      document.getElementById('progn').value = "";
+                                      document.getElementById('scgpa').value = "";
+                                      document.getElementById('dog').value = "";
+                                      document.getElementById('comm').value = "";
+                                      document.getElementById('sec').value = "";
+                                      document.getElementById('acs').value = "";
+                                      document.getElementById('acs2').value = "";   
+                    }   //alert(fname);  
+                } 
+            });
+        }
+        $(document).ready(function() {   
+$('#jdesc').change(function(){   
+if($('#jdesc').val() === 'Others')   
+   {   
+   $('#addjob0').show(); 
+      $('#addjob').show();    
+   }   
+else 
+   {   
+   $('#addjob0').hide(); 
+      $('#addjob').hide();      
+   }   
+});   }); 
+function showjobedit(str)
+{
+    if (str=="")
+  { } 
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    { var e=document.getElementById('addjob0');
+    e.style.visibility='visible';
+    document.getElementById("addjob0").innerHTML=xmlhttp.responseText;
+     xmlhttp=GetXmlHttpObject();
+    }
+  }
+xmlhttp.open("GET","loadd_group.php?q="+str,true);
+xmlhttp.send();
+}  

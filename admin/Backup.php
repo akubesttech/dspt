@@ -1,6 +1,5 @@
-
-
 <?php
+ ob_start();
  include('lib/dbcon.php'); 
 dbcon(); 
 include('session.php');
@@ -16,7 +15,7 @@ authorize($_SESSION["access3"]["bData"]["bdat"]["delete"]) ) {
  $status = TRUE;
 }
 if ($status === FALSE) {
-//die("You dont have the permission to access this page");
+die("You dont have the permission to access this page");
 message("You don't have the permission to access this page", "error");
 		        redirect('./');}else{
 if(mysqli_connect_errno($condb)) {
@@ -132,6 +131,7 @@ function backup_database($condb, $tables = "", $backup_file_name) {
     header("Content-disposition: attachment; filename=\"".$backup_file_name."\"");  
     echo $contents; exit;
 }
+ ob_end_flush();
 ?>
 
  

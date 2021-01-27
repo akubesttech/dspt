@@ -25,7 +25,9 @@ $countnosub = mysqli_num_rows($sql_oresult20);
     <?php
 $find_choicead = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM new_apply1 where appNo='".safee($condb,$row_b['appNo'])."'"));
 $num_fchoice =$find_choicead['course_choice'] ;$verif  =$find_choicead['verify_apply']; $modeentry2 = $find_choicead['moe']; $entrylev2 = getelevel($modeentry2);
-
+if($num_fchoice == '1'){ $dep1 = $row_b['first_Choice']; $sec1 = $row_b['Asession']; $cho = $row_b['course_choice'];
+}else{$dep1 = $row_b['Second_Choice'];$sec1 = $row_b['Asession']; $cho = $row_b['course_choice']; }
+$appst  =$row_b['reg_status'];
 ?>
 	<style>
 #resize{
@@ -51,37 +53,48 @@ $num_fchoice =$find_choicead['course_choice'] ;$verif  =$find_choicead['verify_a
 </center>
    
 <table border="0" style="margin:2px; font-size:14px; font-family: Verdana;  width:880px;" class="tble"  >
-<tr >  <td  colspan="4" style="text-align: center;">
+<tr  style="display: none;">  <td  colspan="4" style="text-align: center;">
 <div >
 <img src="<?php if ($exists30 > 0 ){ print "../Student/".$row_b['images']; }else{ print "../Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
 ?>" alt="" style="float: center;border-radius: 50%;"  height="150" width="150" >
 </div></td></tr>
 <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
-            <td height="36" colspan="4" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong>Basic Details:</strong></td>
+            <td height="36" colspan="5" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong>Basic Details:</strong></td>
           </tr>
-          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Full Name:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
-           <?php echo ucwords($row_b['FirstName']).'  '.ucwords($row_b['SecondName']).' '.ucwords($row_b['Othername']); ?></td>
-         <td height="30" style="font-weight: bold;">Gender</td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['Gender'] ;?>
+          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;font-size:22px;"colspan="5"><?php echo ucwords($row_b['FirstName']).'  '.ucwords($row_b['SecondName']).' '.ucwords($row_b['Othername']); ?></td></tr>
+          
+          <tr style="border: 1px solid #98C1D1;"> <td height="30" style="font-weight: bold;" >Gender :</td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['Gender'] ;?> 
+          </td>
+          <td style="font-weight: bold;width:150px;">Hobbies</td><td  style="font-color:gray;  font-weight:normal; height: 34px;width: 350p;">
+           <?php echo ucwords($row_b['hobbies']); ?></td>
+          <td rowspan="3"><div >
+<img src="<?php if ($exists30 > 0 ){ print "../Student/".$row_b['images']; }else{ print "../Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+?>" alt="" style="float: right;"  height="150" width="150" >
+</div></td>
+          </tr>
+          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Date Of Birth:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
+            <?php echo $row_b['dob'] ;?></td>
+         <td height="30" style="font-weight: bold;">Email Address: </td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['e_address'] ;?>
           </td></tr>
-          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Hobbies:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
-            <?php echo $row_b['hobbies'] ;?></td>
-         <td height="30" style="font-weight: bold;">Date Of Birth: </td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['dob'] ;?>
-          </td></tr>
-          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Email Address:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
-            <?php echo $row_b['e_address'] ;?></td>
-         <td height="30" style="font-weight: bold;">Moble Number:</td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['phone'] ;?>
-          </td></tr>
-          <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Contact Address:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
-            <?php echo $row_b['address'] ;?></td>
-         <td height="30" style="font-weight: bold;">Postal Address:</td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['postal_address'] ;?>
-          </td></tr>
-           <tr style="border: 1px solid #98C1D1;"> <td><strong>State: </strong><?php echo $row_b['state'] ;?></td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
-            <strong>Local Government:</strong> <?php echo $row_b['lga'] ;?></td>
-         <td height="30"><strong>Nationality:</strong></td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['nation'] ;?>
+         <tr style="border: 1px solid #98C1D1;"> <td style="font-weight: bold;">Phone Number:</td><td  style="font-color:gray;  font-weight:normal; height: 34px;">
+            <?php echo $row_b['phone'] ;?></td>
+         <td height="30" style="font-weight: bold;width:180px;">Contact Address:</td> 
+         <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['address'] ;?>
           </td></tr>
           
+          <tr style="border: 1px solid #98C1D1;"> <td><strong>Postal Address: </strong></td>
+          <td style="font-color:gray;  font-weight:normal;width:180px;"><?php echo $row_b['postal_address'] ;?>
+          </td>
+          <td  style="font-color:gray;  font-weight:normal; height: 34px;">
+            <strong>State:</strong> <?php echo $row_b['state'] ;?></td>
+         <td height="30"><strong>Local Government:</strong> <?php echo $row_b['lga'] ;?></td> 
+        <td style=""><strong>Nationality: </strong><?php echo $row_b['nation'] ;?></td></tr>
+        
+         
+          
+          
  <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
-          <td height="36" colspan="4" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> Choice of Course/Programm:</strong></td></tr>
+          <td height="36" colspan="5" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> Choice of Course/Programm:</strong></td></tr>
 <tr style="border: 1px solid #98C1D1;">
           <td style="font-weight: bold;">First Choice:</td>
           <td  style="font-color:gray;  font-weight:normal; height: 34px;"> <?php echo getdeptc($row_b['first_Choice']) ;?></td>
@@ -91,10 +104,10 @@ $num_fchoice =$find_choicead['course_choice'] ;$verif  =$find_choicead['verify_a
           </td>
         </tr>
        <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
-          <td height="36" colspan="4" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> Post Primary School Qualification ('O' Level Record)</strong></td></tr>
+          <td height="36" colspan="5" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> Post Primary School Qualification ('O' Level Record)</strong></td></tr>
 
 <?php $orow_01 = mysqli_fetch_array($sql_oresult10); $orow_1 = mysqli_fetch_array($sql_oresult20);
-if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col =2;}else{ $subcont = $orow_01['oNo_re']; $col = 4; } 
+if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col =2;}else{ $subcont = $orow_01['oNo_re']; $col = 5; } 
  if($count_olresult1 > 0 ){ ?>
         <tr class="row2">
   <td width="50%" colspan="<?php echo $col; ?>" ><div class="pull-left">
@@ -120,16 +133,18 @@ if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col =2;}else{ $subcont = $oro
      </tr>
     <?php }else{ ?>
    <tr class="row2">
-     <td width="20%" colspan="4" height="15" style="text-align:center;"><strong> You have not add any Result Goto Step Two.</strong></td>
+     <td width="20%" colspan="5" height="15" style="text-align:center;"><strong> You have not add any Result Goto Step Two.</strong></td>
 </tr>  <?php } ?>
 <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
-<td height="36" colspan="4" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> OTHER INFORMATION: </strong></td></tr>
+<td height="36" colspan="5" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> OTHER INFORMATION: </strong></td></tr>
 
 <tr style="border: 1px solid #98C1D1;">
-          <td ><strong>Jamb Reg No: </strong><?php echo $row_b['JambNo'] ;?> </td>
-          <td  style="font-color:gray;  font-weight:normal; height: 34px;"> <strong>Jamb Score:</strong> <?php echo $row_b['J_score'] ;?>  </td>
-         <td height="30" ><strong>Post UME Score:</strong></td>
-          <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['post_uscore'] ;?></td></tr>
+          <td ><strong>Jamb Reg No: </strong> </td>
+          <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['JambNo'] ;?></td>
+          <td  style="font-color:gray;  font-weight:normal; height: 34px;"> <strong>Jamb Score:</strong> </td>
+          <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['J_score'] ;?>  </td>
+         <td height="30" ><strong>Post UME Score:</strong><?php echo $row_b['post_uscore'] ;?></td>
+          </tr>
         
         <tr style="border: 1px solid #98C1D1;">
           <td ><strong>Application Remark:</strong></td>
@@ -146,8 +161,10 @@ echo "Verified";}else{echo "Not Verified";} ;?> </td>
 		</div>
 <div class="modal-footer">
 					<?php   if (authorize($_SESSION["access3"]["adm"]["nsp"]["create"])){ ?>
-					<a href="javascript:changeUserStatus(<?php echo $_GET["userId"]; ?>, '<?php echo $verif; ?>');" class="btn btn-info" ><i class="fa fa-check"></i>&nbsp;<?php echo $verif == 'FALSE'? 'Approve' : 'Cancel Approval'; //$is_active == 'FALSE'? 'Cancel Verification' : 'Verified'; ?></a>
-						<?php } ?>
+					<a href="javascript:changeUserStatus(<?php echo $_GET["userId"]; ?>, '<?php echo $verif; ?>','<?php echo $dep1; ?>','<?php echo $sec1; ?>','<?php echo $cho; ?>');" class="btn btn-info" ><i class="fa fa-check"></i>&nbsp;<?php echo $verif == 'FALSE'? 'Approve' : 'Cancel Approval'; //$is_active == 'FALSE'? 'Cancel Verification' : 'Verified'; ?></a>
+					<a href="javascript:enableappedit(<?php echo $_GET["userId"]; ?>, '<?php echo $appst; ?>','<?php echo $dep1; ?>','<?php echo $sec1; ?>','<?php echo $cho; ?>');" class="btn btn-info" ><i class="fa fa-check"></i>&nbsp;<?php echo $appst == '0'? 'Disable Edit' : 'Enable Edit'; //$is_active == 'FALSE'? 'Cancel Verification' : 'Verified'; ?></a>
+							
+                        <?php } ?>
 						  <script type="text/javascript">
 		              $(document).ready(function(){
 		              $('#com').tooltip('show');

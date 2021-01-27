@@ -8,6 +8,7 @@ for($i=0; $i < $N; $i++)
 {
 	$result = mysqli_query($condb,"DELETE FROM user_log where user_log_id='$id[$i]'");
 }
-header("location: user_logs.php");
+//header("location: user_logs.php");
+redirect("user_logs.php");
 }
 ?>

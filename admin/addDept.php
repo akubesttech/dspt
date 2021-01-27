@@ -34,9 +34,9 @@ if ($row_course>0){
 		        redirect('add_Dept.php');
 
 				//echo "<script>alert('Applicationform record inserted sucessfully..');</script>";
-				}elseif(!ctype_digit($Dcode)){
-				message("Incorrect Format For Department Code it should be a Digit.", "error");
-		        redirect('add_Dept.php');
+				//}elseif(!ctype_digit($Dcode)){
+				//message("Incorrect Format For Department Code it should be a Digit.", "error");
+		       // redirect('add_Dept.php');
 
 }elseif(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $Demail)){
 	message("Please! Provide a valid Email Address", "error");
@@ -55,7 +55,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 }
 }
 ?>
-<?php $s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;}?>
+<?php $AppNo="";$s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;}?>
 <div class="x_panel">
                 
              
@@ -64,18 +64,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                     		<form name="dept" method="post" enctype="multipart/form-data" id="dept">
 <input type="hidden" name="insidd" value="<?php echo $_SESSION['insidd'];?> " />
                       
-                      <span class="section">Add New <?php echo $SGdept1; ?> <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
-?> </span>
+                      <span class="section">Add New <?php echo $SGdept1; ?>  </span>
 
 
  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
@@ -85,7 +74,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                       
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard"><?php echo $SGdept1; ?> Code </label>
-                            	  <input type="text" class="form-control " name='Dcode' id="Dcode" onkeypress="return isNumber(event);" value="<?php echo $AppNo; ?>"  required="required">
+                            	  <input type="text" class="form-control " name='Dcode' id="Dcode" maxlength="3"  value="<?php echo $AppNo; ?>"  required="required">
                       </div>
                       
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
@@ -109,7 +98,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                           <select name='Dhod' id="Dhod" class="form-control" required>
                             <option value="">Select Hod</option>
                             <?php  
-$resulthod = mysqli_query($condb,"SELECT * FROM staff_details where position ='HOD' ORDER BY staff_id  ASC");
+$resulthod = mysqli_query($condb,"SELECT * FROM staff_details where access_level2 = '6' ORDER BY staff_id  ASC");
 while($rshod = mysqli_fetch_array($resulthod))
 {
 echo "<option value='$rshod[staff_id]'>$rshod[sname] $rshod[mname] $rshod[oname]</option>";	
@@ -150,7 +139,7 @@ echo "<option value='$rscourse[fac_id]'>$rscourse[fac_name]</option>";
                       <div  class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback>
                         <div class="col-md-6 col-md-offset-3">
                          <?php   if (authorize($_SESSION["access3"]["sConfig"]["adep"]["create"])){ ?>
-                        <button  name="adddept"  id="adddept"  class="btn btn-primary col-md-4" title="Click Here to Save <?php echo $SGdept1; ?> Details" ><i class="fa fa-sign-in"></i> Add <?php echo $SGdept1; ?></button><?php }?>
+                        <button  name="adddept"  id="adddept"  class="btn btn-primary" title="Click Here to Save <?php echo $SGdept1; ?> Details" ><i class="fa fa-sign-in"></i> Add <?php echo $SGdept1; ?></button><?php }?>
                       
                         	<script type="text/javascript">
 	                                            $(document).ready(function(){
