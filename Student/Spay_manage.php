@@ -6,7 +6,7 @@
 
  <?php include('student_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['userId']; ?>
+  <?php $get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : ''; ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -18,10 +18,13 @@
 </div>
 <?php 
 if($student_state == "Delta"){ $scan = "1";}else{ $scan = "0";} 
-$querycomp = mysqli_query($condb,"select * from fee_db where ft_cat ='1' and level= '".safee($condb,$student_level)."' and program='".safee($condb,$student_prog)."' and cat_fee ='".safee($condb,$scan)."' and status = '1'") or die(mysqli_error($condb));
+$qcomp = "select * from fee_db where  level= '".safee($condb,$student_level)."' and program='".safee($condb,$student_prog)."' and cat_fee ='".safee($condb,$scan)."' and status = '1'";
+if($acastatus == 8){ $qcomp.= " and ft_cat ='6' ";}else{$qcomp.= " and ft_cat ='1' ";}
+$querycomp = mysqli_query($condb,$qcomp) or die(mysqli_error($condb));
  $nocomp = mysqli_num_rows($querycomp);
- 
+ $Bno = 0;
 $s=8;while($s>0){ $Bno .= rand(0,9);$s-=1; } $batchno = "B".$Bno;
+
 if (isset($_POST['addpay'])){ $date_now =  date("Y-m-d");
 	 if(empty($_POST['selector'])){
 				message("You have not selected any payment component !", "error");
@@ -109,29 +112,5 @@ $queryin = mysqli_query($condb,"insert into feecomp_tb(regno,feetype,prog,level,
         
   
 
-
-
-   <?php 
-
-function statusUser2()
-{
-	$userId = $_GET['userId'];	
-	$nst 	= $_GET['nst'];
-	
-	$status = $nst == 'Verified' ? 'TRUE' : 'FALSE';
-	$sql   = "UPDATE student_tb SET verify_Data = '$status' WHERE stud_id = '$userId' and verify_Data = 'FALSE'";
-
-	mysqli_query(Database::$conn,$sql);
-//	header('Location: new_apply.php');	
-
-}
-        ?>
-        <script>  function changeUserStatus2(userId, status)
-{
-	var st = status == 'FALSE' ? 'Verified' : 'Not Verified'
-	if (confirm('Your About to ' + st+' this Student Record Make Sure All Information are Correct?')) {
-	window.location.href = 'Student_Record.php?details&userId=' + userId + '&nst=' + st;
-	}
-}</script>
 
          <?php include('footer.php'); ?>

@@ -43,9 +43,11 @@ div.WordSection1
 -->
 @page {size: auto;margin: 10pt;}
 </style>
-<?php include('print_header.php'); ?>
+<?php 
+//session_status() === PHP_SESSION_ACTIVE ?: session_start();
+include('print_header.php'); ?>
 <?php include('session.php'); 
-$depart = $_GET['Schd']; $session=$_GET['session2']; $pro_level= $_GET['lev'];  ?>
+$depart = $_SESSION['Schd']; $session=$_SESSION['session']; $pro_level= $_SESSION['lev'];  ?>
 
 													
 </head>
@@ -79,16 +81,11 @@ $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession =
 }else{
  $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$session)."' and (Department)='".$depart."' and p_level='".safee($condb,$pro_level)."' and verify_Data ='TRUE' and  app_type='".safee($condb,$class_ID)."' ORDER BY p_level ASC")or die(mysqli_error($condb));
  }
-//if($_SESSION['los'] == NULL){
-//$student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$_SESSION['vsession'])."' and md5(Department)='".safee($condb,$_GET['Schd'])."' and verify_Data ='TRUE' and app_type='".safee($condb,$class_ID)."'  ORDER BY p_level ASC")or die(mysqli_error($condb));
-//}else{
-//$student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$_SESSION['vsession'])."' and md5(Department)='".$_GET['Schd']."' and verify_Data ='TRUE' and p_level='".safee($condb,$_SESSION['los'])."' and app_type='".safee($condb,$class_ID)."' ORDER BY p_level ASC")or die(mysqli_error($condb));
-//}
-		$num_rows2 = mysqli_num_rows($student_query2);
+$num_rows2 = mysqli_num_rows($student_query2);
 			if($num_rows2 < 1){ message("The page you are trying to access is not Available.", "error");
 redirect('Student_Record.php?view=v_s'); }
 //$row2 = mysqli_fetch_array($student_query2);
-	$departmen = $_GET['Schd']; //$row2['Department'];
+	$departmen = $depart; //$row2['Department'];
 	$exists02 = imgExists($row1['Logo']);
 ?>
 													
@@ -100,14 +97,20 @@ font-family:"Times New Roman","serif"'><br><img width="100" height="70" id="Pict
 src="   <?php  //if ($row1['Logo']==NULL or $row1['Logo']=='uploads/' ){echo "upload/NO-IMAGE-AVAILABLE.jpg";}else{echo $row1['Logo'];}
 if ($exists02 > 0 ){print $row1['Logo'];}else{ print "uploads/NO-IMAGE-AVAILABLE.jpg";}
  ?>  "  ></span></b></p>
-
 <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
-text-align:center;line-height:normal'><b><span style='font-size:14.0pt;
+text-align:center;line-height:normal'><b><span style='font-size:16.0pt;
 font-family:"Times New Roman","serif"'><?php echo $row1['SchoolName']; ?></span></b></p>
 
 <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
-text-align:center;line-height:normal'><b><span style='font-size:10.0pt;
+text-align:center;line-height:normal'><b><span style='font-size:12.0pt;
 font-family:"Times New Roman","serif"'><?php echo $row1['Motto']; ?></span></b></p>
+<p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+text-align:center;line-height:normal'><b><span style='font-size:12.0pt;
+font-family:"Times New Roman","serif"'><?php echo $row1['Pcode'];   ?></span></b></p>
+<?php if(!empty($row1['State'])){ ?>
+<p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+text-align:center;line-height:normal'><b><span style='font-size:14.0pt;
+font-family:"Times New Roman","serif"'><?php echo strtoupper($row1['State'])." STATE, NIGERIA"; ?></span></b></p><?php } ?>
 
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
 normal'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>&nbsp;</span></b></p>
@@ -119,7 +122,7 @@ normal'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
 normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
 "Times New Roman","serif"'>
-<?php if(empty($_SESSION['vsession'])){ $linksp = "Student_Record.php?dept1_find=".$depart."&session2=".$session."&los=".$pro_level;}else{
+<?php if(empty($depart)){ $linksp = "Student_Record.php?view=v_s";}else{
     $linksp = "Student_Record.php?view=v_s"; } 
 if($departmen < 1){ $valuecheck = "";}else{ $valuecheck = "in ";}
 //if($_SESSION['los']==Null){echo "All Students ". $valuecheck .getdeptc($departmen);}else{echo "All ".getlevel($_SESSION['los'],$class_ID)." Level Students ".$valuecheck.getdeptc($departmen);

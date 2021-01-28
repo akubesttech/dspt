@@ -45,7 +45,7 @@ $resultview = showfullresult ;
 //$admin_accesscheck = $user_row['access_level'];
 //$_SESSION['access'] = $admin_accesscheck;
 $newl = $student_level + 100;
-$user_query1 = mysqli_query($condb,"select * from session_tb where action='1'")or die(mysqli_error($condb));
+$user_query1 = mysqli_query($condb,"select * from session_tb where action='1' and prog = '".safee($condb,$student_prog)."'")or die(mysqli_error($condb));
 $user_row2 = mysqli_fetch_array($user_query1);
 $default_session=$user_row2['session_name']; $esetSession   =	substr($user_row2['session_name'],5,10);
 $acasemestertag =$user_row2['term']; $setendst=$user_row2['start_end'];
@@ -64,9 +64,12 @@ $date_now = new DateTime();
  $date2    = new DateTime($setendst);
 $date1=date("Y/m/d");
 if ($date_now > $date2) {
-mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."'")
+mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."' and prog = '".safee($condb,$student_prog)."'")
 or die(mysqli_error($condb));
     }
+    
+
+    
 function check_malert(){
 	
 		if(isset($_SESSION['message'])){

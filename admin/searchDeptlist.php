@@ -17,29 +17,26 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 			   
 			   ?>
 <?php
-//if($_SESSION['insidtime']==$_POST['insidtime'])
-//{
-	$_SESSION['vsession']="";
-	$_SESSION['los']="";
+$_SESSION['Schd']="";
+$_SESSION['session']="";
+$_SESSION['lev']="";
 if(isset($_POST['viewRecord'])){
 $salot_dept = $_POST['dept1'];
 $salot_cos = $_POST['cos'];
 $salot_lev = $_POST['los'];
 $salot_session = $_POST['session'];
 $result_alldept=mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$salot_session)."' and Department ='".safee($condb,$salot_dept)."' and app_type='".safee($condb,$class_ID)."' and verify_Data='TRUE'");
-//$result_alldept = mysqli_query($condb,$sql_alldept);
 $num_alldept = mysqli_num_rows($result_alldept);
 //	$_SESSION['vsession']=$salot_session;
-
 if($num_alldept < 1){
 message("ERROR: No Student Record Found for ".getdeptc($salot_dept)." Department , Please Try Again .", "error");
  redirect('Student_Record.php?view=v_s');
-}else{
-	$_SESSION['vsession']=$salot_session;
-	$_SESSION['los']=$salot_los;
-//echo "<script>window.location.assign('Print_students.php?Schd=".md5($salot_dept)."');</script>";}
-echo "<script>window.location.assign('Print_students.php?Schd=".($salot_dept)."&session2=".$salot_session."&lev=".$salot_lev."');</script>";}
-}//}$_SESSION['insidtime'] = rand();
+}else{ $_SESSION['Schd']=$salot_dept;
+	$_SESSION['session']=$salot_session;
+	$_SESSION['lev']=$salot_lev;
+    redirect('Print_students.php');
+//echo "<script>window.location.assign('Print_students.php?Schd=".($salot_dept)."&session=".$salot_session."&lev=".$salot_lev."');</script>";}
+}}
 ?>
 
 <div class="x_panel">
@@ -59,26 +56,13 @@ echo "<script>window.location.assign('Print_students.php?Schd=".($salot_dept)."&
                             	  <select name='fac1' id="fac1" onchange='loadDept(this.name);return false;' class="form-control" >
                             <option value="">Select <?php echo $SCategory; ?></option>
                             <?php  
-
 $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//$counter=1;
-while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
+while($rsblocks = mysqli_fetch_array($resultblocks)){
+	if($_GET['loadfac'] ==$rsblocks['fac_id'] ){
 	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
+}else{echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}}
 ?>
-                            
-                          
-                          </select>
+</select>
                       </div>
                      
                       

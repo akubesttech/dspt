@@ -8,10 +8,12 @@
             <div class="clearfix"></div>
 	<?php $query= mysqli_query($condb,"select * from student_tb where stud_id = '$session_id'")or die(mysqli_error($condb));
 							  $row = mysqli_fetch_array($query); $existx = imgExists($row['images']);
-							  //$checkstatus = $row['access_level'];
+							  //$checkstatus = $acastatus;
 							  
 							  if($student_state == "Delta"){ $scan = "1";}else{ $scan = "0";}
-$qcompamtd = mysqli_query($condb,"select * from fee_db where ft_cat ='1' and level= '".safee($condb,$student_level)."' and program='".safee($condb,$student_prog)."' and status = '1' and Cat_fee = '".safee($condb,$scan)."' ") or die(mysqli_error($condb)); $sumcreditm=0;
+ $qcompamt = "select * from fee_db where  level= '".safee($condb,$student_level)."' and program='".safee($condb,$student_prog)."' and status = '1' and Cat_fee = '".safee($condb,$scan)."' ";            
+if($acastatus == 8){ $qcompamt.= " and ft_cat ='6' ";}else{$qcompamt.= " and ft_cat ='1' ";}
+$qcompamtd = mysqli_query($condb,$qcompamt) or die(mysqli_error($condb)); $sumcreditm=0;
 while($row_camt = mysqli_fetch_array($qcompamtd)){ 
 $paysidm = $row_camt['fee_id']; $dpercm = $row_camt['pper']; 
 $psdatem = $row_camt['psdate'];  $famountm =$row_camt['f_amount'];
@@ -22,10 +24,13 @@ if($dpercm > 0 and $date_nowm >= $newDate20m){  $namountm = $penaltysumm; }else{
 $sumcreditm += $namountm;  } $nocompm = mysqli_num_rows($qcompamtd);
 if($sumcreditm > 0){   $com_payamt = $sumcreditm; }else{ $com_payamt = 0; } 
 
-
-if(empty($student_RegNo)){
-$querycompamount = mysqli_query($condb,"select * from feecomp_tb where fcat ='1' and level= '".safee($condb,$student_level)."' and prog='".safee($condb,$student_prog)."' and pstatus = '1' and session = '".safee($condb,$default_session)."' and regno = '".safee($condb,$student_appNo)."' ") or die(mysqli_error($condb));}else{
-$querycompamount = mysqli_query($condb,"select * from feecomp_tb where fcat ='1' and level= '".safee($condb,$student_level)."' and prog='".safee($condb,$student_prog)."' and pstatus = '1' and session = '".safee($condb,$default_session)."' and regno = '".safee($condb,$student_RegNo)."'") or die(mysqli_error($condb));} $sumcredito=0;
+$qamt = "select * from feecomp_tb where level= '".safee($condb,$student_level)."' and prog='".safee($condb,$student_prog)."' and pstatus = '1' and session = '".safee($condb,$default_session)."' ";
+if(empty($student_RegNo)){ $qamt.= " and regno = '".safee($condb,$student_appNo)."' ";}else{$qamt.= " and regno = '".safee($condb,$student_RegNo)."' ";}
+if($acastatus == 8){ $qamt.= " and fcat ='6' ";}else{$qamt.= " and fcat ='1' ";}
+$querycompamount = mysqli_query($condb,$qamt) or die(mysqli_error($condb));
+//$querycompamount = mysqli_query($condb,"select * from feecomp_tb where fcat ='1' and level= '".safee($condb,$student_level)."' and prog='".safee($condb,$student_prog)."' and pstatus = '1' and session = '".safee($condb,$default_session)."' and regno = '".safee($condb,$student_appNo)."' ") or die(mysqli_error($condb));}else{
+//$querycompamount = mysqli_query($condb,"select * from feecomp_tb where fcat ='1' and level= '".safee($condb,$student_level)."' and prog='".safee($condb,$student_prog)."' and pstatus = '1' and session = '".safee($condb,$default_session)."' and regno = '".safee($condb,$student_RegNo)."'") or die(mysqli_error($condb));} 
+$sumcredito=0;
 $nocomp = mysqli_num_rows($querycompamount); while($row_camount = mysqli_fetch_array($querycompamount)){ $famountc =$row_camount['f_amount'];
 $sumcredito += $famountc;   }
 if($sumcredito > 0){   $com_amount = $sumcredito; }else{ $com_amount = 0; }

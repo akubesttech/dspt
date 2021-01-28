@@ -847,11 +847,11 @@ function FeesCalc($Fees,$per,$sdate){
             return $TotalFees = $late+$Fees;}else{ return $TotalFees = $Fees; }}
  function getfeecat($statnum20 ="",$n = ""){
  if(empty($n)){
-if ($statnum20==1){ return "Service Charge";} else if($statnum20==2){
+if ($statnum20==1){ return "School Fee(s)";} else if($statnum20==2){
 return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
-}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==0){ return "Others"; }
+}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==7){return "Change of Course"; }
 }else{ $output = '';  
-	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Others" =>"0"); 
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Change of Course" =>"7"); 
 foreach($arr as $val => $nvalue)
 	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
  return $output;}

@@ -26,7 +26,7 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                   
                    
                     	<?php include('modal_delete.php'); ?>
-                    	 <span id="printout">
+                    	 
                     	  <table ><tr >
                     	 <div   id="divTitle" name="divTitle">
                         <div class="col-xs-12 invoice-header" >
@@ -71,14 +71,17 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                         <!-- /.col -->
                       </div> </tr></table>
                       <!-- /.row -->
-                    	 <div class="alert alert-info alert-dismissible fade in" role="alert">
+                      <div id="print_content"> 
                     
-          <strong> Listed Below are Your Due Payment(s) For The Session and also Note that Checked Payment(s) are required to proceed.</strong>
-                  </div>
                       <form method="post" class="form-horizontal"  action="" enctype="multipart/form-data">
-                    <table  class="table table-striped jambo_table bulk_action" border="1">
+                      <tr><td>
+  <div  style="color:blue;font-size:15px;text-align: center;">
+  <b>Listed Below are Your Due Payment(s) For The Session and also Note that Checked Payment(s) are required to proceed </b></div></td></tr>
+                    <table   class="table table-striped table-bordered" border="0">
+ <div id="cccv">
                     <button type="submit" name="addpay"  id="save" data-placement="right" class="btn btn-primary" title="Click to add Payment and Conutinue" ><i class="fa fa-plus-circle icon-large"></i> Add Payment (s)</button><a data-placement="top" title="Click to Load The Available Banks You can make payments"    data-toggle="modal" href="#myModal200" id="delete"  class="btn btn-primary" name="delete_course" ><i class="fa fa-external-link icon-large"> View Bank</i></a>
-									<script type="text/javascript">
+					<a rel="tooltip"  href="javascript:void(0);" title="Print Details"  onClick="return Clickheretoprint();" class="btn btn-default"><i class="fa fa-print icon-large"> Print</i></a>			
+                                </div>	<script type="text/javascript">
 									 $(document).ready(function(){
 									 $('#delete').tooltip('show'); $('#delete1').tooltip('show'); $('#delete2').tooltip('show');
 									 $('#delete').tooltip('hide'); 	 $('#delete1').tooltip('hide'); $('#delete2').tooltip('hide');
@@ -86,7 +89,7 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
 									</script>
 									
                       <thead>
-                        <tr>
+                        <tr class="row2">
                          <th><!--<input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');">--!></th>
                          <th>S/N</th>
 						 <th>Payment Description</th>
@@ -101,38 +104,36 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                       
                       
  <tbody>
-                 <?php
-$depart = $_GET['dept1_find'];
-$level=$_GET['level'];
-$semester= $_GET['semester'];
+                 <?php 
+$depart = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
+$level = isset($_GET['level']) ? $_GET['level'] : '';
+$semester = isset($_GET['semester']) ? $_GET['semester'] : '';
 $user_queryst = mysqli_query($condb,"select * from student_tb where stud_id = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
 $user_rowstate = mysqli_fetch_array($user_queryst);
 $states = $user_rowstate['state'];
 $student_s = "Delta";
-if($states == $student_s){
-$stud_from = "1" ;
-//f_dept='$student_dept'  and
-$viewfee_query = mysqli_query($condb,"select * from fee_db where  Cat_fee = '1' and level = '".safee($condb,$student_level)."' and program = '".safee($condb,$student_prog)."'  order by feetype DESC ")or die(mysqli_error($condb));
-}else{
-$viewfee_query = mysqli_query($condb,"select * from fee_db where  program ='".safee($condb,$student_prog)."' and Cat_fee = '0' and level = '".safee($condb,$student_level)."'  order by feetype DESC ")or die(mysqli_error($condb));
-$stud_from = "0" ;
-}
- ?>
- 
+if($states == "Delta"){ $stud_from = "1";}else{ $stud_from = "0";}
+$Qviewfee = "select * from fee_db where  Cat_fee = '".safee($condb,$stud_from)."' and level = '".safee($condb,$student_level)."' and program = '".safee($condb,$student_prog)."'  ";
+if($acastatus == 8){ $Qviewfee.= " and ft_cat BETWEEN 2 and 6 ";}else{$Qviewfee.= " and ft_cat BETWEEN 1 and 2 ";}
+$Qviewfee.= " order by feetype DESC";
+$viewfee_query = mysqli_query($condb,$Qviewfee)or die(mysqli_error($condb));
+//if($states == $student_s){
+//$stud_from = "1" ;
+//$viewfee_query = mysqli_query($condb,"select * from fee_db where  Cat_fee = '1' and level = '".safee($condb,$student_level)."' and program = '".safee($condb,$student_prog)."' and ft_cat BETWEEN 1 and 2  order by feetype DESC ")or die(mysqli_error($condb));
+//}else{
+//$viewfee_query = mysqli_query($condb,"select * from fee_db where  program ='".safee($condb,$student_prog)."' and Cat_fee = '0' and level = '".safee($condb,$student_level)."' and ft_cat BETWEEN 1 and 2  order by feetype DESC ")or die(mysqli_error($condb));
+//$stud_from = "0" ;} 
+?>
  <tr>
-
-	<?php		 		
-											
-							 if(mysqli_num_rows($viewfee_query)<1){
-	  echo "<td colspan='9' style='text-align:centre;'><strong>No School Payment (s) Found.</strong></td>";
- }?>
- 						
+<?php	if(mysqli_num_rows($viewfee_query)<1){
+echo "<td colspan='9' style='text-align:centre;'><strong>No School Payment (s) Found.</strong></td>"; }?>
 </tr>
 <?php
 $serial=1;
-$sumcredit=0;
+$sumcredit=0; $i = 0;
 while($row_utme = mysqli_fetch_array($viewfee_query)){
-$Fee_type1 = $row_utme['feetype'];  $Fee_cat = $row_utme['ft_cat']; if($Fee_cat == "1"){ $check_c =" Checked";  }else{ $check_c ="";  }
+    if ($i%2) {$class = 'row2';} else {$class = 'row1';}$i += 1;
+$Fee_type1 = $row_utme['feetype'];  $Fee_cat = $row_utme['ft_cat']; if($Fee_cat == "1" OR $Fee_cat == "6" ){ $check_c =" Checked";  }else{ $check_c ="";  }
 $paysid = $row_utme['fee_id']; $dperc = $row_utme['pper']; 
 $psdate = $row_utme['psdate']; $famount =$row_utme['f_amount'];
 $date20 = str_replace('/', '-', $psdate );  $newDate20 = date("Y-m-d", strtotime($date20));  $date_now =  date("Y-m-d");
@@ -143,23 +144,23 @@ if($dperc > 0 and $date_now >= $newDate20){ $noteo = ", Note:  (".$dperc."% pena
 //$statuspay2 = $row_payview['pay_status'];  $feetypepay = $row_payview['fee_type'];
 $qpaycomp = mysqli_query($condb,"SELECT pstatus FROM feecomp_tb  WHERE regno = '".safee($condb,$student_RegNo)."'  AND session = '".safee($condb,$default_session)."' AND level = '".safee($condb,$student_level)."' AND feetype = '".safee($condb,$Fee_type1)."'");
 $row_paycomp = mysqli_fetch_array($qpaycomp);  $statuspay = $row_paycomp['pstatus']; //Batchno ='".safee($condb,$feetp)."' AND  
-?>     <tr >
+
+?>     <tr class="<?php echo $class ; ?>">
                         	<?php if($statuspay > 0){
 							$status = 'Paid';
 							 ?>
-							<td width="30" style="text-align:centre;"  >
+                             <input type='hidden' name='feetn[]' value='<?php echo $Fee_cat; ?>' />
+							<td  style="text-align:centre;"  >
 <input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" disabled  value="<?php echo $row_utme['fee_id']; ?>">  
-                        <input type='hidden' name='feetn[]' value='<?php echo $Fee_cat; ?>' />   
-													</td> <?php }else{ if($Fee_cat =="1"){$status = 'Not Paid';}else{
+</td> <?php }else{ if($Fee_cat =="1"){$status = 'Not Paid';}else{
 $status ="Not Paid"; //'<a rel="tooltip"  title="Click to Conutinue Payment" id="delete1" href="Spay_manage.php?view=m_sp&id='.md5($paysid).'" data-toggle="modal" class="btn btn-success"><i class="fa fa-plus-circle icon-large" > Add Payment</i></a>';
-}
-													
-													 ?>
-														<td width="30" style="text-align:center;">
-           	<input id="optionsCheckbox"  class="uniform_on1" name="selector[]" type="checkbox"  value="<?php echo $row_utme['fee_id']; ?>" <?php echo $check_c ;?> >  <input type='hidden' name='feetn[]' value='<?php echo $Fee_cat; ?>' />  
+}  ?>
+														<td  style="text-align:center;">
+           	<input id="optionsCheckbox"  class="uniform_on1" name="selector[]" type="checkbox"  value="<?php echo $row_utme['fee_id']; ?>" <?php echo $check_c ;?> >    
 													</td>
+                                                    <input type='hidden' name='feetn[]' value='<?php echo $Fee_cat; ?>' />
 													<?php } ?>
-														<td  align='center'>
+														<td   style="text-align:center;">
 <?php echo $serial++ ; ?>
 												</td>
 						  <td><?php 
@@ -169,54 +170,23 @@ $status ="Not Paid"; //'<a rel="tooltip"  title="Click to Conutinue Payment" id=
 					 ?></td>
 					 <td><?php echo getprog($row_utme['program']); ?></td>
                           <td align='center'><?php echo getlevel($row_utme['level'],$student_prog); ?></td>
-                          
-						<!--	<td style="text-align:justify;"><?php //echo $row_utme['f_dept']; ?></td>	--!>
-							<td style="text-align:center;"><?php echo number_format($namount,2);//$row_utme['f_amount']; ?></td>	
+                         <td style="text-align:center;"><?php echo number_format($namount,2);//$row_utme['f_amount']; ?></td>	
 							<td style="text-align:center;"><?php echo $status; ?></td> 		
-											
-												
-												
-										
-                        </tr>
+					 </tr>
                     <?php $sumcredit += $namount; }  ?>
-                   
-								<?php 
-//$sumnet="select SUM(f_amount) from fee_db where f_dept='$student_dept' and program ='$student_prog'";
-/* $student_s = "Delta";
-if($states == $student_s){
-$sumnet="select SUM(f_amount) as samount,SUM((pper / 100 * f_amount) + (f_amount)) as samount2 from fee_db where  program ='".safee($condb,$student_prog)."' and Cat_fee = '1' and level = '".safee($condb,$student_level)."'";
-  $resultsumnet = mysqli_query($condb,$sumnet);
-}else{
-$sumnet="select SUM(f_amount) as samount,SUM((pper / 100 * f_amount) + (f_amount)) as samount2 from fee_db where  program ='".safee($condb,$student_prog)."' and Cat_fee = '0' and level = '".safee($condb,$student_level)."'";
-  $resultsumnet = mysqli_query($condb,$sumnet);
-} 
-  $num_rows2 =mysqli_num_rows($resultsumnet);
-  
- $get_infc = mysqli_fetch_array($resultsumnet); */
- //$sumcredit = $get_infc['samount'];
-  //$sumcredit2 = $get_infc['samount2'];
-  //echo $expire = $row_utme['psdate'];
-// while($get_infc = mysqli_fetch_row($resultsumnet))
- //{
-	  //foreach ($get_infc as $sumcredit)
-								?>				
-						<!--	<strike>N</strike>	--!>			
-								<tfoot>
-    <tr class="text-offset">
+                   <!--	<strike>N</strike>	--!>			
+							
+    <tr class="row2">
       <td colspan="5"><strong>Total Amount: </strong></td>
    <td style="text-align:center;"><strong> <?php if($sumcredit > 0){ echo "&#8358; ".number_format($sumcredit,2);}else{echo "0";} ?></strong></td>
-    </tr>
-   </tfoot> 	<?php //} ?>			
-												
-										
-                     
-                      </tbody>
-                      
-                      
-                      <div class="btn-group" id="divButtons" name="divButtons">
-                      <input type="button" value="Print" onclick="tablePrint();" class="btn btn-default">
+    <td></td></tr>
+  			
+</tbody>
+<div class="btn-group" id="ccc2" name="divButtons">
+                  
                       	 </div>
                     </table>
+                    
                     </form>
                     
                     

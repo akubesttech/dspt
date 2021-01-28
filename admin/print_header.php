@@ -1,6 +1,7 @@
+
  
   <?php 
-session_start();
+//session_start();
 
 include('lib/dbcon.php'); 
 dbcon(); 
@@ -10,7 +11,7 @@ dbcon();
  $user_query = mysqli_query($condb,"select * from schoolsetuptd")or die(mysqli_error($condb));
 													$row1 = mysqli_fetch_array($user_query);
 													$id2 = $row1['id'];
-													$s_utme = $row1['p_utme']; $s_logom = $row1['Logo'];
+													$s_utme = $row1['p_utme'];
 									
 						?>
 <!DOCTYPE html>

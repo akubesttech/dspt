@@ -37,7 +37,7 @@ function createRandomPassword($qtd){
 
     return $Hash;
 }
-$viewfee_query1 = mysqli_query($condb,"select * from fee_db where program ='".safee($condb,$student_prog)."' and ft_cat ='0' and Cat_fee = '0'")or die(mysqli_error($condb));
+$viewfee_query1 = mysqli_query($condb,"select * from fee_db where program ='".safee($condb,$student_prog)."' and ft_cat ='7'")or die(mysqli_error($condb));
 $cfeecheck = mysqli_num_rows($viewfee_query1);
 $row_fee = mysqli_fetch_array($viewfee_query1); $Fee_amount = $row_fee['f_amount']; $Fee_type = $row_fee['feetype'];
 $fcat = $row_fee['ft_cat'];
@@ -66,7 +66,11 @@ $paystatus13 =mysqli_num_rows($paystatuspin);
 
 if($cdept == $newdept){ 
 message("Your cannot Change to the same course.", "error");
-redirect('changeofcourse_m.php?view=capply');}elseif($paystatus12 > 0){
+redirect('changeofcourse_m.php?view=capply');
+}elseif($cfeecheck < 1){
+    message("Unable to Load Payment at this time Please Try Again .", "error");
+redirect('changeofcourse_m.php?view=capply');
+}elseif($paystatus12 > 0){
   message("Your Change of Course Has Been Verified.", "success");
 redirect('changeofcourse_m.php?view=c_info');  
 }else{

@@ -29,8 +29,8 @@
 	if($existsop > 0 ){ print $user_row['images']; }else{ print "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>"   width="20" height="20"><?php 
 	//date_default_timezone_set("America/New_York");
 //echo "The time is " . date("h:i:sa");
-$ctextra = date('H')+5; if( $ctextra > 24){   $Hour = $ctextra - 24;}else{    $Hour = date('H')+5; }
-	//$Hour =date('H');
+//$ctextra = date('H')+5; if( $ctextra > 24){   $Hour = $ctextra - 24;}else{    $Hour = date('H')+5; }
+	$Hour =date('H');
 
 
 if ( $Hour >= 5 && $Hour <= 11 ) {
@@ -43,7 +43,7 @@ if ( $Hour >= 5 && $Hour <= 11 ) {
     echo " Good Night ";
 }else if( $Hour >= 1 && $Hour <= 4 ) {
     echo " Good Morning ";
-}  ?>!<strong> <?php echo $stud_row['FirstName']." ".$stud_row['SecondName'];  ?></strong> <?php //$Hour =date('H');
+}  ?>!<strong> <?php echo $stud_row['FirstName']." ".$stud_row['SecondName'];  ?></strong> <?php $Hour =date('H');
 
 
 if ( $Hour >= 5 && $Hour <= 11 ) {
@@ -61,12 +61,11 @@ if ( $Hour >= 5 && $Hour <= 11 ) {
                             <?php
     
  // $curdate=date("Y/m/d");
-    	  $date1=date("Y/m/d");
+    	  //$date1=date("Y/m/d");
     	    $date2=date("Y-m-d");
-mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE start_end='$date1'")
-or die(mysqli_error($condb));
+//mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE start_end='$date1'")or die(mysqli_error($condb));
 
-	$que_warning=mysqli_query($condb,"select * from session_tb where  Action='1'");
+	$que_warning=mysqli_query($condb,"select * from session_tb where  Action='1' AND prog = '".safee($condb,$student_prog)."'");
 	$warning_count=mysqli_num_rows($que_warning);
 ?>
   <?php	if($warning_count>0){}else{   ?> 
@@ -95,8 +94,8 @@ $year=date('Y');
 $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payment_tb where stud_reg ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$default_session)."' and pay_status='1' and ft_cat='1' and level = '".safee($condb,$student_level)."'  ");}
 	$warning_count2=mysqli_num_rows($que_checkpay);	      
 	$warning_data=mysqli_fetch_array($que_checkpay);   $sumpay = $warning_data['samount'];
-	$pay_status = $warning_data['pay_status'];
-$newSession   =	substr($warning_data['session'],5,10);
+	//$pay_status = $warning_data['pay_status'];
+//$newSession   =	substr($warning_data['session'],5,10);
 //$que_warning2=mysqli_query($condb,"select * from payment_tb where reg_id='$regNo' and session ='$default_session'");
 	//$warning_count2=mysqli_num_rows($que_warning2);
 	if($Snoti == 1)  
@@ -141,11 +140,6 @@ function birthday($birthday){
     return $age; } 
 
     
-	     //$student = mysqli_query($condb,"select * from student_tb where stud_id  = '$session_id'")or die(mysqli_error($condb));
-		// $student = mysqli_fetch_array($student);
-		  // $student= $student['dob'];
-	//$studentdob   =	substr($student,5,10);
-//	$todaydate   =	substr($date2,5,10);
  $student2 = mysqli_query($condb,"select * from student_tb where stud_id  = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
 		 $student3 = mysqli_fetch_array($student2);
 		  $student4 = $student3['dob']; 
@@ -300,7 +294,7 @@ if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){ ?>
 		// set default timezone
 //date_default_timezone_set('Europe/London'); // CDT 
 		//date_default_timezone_set('USA/Canada');
-	     $log = mysqli_query($condb,"select * from session_tb where action='1'")or die(mysqli_error($condb));
+	     $log = mysqli_query($condb,"select * from session_tb where action='1' and prog = '".$student_prog."'")or die(mysqli_error($condb));
 		 $log2 = mysqli_num_rows($log);
 		 	 $log3 = mysqli_fetch_array($log);
 		 	 $academic =$log3['session_name'];
@@ -319,7 +313,7 @@ if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){ ?>
 $curdate=date("Y/m/d");
 //$diff2 = strtotime($curdate);
 //$diff3 = round(diff2/86400);
-function dateDiff($start, $end) {
+/*function dateDiff($start, $end) {
 
 $start_ts = strtotime($start);
 
@@ -330,7 +324,7 @@ $diff = $end_ts - $start_ts;
 
 return round($diff / 86400);
 
-}
+}*/
 
 
 
