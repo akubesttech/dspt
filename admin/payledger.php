@@ -44,12 +44,17 @@ $sreg = $_GET['sreg'];
 $gsec=$_GET['xsec'];
 $gdop= $_GET['xdop']; 
 $plevel= $_GET['xlev'];
+$gdop2= $_GET['xd2']; //isset($_REQUEST['xd2']) ? $_REQUEST['xd2'] : '';
 $origDate = $gdop;
+$origDate2 = $gdop2;
  $date = str_replace('/', '-', $origDate );
 $newDate = date("Y-m-d", strtotime($date));
-
-if($gsec == Null and $gdop == null and $plevel == null ){ echo "<font size='5px'>Payment Ledger </font><br>".ucwords(getname($sreg))." (".$sreg.")";}
-elseif($gdop == null and $plevel == null ){ echo "<font size='5px'>Payment Ledger </font><br> ".ucwords(getname($sreg))." (".$sreg.") for ".$gsec." Academic Session";}elseif($gdop == null ){ echo "<font size='5px'>Payment Ledger </font><br> ".ucwords(getname($sreg))." (".$sreg.") <br>".getlevel($plevel,$class_ID)." ".$gsec." Academic Session  ";}else{ echo "<font size='5px'>Payment Ledger </font><br> ".ucwords(getname($sreg))." (".$sreg.") <br>".getlevel($$class_ID,$plevel)." ".$gsec."  Academic Session, Date ".$date;}
+$date2 = str_replace('/', '-', $origDate2 );
+$newDate2 = date("Y-m-d", strtotime($date2));
+$sdept = getDep($sreg);
+if(empty($plevel)){ $prol = "";}else{ $prol = " [ ".getlevel($plevel,$class_ID)." ]";}
+echo "<font size='5px'>Payment Ledger </font><br> ".getprog($class_ID)."   ".$prol." <br>".getdeptc($sdept)."<br>".ucwords(getname($sreg))." (".$sreg.")";
+if(empty($gdop) && empty($gdop2)){ echo $secd = "";}else{ echo $secd = " <br> From ".$date." To ".$date2;}
 ?>
  </center></b></div>
                       <thead >
@@ -58,73 +63,91 @@ elseif($gdop == null and $plevel == null ){ echo "<font size='5px'>Payment Ledge
                          <th>S/N</th>
 						 <th>Reference No</th>
                           <th>Name</th>
-                          <th><?php echo $SGdept1; ?></th>
-                          <th>Programme</th>
-                          <th>Level</th>
+                           <th>Level</th>
                           <th>Payment Type</th>
                           <th>Session</th>
                          <th>Payment Date</th>
                            <th>Transaction Status</th>
+                           <th>Schedule Fee<?php //echo $SGdept1; ?></th>
                            <th>Amount Paid</th>
-                          
+                          <th>Balance</th>
                         </tr>
                       </thead>
                       
                       
  <tbody>
                  <?php
-if($gsec == Null and $gdop == null and $plevel == null ){
-$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
-$resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
+ $vquery = "select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and pay_status = '1'  ";
+if(!empty($gsec)){$vquery .= " AND session ='".safee($condb,$gsec)."'";}
+if(!empty($plevel)){$vquery .= " AND level = '".safee($condb,$plevel)."'";}
+if(!empty($gdop) && !empty($gdop2)){$vquery .= " AND pay_date BETWEEN '".safee($condb,$newDate)."' AND '".safee($condb,$newDate2)."'";}
+$vquery .= " ORDER BY ft_cat ASC,pay_date DESC,session DESC limit 0,500";
+$viewutme_query = mysqli_query($condb,$vquery)or die(mysqli_error($condb));
+//if($gsec == Null and $gdop == null and $plevel == null ){
+//$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
+//$resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
+//}elseif($gdop == null and $plevel == null ){ 
+//$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
+ //$resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."' and session ='".safee($condb,$gsec)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
+ //}elseif($gdop == null ){
+ //$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
+ //$resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
+//}else{ 
+//$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_date = '".safee($condb,$newDate)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb)); 
+// $resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_date = '".safee($condb,$newDate)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
+//}
 
-  }elseif($gdop == null and $plevel == null ){ 
-$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
- $resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."' and session ='".safee($condb,$gsec)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
- }elseif($gdop == null ){
- $viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb));
- $resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
-}else{ 
-$viewutme_query = mysqli_query($condb,"select * from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_date = '".safee($condb,$newDate)."' and pay_status ='1' order by pay_date DESC limit 0,500 ")or die(mysqli_error($condb)); 
- $resultQP = mysqli_query($condb,"select SUM(paid_amount) from payment_tb where prog = '".safee($condb,$class_ID)."' and stud_reg = '".safee($condb,$sreg)."'   and session ='".safee($condb,$gsec)."' and level = '".safee($condb,$plevel)."' and pay_date = '".safee($condb,$newDate)."' and pay_status ='1' order by pay_date DESC limit 0,500 ");
-}
+
+
+
 $countrow = mysqli_num_rows($viewutme_query);
 if($countrow < 1){
 ?>
 <tr class="row1" >
 <td colspan="12" class="text-muted well well-sm no-shadow" style="margin-top: 10px;"><font color="black"><strong>    No Payment Information Found.</strong> </font></td></tr>
 <?php
-}
+}$bal = 0.00;
+$tdue = 0.00;
+$tbal = 0.00;
+$tpaid = 0.00;$nbal = 0.00; $amtn = 0.00;
 while($row_utme = mysqli_fetch_array($viewutme_query)){
-$id = $row_utme['pay_id'];  $feetype = $row_utme['fee_type'];
+$id = $row_utme['pay_id'];  $feetype = $row_utme['fee_type'];$is_active = $row_utme['pay_status'];
 if(substr($feetype,0,1) == "B"){ $feet = getfeecat($row_utme['ft_cat']);}else{ $feet = getftype($row_utme['fee_type']);}
+$fcat = $row_utme['ft_cat'];  
+$student_reg = $row_utme['stud_reg'];$app_id = $row_utme['app_no'];$stud_cat = $row_utme['stud_cat'];
+if(empty($student_reg)){$matn = $row_utme['app_no'];}else{ $matn = $row_utme['stud_reg'];}
+ if($is_active == "1"){$amtn = $row_utme['paid_amount']; }else{ $amtn = "0.00"; }
+//get Sccheduled Fee
+$namount = getDueamt($fcat,$class_ID,$row_utme['level'],$stud_cat);
+$currentbal = getpayamt($matn,$fcat,$class_ID,$row_utme['level'],$row_utme['session']);
+$nbal = $currentbal - $amtn;
+$bal = $namount - $nbal - $amtn;
+if($bal < 1){ $nbal= "0.00";}else{ $nbal= number_format($bal,2); }
 $i = 0;
 if ($i%2) {$classo = 'row1';} else {$classo = 'row2';}$i += 1;
 $forderquery = mysqli_query($condb,"select pay_status,paid_amount from payment_tb where pay_status > 0 and paid_amount > 0 and pay_id ='".safee($condb,$id)."'")or die(mysqli_error($condb));
 $countpay = $row_utme['pay_status'];
 ?>     
-                        <tr class="<?php echo $classo; ?>">
-                        	
-												<td width="30"> <?php echo $serial++;?> </td>
-						  <td> <?php 
+<tr class="<?php echo $classo; ?>">
+<td width="30"> <?php echo $serial++;?> </td>
+<td> <?php 
 if($countpay > 0){echo "<font color='green'>$row_utme[trans_id]</font>";}else{echo "<font color='red'>$row_utme[trans_id]</font>";} ?></td>
                           <td><?php echo ucwords(getname($row_utme['stud_reg'])); ?></td>
-                          <td><?php echo getdeptc($row_utme['department']); ?></td>
-                      <td><?php echo getprog($row_utme['prog']); ?></td>
-                      <td><?php echo getlevel($row_utme['level'],$class_ID); ?></td>
+<td><?php echo getlevel($row_utme['level'],$class_ID); ?></td>
                           <td><?php echo $feet; ?></td>
                           <td><?php echo ($row_utme['session']); ?></td>
                           <td><?php echo $row_utme['pay_date']; ?></td>
-                         <td><?php if($countpay > 0){ echo getpaystatus($row_utme['pay_status']);}else{echo getpaystatus("0");} ?></td>
-						 <td><?php echo number_format($row_utme['paid_amount'],2); ?></td>					
-												
-                        </tr>
-                     
-                     
-                        <?php } ?>
+<td><?php if($countpay > 0){ echo getpaystatus($row_utme['pay_status']);}else{echo getpaystatus("0");} ?></td>
+<td><?php echo number_format($namount,2); ?></td>
+						 <td><?php echo number_format($amtn,2);  ?></td>
+                         <td><?php echo $nbal; ?></td>	</tr>
+<?php  $tpaid += $amtn;  $tbal += $bal;  } ?>
                              <tr class="<?php echo $classo; ?>">
-                        <td colspan="10"><strong>Total </strong></td>
-                          <td width="15%" style="text-shadow: 1px 0px #0000FF; text-decoration-style: solid; font-weight: bold;">&#8358;<?php while($get_qp = mysqli_fetch_row($resultQP))
- { foreach ($get_qp as $sumqp) if($sumqp > 0){ echo " ".number_format($sumqp,2);}else{echo " 0.00";}}  ?></td>
+                        <td colspan="9"><strong>Total </strong></td>
+                          <td width="15%" style="text-shadow: 1px 0px #0000FF; text-decoration-style: solid; font-weight: bold;">&#8358;
+                          <?php  if($tpaid > 0){ echo " ".number_format($tpaid,2);}else{echo " 0.00";}  ?></td>
+                   <td width="15%" style="text-shadow: 1px 0px #0000FF; text-decoration-style: solid; font-weight: bold;">&#8358;
+                          <?php if($tbal > 0){ echo " ".number_format($tbal,2);}else{echo " 0.00";}  ?></td>
                    </tr>
                       </tbody>
                       

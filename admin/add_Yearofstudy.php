@@ -151,7 +151,8 @@ message("You don't have the permission to access this page", "error");
 					$user_query = mysqli_query($condb,"select * from session_tb order by action desc")or die(mysqli_error($condb));
 													while($row_s = mysqli_fetch_array($user_query)){
 													$id = $row_s['session_id'];
-													$caction=$row_s['action'];
+													$caction=$row_s['action']; $enp = $row_s['epstatus'];
+                                                    if($caction > 0 && $enp > 0){ $npo = "<font color='green'> <i class='fa fa-money'></i> ";}else{ $npo = "";}
 													?>
 
                     
@@ -160,28 +161,19 @@ message("You don't have the permission to access this page", "error");
 												<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
 												</td>
 											
-                          <td><?php echo $row_s['session_name']; ?></td>
+                          <td><?php echo $row_s['session_name']." ".$npo; ?></td>
                           <td><?php echo getprog($row_s['prog']); ?></td>
                           <td><?php echo $row_s['start_date']; ?></td>
                           <td><?php echo $row_s['start_end']; ?></td>
                           <td><?php echo $row_s['term']; ?></td>
                         
-                          <?php  if ($caction == '1'){
-											
-											
-											  ?>
-                          
-                          
-                          	<td width="120">  <?php   if (authorize($_SESSION["access3"]["sConfig"]["ayos"]["edit"])){ ?>
-												<a rel="tooltip"  title="This is The Active Session" id="<?php echo $id; ?>" href="add_Yearofstudy.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-success"><i class="fa fa-check icon-large"> Edit Session</i></a>
-												</td>
-												<?php }}else { ?>
-												
-												<td width="120"><?php   if (authorize($_SESSION["access3"]["sConfig"]["ayos"]["edit"])){ ?>
-												<a rel="tooltip"  title="Edit Session Details" id="<?php echo $id; ?>" href="add_Yearofstudy.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-danger"><i class="fa fa-pencil icon-large"> Edit Record</i></a>
-												</td>
-												
-													<?php } }?>
+                          <?php  if ($caction == '1'){ ?>
+<td width="120">  <?php   if (authorize($_SESSION["access3"]["sConfig"]["ayos"]["edit"])){ ?>
+<a rel="tooltip"  title="This is The Active Session" id="<?php echo $id; ?>" href="add_Yearofstudy.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-success"><i class="fa fa-check icon-large"> Edit Session</i></a>
+</td><?php }}else { ?>
+<td width="120"><?php   if (authorize($_SESSION["access3"]["sConfig"]["ayos"]["edit"])){ ?>
+<a rel="tooltip"  title="Edit Session Details" id="<?php echo $id; ?>" href="add_Yearofstudy.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-danger"><i class="fa fa-pencil icon-large"> Edit Record</i></a>
+												</td> <?php } }?>
                         </tr>
                      
                      

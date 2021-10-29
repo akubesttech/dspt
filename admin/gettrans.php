@@ -67,4 +67,40 @@ if(isset($_REQUEST['matno'])){
  echo json_encode($users_arr2);
    exit;
     }
+    
+     if(isset($_REQUEST['searchstaff'])){
+ $staffuname3 = $_POST['searchstaff'];
+    $sql = "SELECT * FROM  staff_details WHERE ( usern_id='".safee($condb,$staffuname3)."'  OR phone='".safee($condb,$staffuname3)."' OR email='".safee($condb,$staffuname3)."') AND access_level2 > 1  ";
+    $result = mysqli_query($condb,$sql);  
+    $users_arr2 = array();
+   while( $row = mysqli_fetch_array($result) ){
+        $checkcourse =  mysqli_query($condb,"select *  from course_allottb where assigned = '".safee($condb,$row['staff_id'])."'  AND a_lotstatus > 0 ");
+        $Ccount = mysqli_num_rows($checkcourse);
+        $id = $row['usern_id']; $actid = $row['staff_id'];
+        $fullname = ucwords($row['sname'])." ".ucwords($row['mname'])." ".ucwords($row['oname']);
+        $cos = $row['cos'];
+        $heq = $row['heq'];
+        $email = $row['email'];
+        $post = $row['position'];
+        $users_arr2[] = array("staff_uid" => $id,"s_idno" => $actid,"f_name" =>$fullname,"cos" => $cos,"heq" => $heq,"ccount" => $Ccount,"email" => $email,"post" => $post );
+       // 
+    }
+// encoding array to json format
+    echo json_encode($users_arr2);
+    exit;
+    }
+    
+    if(isset($_REQUEST['sregNo'])){
+ $staffuname3 = $_POST['sregNo'];
+    $sql = "SELECT * FROM  student_tb WHERE RegNo='".safee($condb,$staffuname3)."'";
+    $result = mysqli_query($condb,$sql);  
+    $users_arr2 = array();
+   while( $row = mysqli_fetch_array($result) ){
+      $id = $row['stud_id']; $actid = $row['RegNo'];
+    $users_arr2[] = array("matid" => $id,"mstatus" => $actid );
+       }
+// encoding array to json format
+    echo json_encode($users_arr2);
+    exit;
+    }
 ?>

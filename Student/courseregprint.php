@@ -3,7 +3,7 @@ include("header1.php");
 //include("dbconnection.php")
 include('session.php'); 
   $existl = imgExists("../admin/".$row['Logo']);
-  $saddress = $row['Address']; $state = $row['State'];$city = $row['City']; $smotto = $row['Motto'];
+  $saddress = $row['Address']; $state = $row['State'];$city = $row['City']; $smotto = $row['Motto']; $smato = $row['smat'];
   //$checkreg_query = mysqli_query($condb,"select * from coursereg_tb where sregno='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$default_session)."' ")or die(mysqli_error($condb));
 //$dform_checkexist20 = mysqli_num_rows($checkreg_query);
 //if($dform_checkexist20 < 1){ message("No Course has been Registered for.".$default_session, "error");
@@ -12,10 +12,10 @@ include('session.php');
 //$applcation_id = $rsprint['app_no'];
 //$student_reg = $rsprint['stud_reg'];
  $qsql = mysqli_query($condb,"SELECT * FROM student_tb  WHERE  stud_id ='".safee($condb,$session_id)."' ")or die(mysqli_error($condb));
-$rsprint = mysqli_fetch_array($qsql); $regen = $rsprint['RegNo'];
+$rsprint = mysqli_fetch_array($qsql); $regen = $rsprint['RegNo']; $sshow = $rsprint['istatus'];  $semailo = $rsprint['e_address'];
 ?>
 
-<body style="background-color: rgb(59, 59, 59); padding: 5px; height: 800px;"  >
+<body style=" padding: 5px; height: 800px;"  >
   <div class="row-fluid">
                         <!-- block -->
  <div class="block1"  >
@@ -30,25 +30,25 @@ $rsprint = mysqli_fetch_array($qsql); $regen = $rsprint['RegNo'];
 </div>
 <div class="block-content2 collapse in"  >
                                 <div class="span121" style="background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('<?php if ($existl > 0 ){ echo "../admin/".$row['Logo'];
-	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: inline; -webkit-print-color-adjust: exact; ">
+	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: block; -webkit-print-color-adjust: exact; ">
 								
 								 <!--------------------form------------------->
 								<form method="post" enctype="multipart/form-data">
 					<div class="control-group">
                              <div class="controls">
                              
-                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;"  border="0">
-    <style type="text/css" media="print"> @media print { a[href]:after {content: url('<?php if ($existl > 0 ){ echo "../admin/".$row['Logo'];
-	}else{ echo "css/images/logo.png";} ?>') !important;} }
-.row1 {background-color: #EFEFEF;border: 1px solid #98C1D1;
+                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;background-color: transparent;"  border="0">
+    <style type="text/css" media="print"> @media print { a[href]:after  {content: url('<?php if ($existl > 0 ){ echo "../admin/".$row['Logo'];
+	}else{ echo "css/images/logo.png";} ?>') !important; visibility: hidden; } }
+.row1 {background-color: transparent;border: 1px solid #98C1D1;/* #EFEFEF */
 		height: 30px;	font-family:Verdana, Geneva, sans-serif; font-size:12px; }
-.row2 {background-color: #DEDEDE;border: 1px solid #98C1D1;height: 30px; font-family:Verdana, Geneva, sans-serif; 
-	font-size:12px; }  @page {size: auto;margin: 0;}
+.row2 {background-color: transparent;border: 1px solid #98C1D1;height: 30px; font-family:Verdana, Geneva, sans-serif; /*#DEDEDE*/
+	font-size:12px; } @page {margin: 0;size: portrait;}  /*@page {size: auto;margin: 0;}*/
 					  </style>
 	<tr style="background-color:#FFC">
-            <td height="30" colspan="2"> <div class="rounded">
+            <td height="30" colspan="4"> <!-- <div class="rounded">
     <main class="container clear"> 
-      <!-- main body --> 
+      main body --> 
       <!-- ################################################################################################ -->
      <center><font size="+2">COURSE REGISTRATION FORM</font></center>
      <p></p><!--
@@ -57,30 +57,36 @@ $rsprint = mysqli_fetch_array($qsql); $regen = $rsprint['RegNo'];
       <p><?php echo $SGdept1; ?>:&nbsp;<?php echo getdeptc($rsprint['Department']);?></p> 
       <p>Level: <?php echo getlevel($student_level,$student_prog); ?></p> --!>
       <!-- ################################################################################################ --> 
-      <!-- / main body -->
+      <!-- / main body 
       <div class="clear"><hr></div>
     </main>
-  </div></td>
-     
-          </tr>
-
-<tr ><td style="position: absolute;font-size:13px;font-family:Verdana, Geneva, sans-serif;" colspan="1" height="32"><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matric Number: <?php echo  $regen; ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $SCategory; ?> :   <?php echo getfacultyc($rsprint['Faculty']) ; ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $SGdept1; ?>:&nbsp;<?php echo getdeptc($rsprint['Department']);?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;
-Level: <?php echo getlevel($student_level,$student_prog); ?></td>
-            <td height="32" colspan="1"> <div class="rounded" align="center">
-   <img id="admin_avatar" class="img-circle" src="<?php 
-  // $sql = "SELECT * FROM new_apply1 left join olevel_tb ON olevel_tb.oPin = new_apply1.Pin WHERE md5(new_apply1.appNo)='$_GET[applyid]' or md5(new_apply1.JambNo)='$_GET[applyid]'";
-
-		  $existn = imgExists($rsprint['images']);
-		  		  if ($existn > 0 ){ echo $rsprint['images'];
-	}else{ echo "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>" width="180" height="130" style=" border-radius: 50%;" >
-  </div></td><td style="margin-left: 30px;" colspan="1"></td>
+  </div>--></td>
      
           </tr>
 
 <tr >
-            <td height="32" colspan="2" style="font-size:17px;font-weight: bold;color: blue; font-family:vandana;text-shadow: 1px 1px gray;"> <div class="rounded" align="center"><br><br>
+<td style="font-size:12px;font-family:Verdana, Geneva, sans-serif;width: 355px;text-align: justify;" colspan="1" height="32">
+<p><?php if(!empty($smato)){ if(empty($sshow)){ ?>Username: <?php echo $semailo; }else{ ?> Matric Number: <?php echo  $regen; } }else{ ?> Matric Number: <?php echo  $regen; } ?></p>
+<p><?php echo $SCategory; ?> :   <?php echo getfacultyc($rsprint['Faculty']) ; ?></p>
+<p><?php echo $SGdept1; ?>:&nbsp;<?php echo getdeptc($rsprint['Department']);?></p>
+Level: <?php echo getlevel($student_level,$student_prog); ?></td>
+
+            <td height="32" colspan="1" style="text-align: center;width: 190px;" >    
+            <img  src="<?php 
+  // $sql = "SELECT * FROM new_apply1 left join olevel_tb ON olevel_tb.oPin = new_apply1.Pin WHERE md5(new_apply1.appNo)='$_GET[applyid]' or md5(new_apply1.JambNo)='$_GET[applyid]'";
+
+		  $existn = imgExists($rsprint['images']);
+		  		  if ($existn > 0 ){ echo $rsprint['images'];
+	}else{ echo "uploads/NO-IMAGE-AVAILABLE.jpg";} ?>" width="150" height="120" style=" border-radius: 50%;" >
+  </td>
+  <td colspan="1" style="margin-left: 30px;text-align: center;font-family:Verdana, Geneva, sans-serif;width: 355px;" ><?php echo strtoupper(getprog($student_prog)); ?></td>
+     
+          </tr>
+
+<tr >
+<td height="32" colspan="4" style="font-size:17px;font-weight: bold;color: blue; font-family:vandana;text-shadow: 1px 1px gray;text-align: center;">
   <?php echo strtoupper(getname($regen)); ?>
-  </div></td>
+  </td>
      
           </tr>
 <div class="rounded">
@@ -118,7 +124,7 @@ $i = "0";
 while($row_utme = mysqli_fetch_array($getfirst_query)){
 $coursstatus = $row_utme['c_cat']; if($coursstatus > 0){  $cstat = "Compulsory";}else{  $cstat = "Elective";}
 if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select DISTINCT lect_approve  from coursereg_tb WHERE sregno = '".safee($condb,$regen)."' AND c_code = '".safee($condb,$row_utme['c_code'])."' and lect_approve = '1' ")or die(mysqli_error($condb));
 ?>     
                         <tr class="<?php echo $classo1; ?>">
@@ -208,7 +214,7 @@ $i = "0";
 while($row_utme = mysqli_fetch_array($viewutme_query2)){
 if ($i%2) {$classo = 'row1';} else {$classo = 'row2';}$i += 1;
 $coursstatus2 = $row_utme['c_cat']; if($coursstatus2 > 0){  $cstat = "Compulsory";}else{  $cstat = "Elective";}
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select DISTINCT lect_approve  from coursereg_tb WHERE sregno = '".safee($condb,$regen)."' AND c_code = '".safee($condb,$row_utme['c_code'])."' and lect_approve = '1' ")or die(mysqli_error($condb));
 ?>     
                         <tr class="<?php echo $classo1; ?>">
@@ -287,21 +293,21 @@ $sumnet2="select SUM(c_unit) from coursereg_tb where sregno='".safee($condb,$reg
        </tr>
        <tr>
          <td colspan="1">_________________________________&nbsp;&nbsp;</td>
-         <td colspan="1">&nbsp;&nbsp; _________________________________&nbsp;&nbsp; </td>
+         <td colspan="1">&nbsp;&nbsp;<!-- _________________________________--!>&nbsp;&nbsp; </td>
          <td colspan="1"> _________________________________ </td>
        </tr>
        
        <tr style="font-size:8;text-align: center;">
          <td colspan="1"><strong>Student's Signature and Date</strong></td>
-         <td colspan="1"><strong>Course Advisor Signature and Date</strong> </td>
-          <td colspan="1"><strong>HOD Signature and Date</strong> </td>
+         <td colspan="1"><strong><!--Course Advisor Signature and Date--!></strong> </td>
+          <td colspan="1"><strong><!--HOD Signature and Date --!>Course Advisor Signature and Date</strong> </td>
        </tr>
       
        <tr>
          <td colspan="4">&nbsp;</td>
        </tr>
        
-        <tr>
+    <!--    <tr>
          <td colspan="1">&nbsp;&nbsp;</td>
          <td colspan="1">&nbsp;&nbsp; _________________________________&nbsp;&nbsp; </td>
          <td colspan="1"> </td>
@@ -309,9 +315,9 @@ $sumnet2="select SUM(c_unit) from coursereg_tb where sregno='".safee($condb,$reg
        
        <tr style="font-size:8;text-align: center;">
          <td colspan="1"><strong></strong></td>
-         <td colspan="1"><strong>Dean of School Signature and Date</strong> </td>
+         <td colspan="1"><strong>Dean of Studies Signature and Date</strong> </td>
           <td colspan="1"><strong></strong> </td>
-       </tr>
+       </tr> --!>
        <!--
        <tr>
          <td colspan="4">_______________________________________&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;             _________________________________________</td>

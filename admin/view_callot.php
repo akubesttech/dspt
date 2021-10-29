@@ -1,5 +1,5 @@
   <?php 	$status = FALSE;
-if ( authorize($_SESSION["access3"]["cMang"]["vsa"]["create"]) || 
+if ( authorize($_SESSION["access3"]["cMang"]["vca"]["create"]) || 
 authorize($_SESSION["access3"]["cMang"]["vca"]["edit"]) || 
 authorize($_SESSION["access3"]["cMang"]["vca"]["view"]) || 
 authorize($_SESSION["access3"]["cMang"]["vca"]["delete"]) ) {
@@ -66,31 +66,29 @@ message("You don't have the permission to access this page", "error");
                       
  <tbody>
                  <?php
-$depart = $_GET['dept1_find'];
-$session=$_GET['session2'];
-$entry_mode= $_GET['moe2'];
+//$depart = $_GET['dept1_find'];
+//$session=$_GET['session2'];
+//$entry_mode= $_GET['moe2'];
 $staffmainid = getsusern($admin_username); 
 //echo $admin_username;
 $viewcourseallot1=mysqli_query($condb,"select * from course_allottb where assigned ='". safee($condb,$staffmainid) ."' and session ='". safee($condb,$default_session)."'  and semester='". safee($condb,$default_semester) ."' ");
 		while($row_allot = mysqli_fetch_array($viewcourseallot1)){
-		$id = $row_allot['class_id']; 	$programa = $row_allot['prog'];
+		$id = $row_allot['a_lotid']; 	$programa = $row_allot['prog'];
 		$course_id = $row_allot['course'];
 ?>     
                         <tr>
                         	<td width="30">
 												<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
 												</td>
-						  <td><?php 
-						  echo getdeptc($row_allot['dept']);?></td>
+						  <td><?php echo getdeptc($row_allot['dept']);?></td>
 					 <td><?php  echo $row_allot['course']; ?></td>
                           <td><?php echo getcourse($row_allot['course']); ?></td>
                           <td><?php echo $row_allot['session']; ?></td>
                           <td><?php echo $row_allot['semester']; ?></td>
                           <td><?php echo getlevel($row_allot['level'],$programa); ?></td>
                            <td><?php echo $row_allot['a_lotdate']; ?></td>
-                          
-												<td width="90"><?php   if (authorize($_SESSION["access3"]["cMang"]["vca"]["view"])){ ?>
-			<a rel="tooltip"  title="View Student offering This Course <?php echo $row_allot['course']; ?>" id="delete1" href="?view=clist&userId=<?php echo $course_id;?>" 	  data-toggle="modal" class="btn btn-info"><i class="fa fa-file icon-large"> View Class</i></a><?php } ?>
+<td width="90"><?php   if (authorize($_SESSION["access3"]["cMang"]["vca"]["view"])){ ?>
+<a rel="tooltip"  title="View Student offering This Course <?php echo $row_allot['course']; ?>" id="delete1" href="?view=clist&userId=<?php echo $id;?>" 	  data-toggle="modal" class="btn btn-info"><i class="fa fa-file icon-large"> View Class</i></a><?php } ?>
 												</td>
                         </tr>
                      

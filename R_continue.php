@@ -105,11 +105,10 @@ if (!isset($_SESSION['temppin']) ||(trim ($_SESSION['temppin']) == '')) {
 }
 
 //session_start();
-	$s=10;
+	$s=10; $AppNo= "0";
 	while($s>0){
 		$AppNo .= rand(0,9);
-		$s-=1;
-	}
+		$s-=1;}
 	
 	  $sql_pin1="SELECT * FROM student_tb WHERE RegNo='".safee($condb,$_SESSION['temppin'])."'";
 $result_pin1 = mysqli_query($condb,$sql_pin1);
@@ -393,16 +392,17 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head"><?php echo $SGdept1; ?> Group</label>
-			    					<div class="form-group" ><div  id="txtroomno" ><input type="text" name="d_group1" id="d_group1"   tabindex="1"  class="form-control input-sm" readonly> </div></div>
+			    					<div class="form-group" ><div  id="txtroomno" >
+                                    <input type="text" name="d_group1" id="d_group1"   tabindex="1"  class="form-control input-sm" readonly> </div></div>
 			    				</div>
 			    				
 			    			</div>
 <div class="row"><div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Password *</label><div class="form-group" >
-<input type="password" name="pword" id="pword"  <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?> tabindex="1"  class="form-control input-sm" autcomplete="false" ></div> </div>		    			
+<input type="password" name="pword" id="pword"  <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?> tabindex="1"  class="form-control input-sm" autcomplete="false" required="required" ></div> </div>		    			
 			    			<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Comfirm Password *</label>
-<div class="form-group" ><input type="password" name="pword2" id="pword2" <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?>  tabindex="1"  class="form-control input-sm" autcomplete="false" > </div>
+<div class="form-group" ><input type="password" name="pword2" id="pword2" <?php if($find_record['password'] == ""){ echo ""; }else{ echo "value='".$find_record['password']."'"; } ?>  tabindex="1"  class="form-control input-sm" autcomplete="false" required="required" > </div>
 			    				</div>   			</div>
 			    				<h5 class="panel-title"> Bio Data </h5>
 			    		<div class="row">
@@ -505,7 +505,7 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
 			    					<div class="form-group"><input class="form-control input-sm" id="phone" type="tel" pattern="[+]?[\.\s\-\(\)\*\#0-9]{3,}" onkeypress="return isNumber(event);" maxlength="11" name="phone_no" required="required" tabindex="1" value="<?php echo $phone_e; ?>"/></div></div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 			    				<label class="head">Email Address *</label>
-			    					<div class="form-group"> <input type="text" class="form-control input-sm" name="gemail" id="email" tabindex="4" value="<?php echo $email_e; ?>" >	</div>
+			    					<div class="form-group"> <input type="text" class="form-control input-sm" name="gemail" id="email" tabindex="4" value="<?php echo $email_e; ?>" required="required" >	</div>
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
 <label class="head" id="s1_chalenge">Contact Address</label><div class="form-group"><textarea name="contactaddress" id="contactaddress" tabindex="2" class="form-control input-sm"> <?php echo $address_e; ?></textarea></div>
@@ -564,7 +564,7 @@ while($rsfac_1 = mysqli_fetch_array($resultfac1))
   <option value="" selected="selected" >Select LGA</option><?php }else{ ?> <option value="<?php echo $find_record['lga']; ?>"><?php echo $find_record['lga']; ?></option> <?php } ?>
 </select></div></div>
 			    				<div class="col-xs-6 col-sm-6 col-md-4">
-			    				<label class="head" id="s1_chalenge">Nationality</label><div class="form-group"><select class="form-control input-sm"  name="nation" id="nation"  > <?php if($find_record['nation'] == ""){ ?>
+			    				<label class="head" id="s1_chalenge">Nationality</label><div class="form-group"><select class="form-control input-sm"  name="nation" id="nation" required="required" > <?php if($find_record['nation'] == ""){ ?>
   <option value="" selected="selected" >Select Nationality</option><?php }else{ ?> <option value="<?php echo $find_record['nation']; ?>"><?php echo $find_record['nation']; ?></option> <?php } ?>
 <option  value="Nigeria">Nigeria</option>
 <option value="Others">Others</option>

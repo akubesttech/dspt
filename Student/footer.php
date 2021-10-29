@@ -436,7 +436,18 @@ window.setTimeout(function() {
 }, 5000);
  
 });
-
+  function calc() {
+  var tots = 0;
+  $(".uniform_on1:checked").each(function() {
+    var price = $(this).attr("payamt");
+    tots += parseFloat(price);
+  });
+  $('#tots').text(tots.toFixed(2));
+}
+$(function() {
+  $(document).on("change", ".uniform_on1", calc);
+  calc();
+});
  /*   $(document).ready(function(){
                 $( "#ed , #endDate" ).datepicker({
                     dateFormat: 'yy-mm-dd',

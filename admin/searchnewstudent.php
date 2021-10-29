@@ -14,6 +14,8 @@ authorize($_SESSION["access3"]["adm"]["sar"]["delete"]) ) {
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 }
+$qeryno = mysqli_query($condb,"select * from new_apply1 where  reg_status = '1' and Asession = '".safee($condb,$default_session)."' and app_type = '".safee($condb,$class_ID)."'  ")or die(mysqli_error($condb));
+$u_count = mysqli_num_rows($qeryno);
 			    ?>
 <div class="x_panel">
                 
@@ -93,8 +95,8 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
              
                       <div  class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback>
                         <div class="col-md-6 col-md-offset-3">	<?php   if (authorize($_SESSION["access3"]["adm"]["sar"]["create"])){ ?>
-                         <button type="submit" name="Search"  id="save" data-placement="right" class="btn btn-primary col-md-4" title="Click To Search Record " ><i class="fa fa-cloud"></i> Search Record</button><?php } ?>
-                        
+<button type="submit" name="Search"  id="save" data-placement="right" class="btn btn-primary col-md-4" title="Click To Search Record " ><i class="fa fa-cloud"></i> Search Record</button><?php } ?>
+<a 	onClick="window.location.href='new_apply.php?session2=<?php echo $default_session; ?>';" class="btn btn-info"  id="pappd" data-placement="top" title="Click to Load most resent <?php echo $default_session; ?> Application information" ><i class="fa fa-file icon-large"></i> View <?php echo $default_session; ?> New Application <span class="badge bg-yellow"><?php echo $u_count; ?></span></a>
                         <script type="text/javascript">
 	                                            $(document).ready(function(){
 	                                            $('#save').tooltip('show');

@@ -16,7 +16,8 @@ authorize($_SESSION["access3"]["sConfig"]["afac"]["delete"]) ) {
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 } ?>
-  <?php $get_RegNo= $_GET['id']; ?>
+  <?php $get_RegNo = isset($_GET['id']) ? $_GET['id'] : '';
+  $AppNo="";$s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;} ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -30,22 +31,11 @@ message("You don't have the permission to access this page", "error");
 
             <div class="row">
               <div class="col-md-12">
-                
-				 <!-- /Organization Setup Form -->
-				
-					<?php 
-					$num=$get_RegNo;
-				if ($num!==null){
-			include('editFac.php');
-			}else{
-			
-				include('addFac.php'); }?>
-				
-                   <!-- /Organization Setup Form End -->
-                 
-                  
-                  
-                </div>
+                <!-- /Organization Setup Form -->
+				<?php $num=$get_RegNo;
+                    if(!empty($get_RegNo)){ include('editFac.php');}else{ include('addFac.php'); }?>
+				<!-- /Organization Setup Form End -->
+                 </div>
               </div>
             </div>
 
@@ -88,6 +78,7 @@ message("You don't have the permission to access this page", "error");
                          <th><input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');"></th>
                           <th><?php echo $SCategory; ?> Name</th>
                           <th><?php echo $SCategory; ?> Description</th>
+                          <th><?php echo $SCategory; ?> Short Code</th>
                           <th>Email</th>
                           <th>Office Phone</th>
                           <th>Dean</th>
@@ -109,6 +100,7 @@ message("You don't have the permission to access this page", "error");
 												
                           <td><?php echo $row_f['fac_name']; ?></td>
                           <td><?php echo $row_f['fac_desc']; ?></td>
+                          <td><?php echo strtoupper($row_f['fcode']); ?></td>
                           <td><?php echo $row_f['fac_email']; ?></td>
                           <td><?php echo $row_f['fac_phone']; ?></td>
                           <td><?php echo getdean($row_f['fac_dean']); ?></td>

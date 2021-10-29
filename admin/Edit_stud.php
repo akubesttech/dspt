@@ -1,12 +1,11 @@
 <script>
 
-function sync(){
+function regcom(){
 var sname = document.getElementById('sregNo');
 var sname1 = sname.value;
 var userID = document.getElementById('pass_word');
-var number = Math.floor(Math.random() * 100) +4;
-
-userID.value = sname1+number;
+//var number = Math.floor(Math.random() * 100) +4;
+userID.value = sname1;
 userID.value.changeToUpperCase();
 }
 </script>
@@ -16,15 +15,10 @@ userID.value.changeToUpperCase();
 $(document).ready(function() {   
 $('#jdesc').change(function(){   
 if($('#jdesc').val() === 'Others')   
-   {   
-   $('#addjob0').show(); 
-      $('#addjob').show();    
-   }   
-else 
-   {   
+   {   $('#addjob0').show(); 
+      $('#addjob').show();    }   else {   
    $('#addjob0').hide(); 
-      $('#addjob').hide();      
-   }   
+$('#addjob').hide();      }   
 });   
 });   
 </script>
@@ -32,17 +26,23 @@ else
 <?php
 //if($_SESSION['insidf']==$_POST['insidf'])
 //{
+    $query_staff = mysqli_query($condb,"select * from student_tb where stud_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
+$row_staff = mysqli_fetch_array($query_staff); $ematno = trim($row_staff['RegNo']); $app1 = $row_staff['appNo'];
+$yoe = $row_staff['yoe']; $yog = $row_staff['yog']; $pdura = $row_staff['prog_dura']; $dep1 = $row_staff['Department']; 
+$prog = $row_staff['app_type']; $facd = $row_staff['Faculty']; 
+ 
+           $asec = $yoe."/".(int)($yoe + 1);                    
 if(isset($_POST['editstudentdata'])){
-$sname = ucfirst($_POST['sname']) ; $mname = $_POST['mname'] ; $oname = $_POST['oname'] ; $sex = $_POST['sex'];
-$Mstatus = $_POST['Mstatus'] ; $dob = $_POST['dob'] ; $hobbies = $_POST['hobbies'] ; $sheight = $_POST['shight'];
+$sname = ucfirst($_POST['sname']) ; $mname = $_POST['mname'] ; $oname = $_POST['oname'] ; $sex = $_POST['sex']; $emat = trim($_POST['ematno']);
+ $dob = $_POST['dob'] ; $hobbies = $_POST['hobbies'] ; //$sheight = $_POST['shight'];
 $eaddress = $_POST['eaddress'] ; $paddress = $_POST['paddress'] ; $caddress = $_POST['caddress'] ;$phone = $_POST['phone'] ;
- $lga = $_POST['lga'] ; $state = $_POST['state'] ; $nation = ucfirst($_POST['nation']);
+ $lga = $_POST['lga'] ; $state = $_POST['state'] ; $nation = ucfirst($_POST['nation']);$sid = trim($_POST['sregNo']);
 $moe = $_POST['moe'] ; $yoe = $_POST['yoe'] ; $prog_dura = $_POST['prog_dura'] ; $los = $_POST['los']; $progn = $_POST['prog'];
+$lcount = getlcount($progn); $slen = strlen($lcount);
+$regcount = getlstr($sid,$slen);
 $civ = $_POST['civ'] ; $pass_word2 = $_POST['pass_word'] ; $pass_word = substr(md5($pass_word2.SUDO_M),14); $fac1 = $_POST['fac2'] ; $dept1 = $_POST['dept1'];
-$sstatus = $_POST['sstatus'] ; $sid = $_POST['sregNo']; $yearofgrag = $_POST['yoe']+ $_POST['prog_dura']; $time=date('l jS \of F Y h:i:s A');$webaddress=$_SERVER['HTTP_HOST'];
-$image_find = $_POST['pic'] ;  
-
-
+$sstatus = $_POST['sstatus'] ;  $yearofgrag = $_POST['yoe']+ $_POST['prog_dura']; $time=date('l jS \of F Y h:i:s A');$webaddress=$_SERVER['HTTP_HOST'];
+//$image_find = $_POST['pic'] ;  $Mstatus = $_POST['Mstatus'] ;
 $query = mysqli_query($condb,"select * from student_tb where RegNo = '".safee($condb,$sid)."' ")or die(mysqli_error($condb));
 $count = mysqli_num_rows($query);
 $config = mysqli_fetch_array(mysqli_query($condb,"SELECT * FROM schoolsetuptd "));
@@ -67,15 +67,11 @@ if ($count > 1){
 			}
 
 else{
-
 //$images = uploadProductImage('pic','./uploads/');
 //$thumbnail = $images['thumbnail'];
-
-
 if($config['emailver'] == '1') {
-
 $msg = nl2br("Dear $sname $mname,.\n
-	This Message was Sent From ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
+	This Message was Sent  From ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
 	..................................................................\n
 	The Following is Your Login Information Update:.\n
 	User Name:   ".$sid."\n
@@ -90,22 +86,26 @@ $msg = nl2br("Dear $sname $mname,.\n
 	
 //$random_hash = md5(date('r', time()));
 $subject="Student Login Information Update "; 
-//define the headers we want passed. Note that they are separated with \r\n
-//$headers  = 'MIME-Version: 1.0' . "\r\n";
-//$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
- //$headers      .= "From:Message From Admin\r\n $subject <$webaddress>\r\n";
- //define the body of the message.
+
 ob_start(); //Turn on output buffering
 //mail($eaddress, $subject, $msg, $headers);
 $mail_data = array('to' => $eaddress, 'sub' => $subject, 'msg' => 'Notify','body' => $msg, 'srname' => $comn);
 	send_email($mail_data);
-mysqli_query($condb,"update student_tb  set FirstName='".safee($condb,$sname)."',SecondName='".safee($condb,$mname)."',Othername='".safee($condb,$oname)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',phone='".safee($condb,$phone)."',e_address='".safee($condb,$eaddress)."',postal_address='".safee($condb,$paddress)."',address='".safee($condb,$caddress)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',Faculty='".safee($condb,$fac1)."',Department='".safee($condb,$dept1)."',Moe='".safee($condb,$moe)."',yoe='".safee($condb,$yoe)."',app_type='".safee($condb,$progn)."',prog_dura='".safee($condb,$prog_dura)."',p_level='".safee($condb,$los)."',Cert_inview='".safee($condb,$progn)."',yog='".safee($condb,$yearofgrag)."',password='".safee($condb,$pass_word)."',verify_Data='".safee($condb,$sstatus)."' where stud_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
+mysqli_query($condb,"update student_tb  set RegNo='".safee($condb,$sid)."',FirstName='".safee($condb,$sname)."',SecondName='".safee($condb,$mname)."',Othername='".safee($condb,$oname)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',phone='".safee($condb,$phone)."',e_address='".safee($condb,$eaddress)."',postal_address='".safee($condb,$paddress)."',address='".safee($condb,$caddress)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',Faculty='".safee($condb,$fac1)."',Department='".safee($condb,$dept1)."',Moe='".safee($condb,$moe)."',yoe='".safee($condb,$yoe)."',app_type='".safee($condb,$progn)."',prog_dura='".safee($condb,$prog_dura)."',p_level='".safee($condb,$los)."',Cert_inview='".safee($condb,$progn)."',yog='".safee($condb,$yearofgrag)."',password='".safee($condb,$pass_word)."',verify_Data='".safee($condb,$sstatus)."',reg_count='".safee($condb,$regcount)."' where stud_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 }else{
-mysqli_query($condb,"update student_tb  set FirstName='".safee($condb,$sname)."',SecondName='".safee($condb,$mname)."',Othername='".safee($condb,$oname)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',phone='".safee($condb,$phone)."',e_address='".safee($condb,$eaddress)."',postal_address='".safee($condb,$paddress)."',address='".safee($condb,$caddress)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',Faculty='".safee($condb,$fac1)."',Department='".safee($condb,$dept1)."',Moe='".safee($condb,$moe)."',yoe='".safee($condb,$yoe)."',app_type='".safee($condb,$progn)."',prog_dura='".safee($condb,$prog_dura)."',p_level='".safee($condb,$los)."',Cert_inview='".safee($condb,$progn)."',yog='".safee($condb,$yearofgrag)."',password='".safee($condb,$pass_word)."',verify_Data='".safee($condb,$sstatus)."' where stud_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
+mysqli_query($condb,"update student_tb  set RegNo='".safee($condb,$sid)."',FirstName='".safee($condb,$sname)."',SecondName='".safee($condb,$mname)."',Othername='".safee($condb,$oname)."',Gender='".safee($condb,$sex)."',dob='".safee($condb,$dob)."',hobbies='".safee($condb,$hobbies)."',phone='".safee($condb,$phone)."',e_address='".safee($condb,$eaddress)."',postal_address='".safee($condb,$paddress)."',address='".safee($condb,$caddress)."',lga='".safee($condb,$lga)."',state='".safee($condb,$state)."',nation='".safee($condb,$nation)."',Faculty='".safee($condb,$fac1)."',Department='".safee($condb,$dept1)."',Moe='".safee($condb,$moe)."',yoe='".safee($condb,$yoe)."',app_type='".safee($condb,$progn)."',prog_dura='".safee($condb,$prog_dura)."',p_level='".safee($condb,$los)."',Cert_inview='".safee($condb,$progn)."',yog='".safee($condb,$yearofgrag)."',password='".safee($condb,$pass_word)."',verify_Data='".safee($condb,$sstatus)."',reg_count='".safee($condb,$regcount)."' where stud_id='".safee($condb,$get_RegNo)."'")or die(mysqli_error($condb));
 }
-mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Student Details of $sname $oname with Registration Number $sid  was Updated')")or die(mysqli_error($condb)); 
+if($sid !== $ematno){ $act_message = "The Details of $sname $mname and Matric Number was Update From $ematno to  $sid .";
+//$sql2_up = mysqli_query($condb,"UPDATE payment_tb SET stud_reg ='".safee($condb,$sid)."' WHERE app_no = '".safee($condb,$app1)."' ")or die(mysqli_error($condb));
+$sql2_up1 = mysqli_query($condb,"UPDATE payment_tb SET stud_reg = REPLACE(stud_reg, '".safee($condb,$ematno)."', '".safee($condb,$sid)."') ")or die(mysqli_error($condb));
+$sql2_up1 = mysqli_query($condb,"UPDATE feecomp_tb SET regno = REPLACE(regno, '".safee($condb,$ematno)."', '".safee($condb,$sid)."') ")or die(mysqli_error($condb));
+$sql2_up3 = mysqli_query($condb,"UPDATE coursereg_tb SET sregno = REPLACE(sregno, '".safee($condb,$ematno)."', '".safee($condb,$sid)."') ")or die(mysqli_error($condb));
+}else{ $act_message = "Student Details of $sname $mname with Matric Number $sid  was Updated";} 
+ //UPDATE student SET student_name = replace(student_name, 'John', 'Mark');
+ //UPDATE `table_1`  SET  `field_1` =  BINARY REPLACE(`field_1`, 'find_string', 'replace_string')
+mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','".$act_message."')")or die(mysqli_error($condb)); 
 // ob_start();
-message("Student Record of [$sname $oname] was Successfully Updated", "success");
+message("Student Record of [$sname $mname] was Successfully Updated", "success");
 		       redirect('Student_Record.php?view=e_stud&userId='.$get_RegNo);
 //$res="<font color='green'><strong>Student Record of [$sname $oname] was Successfully Updated !</strong></font><br>";
 				//$resi=1;
@@ -126,23 +126,29 @@ $resultdep = mysqli_query($condb,"SELECT DISTINCT d_name FROM dept where fac_did
  }
 ?>
 <?php
-$myreturn=explode(";",$_COOKIE['return']);
+//$myreturn=explode(";",$_COOKIE['return']);
+$lcount = getlcount($prog); 
+$slen = strlen($lcount);
 ?>
 <div class="x_panel">
                 
              
                 <div class="x_content">
 <?php
-								$query_staff = mysqli_query($condb,"select * from student_tb where stud_id='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
-								$row_staff = mysqli_fetch_array($query_staff);
+								
 								?>
                     <form id="form_name"   method="post" enctype="multipart/form-data" data-parsley-validate >
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
-                      
-                      <span class="section">Edit Student Information </span>
+<input type="hidden"  name='ematno' id="ematno" value="<?php echo $row_staff['RegNo']; ?>" >
+<span class="section">Edit Student Information </span>
+<div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="text-align: left;font-size: 13px;font-weight: bold;">
+ <?php echo "Default Mat Number Format : ".getmatno($asec,$dep1,$prog,$facd); ?><font color="red">
+ &nbsp;&nbsp;&nbsp;&nbsp; Note : You can Modify the last <?php echo $slen; ?> digits of the default .</font></div>
 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Registration Number </label>
-                            	  <input type="text" class="form-control " name='sregNo' id="sregNo"  value="<?php echo $row_staff['RegNo']; ?>" readonly>
+						  	  <label for="heard">Matric Number  </label>
+                            	  <input type="text" class="form-control " name='sregNo' id="sregNo" onkeyup="checkMat(this.value)" onblur="checkMat(this.value)"  value="<?php echo $row_staff['RegNo']; ?>" required="required">
+                       <div style="color: red;"  id="matid"></div>
+                      <div style="color: red;display: none;" id="mstatus">Mat No already Exist </div>
                       </div>
                       
                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
@@ -162,30 +168,20 @@ $myreturn=explode(";",$_COOKIE['return']);
                       
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard">Gender</label>
-                      
-                          <select name='sex' id="sex" class="form-control" required>
-                            <option value="<?php echo $row_staff['Gender']; ?>"><?php if ($row_staff['Gender']='M'){
-						
-						echo 'Male';}else{echo 'Female';}
-						 ?></option>
+<select name='sex' id="sex" class="form-control" required>
+<option value="<?php echo $row_staff['Gender']; ?>"><?php if ($row_staff['Gender']='M'){ echo 'Male';}else{echo 'Female';} ?></option>
                             <option value="M">Male</option>
-                            <option value="F">Female</option>
+                            <option value="F">Female</option> </select> </div>
                           
-                          </select> </div>
-                          
-                          
-                           <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Date Of Birth</label>
-                            	 
-                            	  <input  type="text" name="dob" size="28" class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed" value="<?php echo $row_staff['dob']; ?>" style="height:32px;"   readonly="readonly">
+<input  type="text" name="dob" size="28" class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed" value="<?php echo $row_staff['dob']; ?>" style="height:32px;"   readonly="readonly">
                       </div>
                        <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Hobbies</label>
                             	  <input type="text" class="form-control " name='hobbies' id="hobbies" value="<?php echo $row_staff['hobbies']; ?>" >
                       </div>
-                     
-                     
-                          <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Mobile Number</label>
                             	  <input type="text" class="form-control " name='phone' id="phone"  required="required" value="<?php echo $row_staff['phone']; ?>" onkeypress="return isNumber(event);">
                       </div>
@@ -293,7 +289,7 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
                       </div>
                       
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Department</label>
+						  	  <label for="heard"><?php echo $SGdept1; ?></label>
                             <select name='dept1' id="dept1" class="form-control"  >
                            <option value="<?php echo $row_staff['Department']; ?>"><?php echo getdeptc($row_staff['Department']); ?></option>
                           </select>

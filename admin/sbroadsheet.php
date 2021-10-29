@@ -30,6 +30,11 @@ $('#los').show(); $('#sem').hide(); }else { $('#los').hide(); $('#sem').hide(); 
 //{
 	//$_SESSION['vsession']="";
 	$_SESSION['bfac'] = "";
+    $instid = getinstitution($class_ID);
+    if($instid == "1"){$mastername = "Vice Chancelor"; $disp = "display:none;";$disp2 = ""; $disp3 = ""; $msgn="";
+}elseif($instid == "2"){$mastername = "Rector"; $disp = "display:none;";$disp2 = ""; $disp3 = ""; $msgn="";
+}else{$mastername = "Provost";$disp = "";$disp2 = "display:none;"; $disp3 = "display:none;";$msgn="required";}
+
 if(isset($_POST['viewrbs'])){
 $salot_dept = $_POST['dept1'];
 $semester = $_POST['semester'];
@@ -49,9 +54,9 @@ message("ERROR: No Result Broad Sheet Found for ".getdeptc($salot_dept)." Depart
 
 	$_SESSION['bfac']=$salot_fac;
 	// COLLEGE OF EDUCATION
-//echo "<script>window.location.assign('resultsheet.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
+echo "<script>window.location.assign('resultsheet.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
 // POLY
-echo "<script>window.location.assign('resultsheet_p.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
+//echo "<script>window.location.assign('resultsheet_p.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."');</script>";
 // COLLEGE OF EDUCATION mosogar
 //echo "<script>window.location.assign('resultsheet_c.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."&sem=".($semester)."&rform=".($rforms)."');</script>";
 }
@@ -92,18 +97,18 @@ while($rsblocks = mysqli_fetch_array($resultblocks))
   <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback"><label for="heard">Academic Session</label>
 <select class="form-control"   name="session" id="session"  required="required"><option value="">Select Session</option>
 <?php echo fill_sec(); ?></select></div>
- <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" >
-	<label for="heard">Result Form </label><select class="form-control" name="rtemp" id="rtemp" required >
+ <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="<?php echo $disp; ?>">
+	<label for="heard">Result Form </label><select class="form-control" name="rtemp" id="rtemp" <?php echo $msgn; ?> >
 <option value="">Select Form</option><option value="1">Form A</option><option value="2">Form B</option>
 <option value="3">Form C</option><option value="4">Form D</option><option value="5">Form F</option>
 </select> </div>
-                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;"  id="los">
+                 <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="<?php echo $disp2; ?>"  id="los">
 	<label for="heard">Level </label><select class="form-control" name="los" id="los"  >
 <option value="">Select Level</option><?php 
 $resultsec2 = mysqli_query($condb,"SELECT * FROM level_db where prog = '$class_ID'  ORDER BY level_order ASC");
 while($rssec2 = mysqli_fetch_array($resultsec2)){echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	
 }?></select> </div>
-<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="display: none;"  id="sem">
+<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" style="<?php echo $disp3; ?>"  id="sem">
 					  <label for="heard">Semester </label><select name='semester' id="semester" class="form-control" >
 <option value="">Select Semester</option><option value="First">First</option><option value="Second">Second</option></select> </div>
                     

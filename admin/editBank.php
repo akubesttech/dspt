@@ -17,14 +17,16 @@ else
 </script>
 
 <?php
-
+$fID = isset($_GET['id']) ? $_GET['id'] : '';
 if(isset($_POST['editbank'])){
 $b_name= ucwords($_POST['b_name']);
 $acc_name = $_POST['acc_name'];
 $acc_num = $_POST['acc_num'];
 $b_sort = $_POST['b_sort'];
+$b_code = $_POST['b_code'];
+$f_cat = $_POST['fcate'];
 
-$query_bank = mysqli_query($condb,"select * from bank where b_name = '$b_name' ")or die(mysqli_error($condb));
+$query_bank = mysqli_query($condb,"select * from bank where b_name = '$b_name' AND f_cate = '$f_cat' ")or die(mysqli_error($condb));
 //$row = mysql_fetch_array($query);
 $row_bank = mysqli_num_rows($query_bank);
 if ($row_bank>1){
@@ -37,11 +39,9 @@ message("The Bank Entered  Already Exist Try Again", "error");
 }elseif(!ctype_digit($b_sort)){
 	message("Incorrect Format For Bank Sort Code it should be a Digit", "error");
 		       redirect('add_Bank.php?id='.$get_RegNo);
-
 }else{
 //if($level=="Others"){
-mysqli_query($condb,"update bank set b_name='$b_name',acc_name='$acc_name',acc_num='$acc_num',b_sort='$b_sort' where b_id='$get_RegNo'")or die(mysqli_error($condb));
-
+mysqli_query($condb,"update bank set b_name='$b_name',acc_name='$acc_name',acc_num='$acc_num',b_sort='$b_sort',b_code = '$b_code',f_cate = '$f_cat' where b_id='$get_RegNo'")or die(mysqli_error($condb));
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Bank Titled $b_name was Updated')")or die(mysqli_error($condb)); 
  ob_start();
  message("$b_name has Updated successfully!", "success");
@@ -50,17 +50,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 }
 }
 ?>
-<?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
-	
-
-?>
+<?php //$s=3;while($s>0){ $AppNo .= rand(0,9);$s-=1;} ?>
 <div class="x_panel">
                 
              
@@ -86,16 +76,26 @@ $s=3;
                             	  <input type="text" class="form-control " name='acc_name' id="acc_name" value="<?php echo $row_b['acc_name']; ?>"  required="required">
                       </div>
                       
-                     <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Account Number </label>
                             	  <input type="text" class="form-control " name='acc_num' id="acc_num" value="<?php echo $row_b['acc_num']; ?>" onkeypress="return isNumber(event);"  >
                       </div>
  
- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+ <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Bank Sort Code </label>
                             	  <input type="text" class="form-control " name='b_sort' id="b_sort" value="<?php echo $row_b['b_sort']; ?>" onkeypress="return isNumber(event);"  >
                       </div>
-                      
+                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Bank Code </label>
+                            	  <input type="text" class="form-control " name='b_code' id="b_code" value="<?php echo $row_b['b_code']; ?>"   >
+                      </div>
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+					    <label for="heard">Fee Category</label>
+						  	  <select  name="fcate" id="fcate" class="form-control" ><?php if ($fID > 0) { ?>
+<option value="<?php echo $row_b['f_cate']; ?>"><?php echo getfeecat($row_b['f_cate']); ?></option><?php }else{ ?> <option value="">Select Category</option><?php } ?>
+		<?php echo getfeecat("",1); ?>
+            </select>
+                      </div>
                       
                       
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">

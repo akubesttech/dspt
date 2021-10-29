@@ -22,26 +22,23 @@ srand((double)microtime()*1000000);$i = 0;$pass = '' ;while ($i <= 7) {
 $num = rand() % 33;$tmp = substr($chars, $num, 1);$pass = $pass . $tmp;$i++;}
 return $pass;}
 
-function createRandomPassword($qtd){
+/*function createRandomPassword($qtd){
 //Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
     $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
     $QuantidadeCaracteres = strlen($Caracteres);
     $QuantidadeCaracteres--;
-
-    $Hash=NULL;
-
-    for($x=1;$x<=$qtd;$x++){
+$Hash=NULL;
+for($x=1;$x<=$qtd;$x++){
         $Posicao = rand(0,$QuantidadeCaracteres);
         $Hash .= substr($Caracteres,$Posicao,1);
     }
-
-    return $Hash;
-}
+return $Hash;
+} */
   $feeid = isset($_GET['id']) ? $_GET['id'] : '';
 $viewfee_query1 = mysqli_query($condb,"select * from fee_db where md5(fee_id)='".safee($condb,$feeid)."'")or die(mysqli_error($condb));
 $cfeecheck = mysqli_num_rows($viewfee_query1);
 $row_fee = mysqli_fetch_array($viewfee_query1); $Fee_amount = $row_fee['f_amount']; $Fee_type = $row_fee['feetype'];
-$Fee_level = $row_fee['level'];
+$Fee_level = $row_fee['level']; $fcat = $row_fee['ft_cat'];
 $pemail1 = getsemail($student_RegNo);
 
 //if($cfeecheck < 1){ message("The page you are trying to access is not Available.", "error");
@@ -59,7 +56,7 @@ $amtMonth = $_POST["amt"];
 $duration = $_POST["duration"];
 $startdaten = $_POST["cdate"];
 $total = $amtMonth * $duration;
-$transid = createRandomPassword(10);
+$transid = getfcode($fcat) . createpayref(10);//createRandomPassword(10);
 $roomftype = getroomftype($roomnumber);
 $roomfcate = getftcat($roomftype);
 //$num = "+".$duration." months";

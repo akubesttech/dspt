@@ -1,8 +1,6 @@
-
-   <section id="content" role="document">
+<section id="content" role="document">
         <main style="min-height: 168px;">
                     <div class="container">
-                        
 <?php 
 $paykey = $_GET['p_id'];
 $user_queryst = mysqli_query($condb,"select * from new_apply1 where MD5(appNo) = '".safee($condb,$paykey)."'")or die(mysqli_error($condb));
@@ -70,7 +68,7 @@ if(substr($feetype,0,1) == "B"){ $feet = getfeecat($row_s['ft_cat']);}else{ $fee
     <td><?php echo $feet ; ?></td>
     <td><?php echo $psdate; ?></td>
     <td style="text-align:center;"><?php echo number_format($pamount,2); ?></td>
-    </tr>  <?php $number++;  $sumcredit += $pamount; }  }else{ ?>
+    </tr>  <?php $number++;  $sumcredit += $pamount; }  }else{ $sumcredit = 0; ?>
     <tr><td colspan="5">No Payment Record Found ! </td></tr>
    <?php  } ?>
    <tr><td colspan="4"><strong>Total Amount Paid: </strong></td>

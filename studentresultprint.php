@@ -10,7 +10,7 @@ redirect('apply_b.php?view=C_R'); }
 $rsprint1 = mysqli_fetch_array($qsql1);
 ?>
 
-<body style="background-color: rgb(59, 59, 59); padding: 5px; height: 700px;">
+<body ><!-- style="background-color: rgb(59, 59, 59); padding: 5px; height: 700px;" --!>
   <div class="row-fluid">
                         <!-- block -->
  <div class="block1">
@@ -19,7 +19,7 @@ $rsprint1 = mysqli_fetch_array($qsql1);
                     <img src=" <?php 
 if ($existl > 0 ){ echo "admin/".$row['Logo'];}else{ echo "css/images/logo.png";}
 //if ($row['Logo']==NULL or $row['Logo']=='uploads/' ){echo "css/images/logo.png";}else{echo "./admin/".$row['Logo'];}
- ?>  " class="muted pull-left" width="100px" height="100px"> <span style="color: #000080; font-size:26px;  font-family:vandana;text-shadow: 1px 1px gray; "><br><?php echo strtoupper($row['SchoolName']);  ?></span> </i></div>
+ ?>  " class="muted pull-left" width="100px" height="80px"> <span style="color: #000080; font-size:26px;  font-family:vandana;text-shadow: 1px 1px gray; "><br><?php echo strtoupper($row['SchoolName']);  ?></span> </i></div>
 </div>
 <div class="block-content2 collapse in">
                                 <div class="span121" style="background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('<?php if ($existl > 0 ){ echo "admin/".$row['Logo'];
@@ -30,55 +30,52 @@ if ($existl > 0 ){ echo "admin/".$row['Logo'];}else{ echo "css/images/logo.png";
 					<div class="control-group">
                              <div class="controls">
                              
-                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:750px;" border="0">
+ <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;" border="0" class="tble22">
     
 	<tr style="background-color:#FFC">
-            <td height="30" colspan="2"> <div class="rounded">
-    <main class="container clear"> 
+            <td height="30" colspan="4"> 
+   <!-- <div class="rounded"> <main class="container clear"> --!>
       <!-- main body --> 
       <!-- ################################################################################################ -->
      <center><font size="+2">STUDENT POST UTME EXAM RESULT</font></center>
-     <p></p>
+   <!--  <p></p>
       <p>Date Of Registration: <?php echo $rsprint1['dateofreg']; ?></p>
      <p>Your can Reprint this Result Slip with This   <font color="red"> <?php echo ucfirst($rsprint1['appNo']);  ?></font> Application slip Number.</p>
-      <p>The details of your result is stated Below.</p>
+      <p>The details of your result is stated Below.</p>--!>
       <!-- ################################################################################################ --> 
       <!-- / main body -->
-      <div class="clear"><hr></div>
-    </main>
-  </div></td>
-     
-          </tr>
+      <!--<div class="clear"><hr></div> --!>
+  <!--  </main>
+  </div> --!>
+  </td></tr>
+          
+<?php  $sql = "SELECT * FROM new_apply1 WHERE md5(appNo)='".safee($condb,$_GET['applyid'])."' or md5(JambNo)='".safee($condb,$_GET['applyid'])."'";
+   if(!$qsql=mysqli_query($condb,$sql)){ echo mysqli_error($condb);}
+$rsprint = mysqli_fetch_array($qsql); $existn = imgExists("Student/".$rsprint['images']); $getpro = $rsprint['app_type']; ?>
 
-<tr >
-            <td height="32" colspan="2"> <div class="rounded" align="center">
+<!--<tr ><td height="32" colspan="2"> <div class="rounded" align="center">
    <img id="admin_avatar" class="img-circle" src="<?php 
-  // $sql = "SELECT * FROM new_apply1 left join olevel_tb ON olevel_tb.oPin = new_apply1.Pin WHERE md5(new_apply1.appNo)='$_GET[applyid]' or md5(new_apply1.JambNo)='$_GET[applyid]'";
-   
-   $sql = "SELECT * FROM new_apply1 WHERE md5(appNo)='".safee($condb,$_GET['applyid'])."' or md5(JambNo)='".safee($condb,$_GET['applyid'])."'";
-   
-if(!$qsql=mysqli_query($condb,$sql))
-{
-	echo mysqli_error($condb);
-}
-$rsprint = mysqli_fetch_array($qsql);
-				  $existn = imgExists("Student/".$rsprint['images']);
-if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
-	
-//if ($rsprint['images']==NULL ){print "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rsprint['images'];}
-				  
-				  
-				 // echo $row['adminthumbnails']; ?>" width="200" height="130" style=" border-radius: 50%;">
-  </div></td>
-     
-          </tr>
+//if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+ ?>" width="200" height="130" style=" border-radius: 50%;"></div></td></tr> --!>
 
-<tr >
-            <td height="32" colspan="2"> <div class="rounded" align="center"><br><br>
-  Slip Number:<?php echo  $rsprint['appNo']; ?>
-  </div></td>
+
+<tr ><td style="font-size:12px;font-family:Verdana, Geneva, sans-serif;width: 355px;text-align: justify;" colspan="1" height="30">
+<p>Date Of Registration: <?php echo $rsprint1['dateofreg']; ?></p>
+<p style="color: black;">
+Your can Reprint this Result Slip with This   <font color="red"> <?php echo ucfirst($rsprint1['appNo']);  ?></font> Application slip Number.</p>
+<p style="color:black;">The details of your result is stated Below.</p>
+</td>
+            <td height="30" colspan="1" style="text-align: center;width: 190px;">
+   <img  src="<?php if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+  ?>" width="150" height="120" style=" border-radius: 50%;" >
+  </td><td height="30"  colspan="1" style="text-align: center;font-family:Verdana, Geneva, sans-serif;355px;">
+  <?php echo strtoupper(getprog($getpro)); ?><p style="font-size:15px;font-weight: bold;color: black; font-family:Verdana;">Application Number:<font color="green"><?php echo  $rsprint['appNo']; ?></font></p></td>
      
           </tr>
+          
+<tr style="display: none;" ><td height="32" colspan="2"> <div class="rounded" align="center"><br><br>
+  Slip Number:<?php echo  $rsprint['appNo']; ?></div></td></tr>
+  
 <div class="rounded">
         <table style="margin:5px; font-size:15px; font-family: Verdana;  font-weight:bold; width:900px;">
         <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
@@ -193,7 +190,7 @@ if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploa
           </tr>
           
         </table>
-         <table border="1" style="margin:5px; font-size:15px; font-family: Verdana; font-weight:bold; width:900px;">
+         <table border="0" style="margin:5px; font-size:15px; font-family: Verdana; font-weight:bold; width:900px;">
        
         
         <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">

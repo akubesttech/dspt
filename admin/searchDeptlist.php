@@ -17,23 +17,31 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 			   
 			   ?>
 <?php
+$_SESSION['fac']="";
 $_SESSION['Schd']="";
 $_SESSION['session']="";
 $_SESSION['lev']="";
+$_SESSION['status']="";
 if(isset($_POST['viewRecord'])){
+$salot_fac = $_POST['fac1'];
 $salot_dept = $_POST['dept1'];
-$salot_cos = $_POST['cos'];
+$salot_status = $_POST['status'];
 $salot_lev = $_POST['los'];
 $salot_session = $_POST['session'];
-$result_alldept=mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$salot_session)."' and Department ='".safee($condb,$salot_dept)."' and app_type='".safee($condb,$class_ID)."' and verify_Data='TRUE'");
+$querysrec = "SELECT * FROM student_tb WHERE Asession ='".safee($condb,$salot_session)."' AND app_type='".safee($condb,$class_ID)."'";
+if(!empty($salot_fac)){$querysrec .= " AND Faculty ='".safee($condb,$salot_fac)."'";}
+if(!empty($salot_dept)){$querysrec .= " AND Department ='".safee($condb,$salot_dept)."'";}
+if(!empty($salot_lev)){$querysrec .= " AND p_level ='".safee($condb,$salot_lev)."'";}
+if($salot_status == "TRUE"){$querysrec .= " AND verify_Data='TRUE'";}
+$querysrec .= " ORDER BY FirstName DESC ";
+$result_alldept=mysqli_query($condb,$querysrec)or die(mysqli_error($condb));
 $num_alldept = mysqli_num_rows($result_alldept);
-//	$_SESSION['vsession']=$salot_session;
 if($num_alldept < 1){
-message("ERROR: No Student Record Found for ".getdeptc($salot_dept)." Department , Please Try Again .", "error");
+message("ERROR: No Student Record Found , Please Try Again .", "error");
  redirect('Student_Record.php?view=v_s');
-}else{ $_SESSION['Schd']=$salot_dept;
+}else{ $_SESSION['fac']=$salot_fac;  $_SESSION['Schd']=$salot_dept;
 	$_SESSION['session']=$salot_session;
-	$_SESSION['lev']=$salot_lev;
+	$_SESSION['lev']=$salot_lev;$_SESSION['status']=$salot_status;
     redirect('Print_students.php');
 //echo "<script>window.location.assign('Print_students.php?Schd=".($salot_dept)."&session=".$salot_session."&lev=".$salot_lev."');</script>";}
 }}
@@ -48,7 +56,13 @@ message("ERROR: No Student Record Found for ".getdeptc($salot_dept)." Department
 <input type="hidden" name="insidtime" value="<?php echo $_SESSION['insidtime'];?> " />
                       
                       <span class="section">Search Record </span>
-
+<div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Academic Session</label>
+							   <select class="form-control"   name="session" id="session"  required="required">
+  <option value="">Select Session</option>
+<?php echo fill_sec(); ?>
+</select>
+                      </div>
                       	    <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
 					    
 						  	  <label for="heard"><?php echo $SCategory; ?> </label>
@@ -61,12 +75,10 @@ while($rsblocks = mysqli_fetch_array($resultblocks)){
 	if($_GET['loadfac'] ==$rsblocks['fac_id'] ){
 	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
 }else{echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}}
-?>
-</select>
-                      </div>
+?></select>
+</div>
                      
-                      
-                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
                        
 						  	  <label for="heard"><?php echo $SGdept1; ?></label>
                             	  <select name='dept1' id="dept1" onchange='loadCourse(this.name);return false;' class="form-control"  >
@@ -82,14 +94,8 @@ while($rsblocks = mysqli_fetch_array($resultblocks)){
                           </select>
                       </div>
                       
-  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Academic Session</label>
-							   <select class="form-control"   name="session" id="session"  required="required">
-  <option value="">Select Session</option>
-<?php echo fill_sec(); ?>
-</select>
-                      </div>
-                 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+  
+                 <div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Level <font color="green">     (Optional)</font></label>
                             	  	 <select class="form-control" name="los" id="los" >
 <option value="">Select Level</option>
@@ -99,7 +105,15 @@ while($rssec2 = mysqli_fetch_array($resultsec2))
 {
 echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	
 }?></select> </div>
-
+<div class="col-md-2 col-sm-2 col-xs-12 form-group has-feedback" >
+                       
+						  	  <label for="heard">Record Status</label>
+                            	  <select name='status' id="status" class="form-control"  >
+                           <option value=''>Select Status</option>
+                           <option value='TRUE'>Verified</option>
+                           <option value='FALSE'>Not Verified</option>
+                          </select>
+                      </div>
                     
                       
                   <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">

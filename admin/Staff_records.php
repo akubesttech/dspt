@@ -1,4 +1,13 @@
 <form action="" method="post" enctype="multipart/form-data">
+<label class="chkPenalty"><input type="checkbox" id="chkPenalty"  onclick="ShowHideDiv2(this)" name="chkPenalty" value="1" /> Upload Employee Record(s) CSV </label>		
+<div style="display:none; " id="changestatus">
+                  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"> <label for="heard">Upload CSV file here: </label>
+<input name="fileNames" class="input-file uniform_on" id="fileNames" type="file" readonly="readonly" > </div>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"><div class="col-md-6 col-md-offset-3">
+<button type="submit" name="importstaff"  id="import" data-placement="right" class="btn btn-primary" title="Click To Import Employee Details" ><i class="glyphicon glyphicon-upload"></i> Upload</button> </div> </div> 
+                        <br> </div>
+                        </form>
+<form action="" method="post" >
                     
                      <table id="datatable-responsive" class="table table-striped table-bordered">
                       <!-- <table id="datatable" class="table table-striped table-bordered"> --!>
@@ -9,14 +18,7 @@
                    <a data-placement="right" href="download.php?ids=2" class="btn btn-info"  id="penper"  
                          title="Click to Download CSV template for Employee Record upload" ><i class="fa fa-download icon-large"></i>  
                          CSV Template</a>
-                         
-                         
-                            <label class="chkPenalty"><input type="checkbox" id="chkPenalty"  onclick="ShowHideDiv2(this)" name="chkPenalty" value="1" /> Upload Employee Record(s) CSV </label>		
-                                    
-                                    <div style="display:none; " id="changestatus"> <br><label for="heard">Upload CSV file here: </label>
-<input name="fileNames" class="input-file uniform_on" id="fileNames" type="file" readonly="readonly" >
-<button type="submit" name="importstaff"  id="import" data-placement="right" class="btn btn-primary" title="Click To Import Employee Details" ><i class="glyphicon glyphicon-upload"></i> Upload</button>
-                        <br> </div> 
+                          
                                     <script type="text/javascript">
 									 $(document).ready(function(){
 									 $('#delete').tooltip('show');

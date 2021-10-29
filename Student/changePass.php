@@ -45,13 +45,9 @@ mysqli_query($condb,"update student_tb set password = '".safee($condb,$n_pass)."
 }
 ?>
 <?php
-
-$s=3;
-	while($s>0){
-	$AppNo .= rand(0,9);
-
-		$s-=1;
-	}
+$config2 = mysqli_fetch_array(mysqli_query($condb,"SELECT * FROM schoolsetuptd "));
+$smato = $config2['smat'];
+//$s=3;while($s>0){ $AppNo .= rand(0,9); $s-=1;}
 	
 
 ?>
@@ -61,31 +57,20 @@ $s=3;
                 <div class="x_content">
 	<?php
 $query_change = mysqli_query($condb,"select * from student_tb where stud_id = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
-								$row_change = mysqli_fetch_array($query_change);
+$row_change = mysqli_fetch_array($query_change); $sshow = $row_change['istatus'];  $semailo = $row_change['e_address'];
 								?>
                     		<form name="addFee1" method="post" enctype="multipart/form-data" id="addFee1">
 <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
 <input type="hidden" name="oldme" value="<?php echo $row_change['password'];?>" />
                       
                       <span class="section">System User Change Password
- <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
-?> </span>
-
+ <?php  //if($resi == 1){ echo " <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>";}?> </span>
+ <?php if(!empty($smato)){ if(empty($sshow)){  ?>
+            <?php $np = "Username "; $vai=  $semailo;   }else{ ?>
+              <?php $np = "Matric No "; $vai = $row['RegNo'];  } }else{  $np = "Matric No "; $vai = $row['RegNo'];  ?> <?php } ?>
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  <label for="heard">
-Registration Number </label>
-                      
-                          <input type="text" class="form-control "  name='u_name' id="u_name"  value="<?php echo $row_change['RegNo']; ?>"  readonly> </div>
+					  <label for="heard"><?php echo $np ; ?> </label>
+<input type="text" class="form-control "  name='u_name' id="u_name"  value="<?php echo $vai ; ?>"  readonly> </div>
                           
                           
 <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">

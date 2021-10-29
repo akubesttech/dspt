@@ -22,21 +22,17 @@ srand((double)microtime()*1000000);$i = 0;$pass = '' ;while ($i <= 7) {
 $num = rand() % 33;$tmp = substr($chars, $num, 1);$pass = $pass . $tmp;$i++;}
 return $pass;}
 
-function createRandomPassword($qtd){
+/*function createRandomPassword($qtd){
 //Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
     $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
     $QuantidadeCaracteres = strlen($Caracteres);
     $QuantidadeCaracteres--;
-
-    $Hash=NULL;
-
-    for($x=1;$x<=$qtd;$x++){
+$Hash=NULL;
+for($x=1;$x<=$qtd;$x++){
         $Posicao = rand(0,$QuantidadeCaracteres);
         $Hash .= substr($Caracteres,$Posicao,1);
-    }
-
-    return $Hash;
-}
+    }return $Hash;
+}*/
 $viewfee_query1 = mysqli_query($condb,"select * from fee_db where program ='".safee($condb,$student_prog)."' and ft_cat ='7'")or die(mysqli_error($condb));
 $cfeecheck = mysqli_num_rows($viewfee_query1);
 $row_fee = mysqli_fetch_array($viewfee_query1); $Fee_amount = $row_fee['f_amount']; $Fee_type = $row_fee['feetype'];
@@ -56,7 +52,7 @@ $cfac = $_POST["cfac"];
 $cdept = $_POST["cdept"];
 $newfac = $_POST["fac1"];
 $newdept = $_POST["dept1"];
-$transid = createRandomPassword(12);
+$transid = getfcode($fcat) . createpayref(12);//createRandomPassword(12);
 
 $paystatus1 = mysqli_query($condb,"SELECT ct.sid,ct.a_app,ct.chod_app,ct.nhod_app,ct.pay_status FROM payment_tb pt LEFT JOIN coc_tb ct ON  ct.trans_id = pt.trans_id WHERE ct.sid ='".safee($condb,$studid)."'  AND ct.a_app > 0 AND ct.chod_app > 0 AND ct.nhod_app > 0 AND ct.pay_status = '1'") or die(mysqli_error($condb));
 //$paystatus1=mysqli_query($condb,"SELECT * FROM coc_tb WHERE sid ='".safee($condb,$studid)."'  AND a_app > 0 AND chod_app > 0 AND nhod_app > 0 AND pay_status = '1'");

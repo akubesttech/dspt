@@ -41,13 +41,20 @@ span.BalloonTextChar
 div.WordSection1
 	{page:WordSection1;}
 -->
-@page {size: auto;margin: 10pt;}
+/* @page {size: auto;margin: 10pt;} */
+@media print { a[href]:after {content: none !important;}} @page {size: auto;margin: 0;}
 </style>
 <?php 
 //session_status() === PHP_SESSION_ACTIVE ?: session_start();
 include('print_header.php'); ?>
 <?php include('session.php'); 
-$depart = $_SESSION['Schd']; $session=$_SESSION['session']; $pro_level= $_SESSION['lev'];  ?>
+$fac = $_SESSION['fac'];$salot_status= $_SESSION['status'];
+$depart = $_SESSION['Schd']; $session=$_SESSION['session']; $pro_level= $_SESSION['lev'];
+/*if(empty($_SESSION['Schd']) || empty($_SESSION['session'])){ 
+$depart = $_GET['Schd']; $session=$_GET['session2']; $pro_level= $_GET['lev'];}else{
+ $depart = $_SESSION['Schd']; $session=$_SESSION['session']; $pro_level= $_SESSION['lev'];   
+} */
+  ?>
 
 													
 </head>
@@ -74,13 +81,21 @@ $depart = $_SESSION['Schd']; $session=$_SESSION['session']; $pro_level= $_SESSIO
 <div class="row-fluid">
 <?php
 //$get_RegNo = isset($_GET['userId']) ? $_GET['userId'] : ''; 
-if(!empty($depart) AND !empty($session)){
+/*if(!empty($depart) AND !empty($session)){
 $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$session)."' and (Department)='".safee($condb,$depart)."' and verify_Data ='TRUE' and app_type='".safee($condb,$class_ID)."'  ORDER BY p_level ASC")or die(mysqli_error($condb));
 }elseif(!empty($pro_level) AND !empty($depart) AND !empty($session)){
 $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$session)."' and (Department)='".$depart."' and verify_Data ='TRUE' and p_level='".safee($condb,$pro_level)."' and app_type='".safee($condb,$class_ID)."' ORDER BY p_level ASC")or die(mysqli_error($condb));
-}else{
- $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$session)."' and (Department)='".$depart."' and p_level='".safee($condb,$pro_level)."' and verify_Data ='TRUE' and  app_type='".safee($condb,$class_ID)."' ORDER BY p_level ASC")or die(mysqli_error($condb));
- }
+}else{ $student_query2 = mysqli_query($condb,"SELECT * FROM student_tb WHERE Asession ='".safee($condb,$default_session)."' and verify_Data ='TRUE' and  app_type='".safee($condb,$class_ID)."' ORDER BY p_level ASC limit 0,500")or die(mysqli_error($condb));
+ } */
+ 
+ $student_q = "SELECT * FROM student_tb WHERE Asession ='".safee($condb,$session)."' AND app_type='".safee($condb,$class_ID)."'";
+if(!empty($fac)){$student_q .= " AND Faculty ='".safee($condb,$fac)."'";}
+if(!empty($depart)){$student_q .= " AND Department ='".safee($condb,$depart)."'";}
+if(!empty($pro_level)){$student_q .= " AND p_level ='".safee($condb,$pro_level)."'";}
+if($salot_status == "TRUE"){$student_q .= " AND verify_Data='TRUE'";}
+if($salot_status == "FALSE"){$student_q .= " AND verify_Data='FALSE'";}
+$student_q .= " ORDER BY FirstName ASC ";
+$student_query2=mysqli_query($condb,$student_q)or die(mysqli_error($condb));
 $num_rows2 = mysqli_num_rows($student_query2);
 			if($num_rows2 < 1){ message("The page you are trying to access is not Available.", "error");
 redirect('Student_Record.php?view=v_s'); }
@@ -111,7 +126,9 @@ font-family:"Times New Roman","serif"'><?php echo $row1['Pcode'];   ?></span></b
 <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
 text-align:center;line-height:normal'><b><span style='font-size:14.0pt;
 font-family:"Times New Roman","serif"'><?php echo strtoupper($row1['State'])." STATE, NIGERIA"; ?></span></b></p><?php } ?>
-
+<p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+text-align:center;line-height:normal'><b><span style='font-size:14.0pt;
+font-family:"Times New Roman","serif"'>Student Register For <?php echo $session; ?> Academic Session</span></b></p>
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
 normal'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>&nbsp;</span></b></p>
 
@@ -122,12 +139,12 @@ normal'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
 normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
 "Times New Roman","serif"'>
-<?php if(empty($depart)){ $linksp = "Student_Record.php?view=v_s";}else{
-    $linksp = "Student_Record.php?view=v_s"; } 
+<?php if(!empty($_SESSION['Schd']) || !empty($_SESSION['session'])){  $linksp = "Student_Record.php?view=v_s";}else{
+    $linksp = "Student_Record.php?dept1_find=".$depart."&session2=".$session."&los=".$pro_level;} 
 if($departmen < 1){ $valuecheck = "";}else{ $valuecheck = "in ";}
 //if($_SESSION['los']==Null){echo "All Students ". $valuecheck .getdeptc($departmen);}else{echo "All ".getlevel($_SESSION['los'],$class_ID)." Level Students ".$valuecheck.getdeptc($departmen);
 //} 
-if(empty($pro_level)){echo "All Students ". $valuecheck .getdeptc($departmen);}else{echo "All ".getlevel($pro_level,$class_ID)." Level Students ".$valuecheck.getdeptc($departmen);
+if(empty($pro_level)){echo getprog($class_ID)." Students ". $valuecheck .getdeptc($departmen);}else{echo "All ".getlevel($pro_level,$class_ID)." Level Students ".$valuecheck.getdeptc($departmen);
 }  
 ?><o:p></o:p></span></p>
 
@@ -140,16 +157,26 @@ normal'><span style='font-size:10.0pt;mso-bidi-font-size:11.0pt;font-family:
 
 <div class="pull-right">
    <div class="empty" id="ccc2">
-           <p class=MsoNormal style='margin-bottom:0in; margin-left:-110px; margin-top:-30px; margin-bottom:.0001pt;line-height:
+           <p class=MsoNormal style='margin-bottom:0in; margin-left:-236px; margin-top:-30px; margin-bottom:.0001pt;line-height:
            normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
            "Times New Roman","serif"'>
 		   <a  onClick="myFunction()" class="btn btn-info" id="print2" data-placement="top" title="Click to Print"><i class="icon-print icon-large"></i> Print List</a></p>		      
 		   <script type="text/javascript">
 		     $(document).ready(function(){
-		     $('#print').tooltip('show');
-		     $('#print').tooltip('hide');
+		     $('#print2').tooltip('show');
+		     $('#print2').tooltip('hide');
 		     });
 		   </script> 
+            <p class=MsoNormal style='margin-bottom:0in; margin-left:-130px; margin-top:-30px; margin-bottom:.0001pt;line-height:
+           normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
+           "Times New Roman","serif"'>
+		  <a 	href="javascript:void(0);" id="print3" onclick="window.location.href='exportclist.php?fac1=<?php echo $fac ; ?>&Schd=<?php echo $depart; ?>&session2=<?php echo $session; ?>&lev=<?php echo $pro_level; ?>&sta=<?php echo $salot_status; ?>';" class="btn btn-info"   data-placement = "top" title="Click to export student record to Excel Format" ><i class="fa fa-file-excel-o"></i>  Export Student(s)</a>
+ <script type="text/javascript">
+		     $(document).ready(function(){
+		     $('#print3').tooltip('show');
+		     $('#print3').tooltip('hide');
+		     });
+		   </script>
             <p class=MsoNormal style='margin-bottom:0in; margin-top:-30px; margin-bottom:.0001pt;line-height:
             normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
            "Times New Roman","serif"'>
@@ -181,7 +208,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   solid windowtext .5pt;background:#BFBFBF;mso-background-themecolor:background1;
   mso-background-themeshade:191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Registration Number<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Matric Number<o:p></o:p></span></b></p>
   </td>
   <td width=188 style='width:140.9pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
@@ -195,14 +222,14 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Second Name<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>First Name<o:p></o:p></span></b></p>
   </td>
   <td width=188 style='width:140.9pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Other Names<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Middle Name<o:p></o:p></span></b></p>
   </td>
   <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
@@ -216,7 +243,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Date of Birth<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>State<o:p></o:p></span></b></p>
   </td>
   <!-- <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
@@ -230,33 +257,33 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>State<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>LGA<o:p></o:p></span></b></p>
   </td>
    <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Contact Address<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'><?php echo $SCategory; ?><o:p></o:p></span></b></p>
   </td>
    <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Email Address<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'> <?php echo $SGdept1; ?><o:p></o:p></span></b></p>
   </td>
    <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
   191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Phone<o:p></o:p></span></b></p>
+  normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Mobile No<o:p></o:p></span></b></p>
   </td>
    <td width=188 style='width:140.95pt;border:solid windowtext 1.0pt;border-left:
   none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
   background:#BFBFBF;mso-background-themecolor:background1;mso-background-themeshade:
-  191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt'>
+  191;padding:0in 5.4pt 0in 5.4pt;height:23.25pt;display:none;'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
   normal'><b style='mso-bidi-font-weight:normal'><span style='font-family:"Times New Roman","serif"'>Program Duration<o:p></o:p></span></b></p>
   </td>
@@ -271,7 +298,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
 //$num_rows =mysqli_num_rows($student_query2);
 		$serial=1;
 		while($row = mysqli_fetch_array($student_query2)){
-	$RegNo = $row['RegNo'];
+	$RegNo = $row['RegNo']; $facn = getfacultyc($row['Faculty']);$depn = getdeptc($row['Department']);
 ?>
  <tr style='mso-yfti-irow:1'>
  
@@ -321,7 +348,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
   mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['dob']; ?><o:p></o:p></span></p>
+  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['state']; ?><o:p></o:p></span></p>
   </td>
   </td>
 <!--  <td width=188 valign=top style='width:140.95pt;border-top:none;border-left:
@@ -337,7 +364,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
   mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['state']; ?><o:p></o:p></span></p>
+  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['lga']; ?><o:p></o:p></span></p>
   </td>
   </td>
   <td width=188 valign=top style='width:140.95pt;border-top:none;border-left:
@@ -345,7 +372,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
   mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['address']; ?><o:p></o:p></span></p>
+  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $facn; ?><o:p></o:p></span></p>
   </td>
   </td>
   <td width=188 valign=top style='width:140.95pt;border-top:none;border-left:
@@ -353,7 +380,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
   mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
-  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $row['e_address']; ?><o:p></o:p></span></p>
+  normal'><span style='font-family:"Times New Roman","serif"'><?php echo $depn; ?><o:p></o:p></span></p>
   </td>
   </td>
   <td width=188 valign=top style='width:140.95pt;border-top:none;border-left:
@@ -367,7 +394,7 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
   <td width=188 valign=top style='width:140.95pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt;display:none;'>
   <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
   normal'><span style='font-family:"Times New Roman","serif"'><?php echo getyear($row['prog_dura']); ?><o:p></o:p></span></p>
   </td>

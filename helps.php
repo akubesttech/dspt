@@ -40,7 +40,7 @@
 <!--
 <br><strong>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Toll free (within Alberta): &nbsp;</strong>dial 310-0000, followed by <span class="baec5a81-e4d6-4674-97f3-e9220f0136c1" style="white-space: nowrap;"><a href="tel:17804275318">780-427-5318</a><a style="margin: 0px; border: currentColor; left: 0px; top: 0px; width: 16px; height: 16px; right: 0px; bottom: 0px; overflow: hidden; vertical-align: middle; float: none; display: inline; white-space: nowrap; position: static !important;" href="#" title="Call: 780-427-5318"></a></span> --!>
 
-<br><strong>E-Mail:</strong> &nbsp;&nbsp;<a href="mailto:support@edu.smartdelta.com.ng">support@edu.smartdelta.com.ng</a>&nbsp;</div>
+<br><strong>E-Mail:</strong> &nbsp;&nbsp;<a href="mailto:support@edu.deltasmartcity.ng">support@edu.deltasmartcity.ng</a>&nbsp;</div>
 <!--
 <h4 class="info first-paragraph"><strong>The Help Desk will be closed on the following days:&nbsp;</strong></h4>
 <div class="row">

@@ -18,7 +18,7 @@ else
 //srand((double)microtime()*1000000);$i = 0;$pass = '' ;while ($i <= 7) {
 //$num = rand() % 33;$tmp = substr($chars, $num, 1);$pass = $pass . $tmp;$i++;}
 //return $pass;}
-function createRandomPassword($qtd){
+/*function createRandomPassword($qtd){
 //Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
     $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
     $QuantidadeCaracteres = strlen($Caracteres);
@@ -26,11 +26,18 @@ function createRandomPassword($qtd){
 $Hash=NULL; for($x=1;$x<=$qtd;$x++){
 $Posicao = rand(0,$QuantidadeCaracteres);
 $Hash .= substr($Caracteres,$Posicao,1);}
-return $Hash;}
+return $Hash;} */
+
+$user_queryst = mysqli_query($condb,"select * from student_tb where stud_id = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
+$user_rowstate = mysqli_fetch_array($user_queryst);
+$states = $user_rowstate['state'];
+$student_s = "Delta";
+if($states == "Delta"){ $stud_from = "1";}else{ $stud_from = "0";}
+$enableinst = setinstallment;
 if(substr($_GET['id'],0,1) == "B"){$viewfee_query1 = mysqli_query($condb,"select * from  feecomp_tb where md5(Batchno)='".md5(safee($condb,$_GET['id']))."'")or die(mysqli_error($condb));
 $resultsumnet=mysqli_query($condb,"select SUM(f_amount) as samount from feecomp_tb where md5(Batchno)='".md5(safee($condb,$_GET['id']))."'");
 $row_fsum = mysqli_fetch_array($resultsumnet); $Fee_amount =  $row_fsum['samount']; $cfeecheck = mysqli_num_rows($viewfee_query1);
-$row_fee = mysqli_fetch_array($viewfee_query1); $pendate = $row_fee['psdate']; $penper = $row_fee['pper'];    $Fee_level = $row_fee['level'];
+$row_fee = mysqli_fetch_array($viewfee_query1);    $Fee_level = $row_fee['level'];
 $Fee_type = $row_fee['Batchno']; $fcat =  $row_fee['fcat']; 
 }else{
 $viewfee_query1 = mysqli_query($condb,"select * from fee_db where md5(fee_id)='".safee($condb,$_GET['id'])."'")or die(mysqli_error($condb));
@@ -45,10 +52,11 @@ redirect('Spay_manage.php?view=a_p'); }
 //echo $TIME = date('G:ia');
 if(isset($_POST['addpayment'])){
  $Session_checker1 = $_POST["session"];
+ $tp = $_POST['tp'];
 $level = $_POST["level"];
 $paytype = $_POST['paytype'];
 $Pin = $_POST["pin"];
-$transid = createRandomPassword(10);
+$transid = getfcode($fcat) . createpayref(10);//createRandomPassword(10);
 $paidamt = $_POST["paidamt"]; 
 $origDate = $_POST["dop"];
 $bank = $_POST["bank"];
@@ -62,17 +70,19 @@ $result10=mysqli_query($condb,$sql2);
 $numPin=mysqli_num_rows($result10);
 if($student_state == "Delta"){ $stud_from = "1" ;}else{ $stud_from = "0" ;}
 
-$paystatus1=mysqli_query($condb,"SELECT * FROM payment_tb WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$Session_checker1)."' AND fee_type = '".safee($condb,$Fee_type)."' AND pay_status = '1'");
+$paystatus1=mysqli_query($condb,"SELECT * FROM payment_tb WHERE stud_reg ='".safee($condb,$student_RegNo)."' AND session='".safee($condb,$Session_checker1)."' AND ft_cat = '".safee($condb,$fcat)."' AND pay_status = '1'");
 $paystatus12=mysqli_num_rows($paystatus1);
 $paystatuspin=mysqli_query($condb,"SELECT * FROM payment_tb WHERE pin ='".safee($condb,$Pin)."' and stud_reg ='".safee($condb,$student_RegNo)."' and session='".safee($condb,$Session_checker1)."'");
 $paystatus13 =mysqli_num_rows($paystatuspin);
-
+$inst = getinstalment($tp,$enableinst,$Fee_amount);
 //if(strpos($nappNo21," ")){ $res="<font color='Red'><strong>Please! Application Id can not Contain a Space..</strong></font><br>";
 //$resi=1;
-if($paystatus12 > 0 ){
-message("You Have Paid ".$feetshow." For $Session_checker1 Session.", "success");
-redirect('Spay_manage.php');
-//$res="<font color='Red'><strong>You Have Paid ".getftype($Fee_type)." For $Session_checker1 Session.</strong></font><br>"; $resi=1;
+//if($paystatus12 > 0 ){
+//message("You Have Paid ".$feetshow." For $Session_checker1 Session.", "success");
+//redirect('Spay_manage.php');
+   if(($inst > $Fee_amount) AND ($paystatus12 < 1)){
+message("Your Payment installment should not be lessthan &#8358;".number_format($inst,2), "success");
+		       redirect('Spay_manage.php?view=m_sp&id='.($_GET['id'])); 
 }else{
 if($paytype == 'Paycard'){
 $name4     = $_FILES['image_name']['name'];
@@ -110,8 +120,8 @@ $recordimage = move_uploaded_file($_FILES["image_name"]["tmp_name"], "../admin/p
                                 $adminthumbnails = "payimg/" .$newname;
     if($c_cho==1){ $pdepart = $deep1; }else{$pdepart = $deep2;
 						}
- $result = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,pin,bank_name,teller_no,teller_img,dueamount,paid_amount,pay_date,session,level,department,pay_status,stud_cat,prog) 
-			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','$paytype','".safee($condb,$Fee_type)."','".safee($condb,$Pin)."','$bank','".safee($condb,$_POST['tellerno'])."','".safee($condb,$adminthumbnails)."','".safee($condb,$paidamt)."','".safee($condb,$paidamt)."','$date','".safee($condb,$Session_checker1)."','$level','".safee($condb,$student_dept)."','1','$stud_from','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
+ $result = mysqli_query($condb,"insert into payment_tb(stud_reg,trans_id,email,pay_mode,fee_type,ft_cat,pin,bank_name,teller_no,teller_img,dueamount,paid_amount,pay_date,session,level,department,pay_status,stud_cat,prog) 
+			values('".safee($condb,$student_RegNo)."','".safee($condb,$transid)."','".safee($condb,$pemail1)."','$paytype','".safee($condb,$Fee_type)."','".safee($condb,$fcat)."','".safee($condb,$Pin)."','$bank','".safee($condb,$_POST['tellerno'])."','".safee($condb,$adminthumbnails)."','".safee($condb,$paidamt)."','".safee($condb,$paidamt)."','$date','".safee($condb,$Session_checker1)."','$level','".safee($condb,$student_dept)."','1','$stud_from','".safee($condb,$student_prog)."')")or die(mysqli_error($condb));
 $resultapp20 = mysqli_query($condb,"UPDATE feecomp_tb SET session = '".safee($condb,$Session_checker1)."',pstatus = '1' where Batchno = '".safee($condb,$_GET['id'])."'")or die(mysqli_error($condb));		
 			$sql2=	mysqli_query($condb,"UPDATE pin_fee SET status='USED' WHERE pinnumber='".safee($condb,$Pin)."'")or die(mysqli_error($condb));
 	//$find_d_load = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM dept where d_name='$num_dep'"));
@@ -143,6 +153,7 @@ redirect("Spay_manage.php?view=e_pv");
 			
 
 }//}$_SESSION['insidp'] = rand();
+$tamt = getDueamt($fcat,$student_prog,$Fee_level,$stud_from);
 ?>
 <div class="x_panel">
                 
@@ -151,15 +162,18 @@ redirect("Spay_manage.php?view=e_pv");
 	                <form method="post" class="form-horizontal"  action="" enctype="multipart/form-data">
                     <input type="hidden" name="insidp" value="<?php echo $_SESSION['insidp'];?> " />
                       <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
-                      
+                       <input type="hidden" name="tp" value="<?php echo $tamt;?> " />
                       <span class="section">Add Payment</span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
           Please Complete the  information Below to make payment. 
                   </div>
+                  <div class="col-xs-12 primary-content link-icons" style="font-size: 20px;">
+	<p class="first-paragraph">Total Amount : <font color="red"> <?php echo "&#8358; ".number_format($Fee_amount,2) ;?></font></p>
+                </div>
                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Registration No</label>
+						  	  <label for="heard">Matric No</label>
                             	  <input type="text" class="form-control " name='regNo' id="regNo" value="<?php echo $student_RegNo ; ?>" readonly>
                       </div>
     
@@ -168,13 +182,9 @@ redirect("Spay_manage.php?view=e_pv");
                             	  
                             	  <select  class="form-control " name='level' id="level"  required="required" readonly>
   <option value="<?php echo $Fee_level; ?>"><?php echo getlevel($Fee_level,$student_prog); ?></option>
-               <?php 
-//include('lib/dbcon.php'); 
-//dbcon(); 
-$resultsec2 = mysqli_query($condb,"SELECT * FROM level_db WHERE prog = '".safee($condb,$student_prog)."'  ORDER BY level_order ASC");
+               <?php $resultsec2 = mysqli_query($condb,"SELECT * FROM level_db WHERE prog = '".safee($condb,$student_prog)."'  ORDER BY level_order ASC");
 while($rssec2 = mysqli_fetch_array($resultsec2))
-{
-echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	
+{ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	
 }
 ?>	
 </select>
@@ -183,14 +193,7 @@ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";
                        
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
-  <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb  ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
-?>
+  <option value="<?php echo $default_session; ?>"><?php echo $default_session; ?></option><?php echo fill_sec(); ?>
 </select>
                       </div>
                       
@@ -209,7 +212,7 @@ echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";
 						  	  <label for="heard">Bank Name</label>
                          <?php $query2 = "SELECT * FROM bank";
  $result2 = mysqli_query($condb,$query2); 
- ?> <select   name="bank" class="form-control"><option selected="selected" value="" disabled="disabled">--- Select  Bank---</option>
+ ?> <select   name="bank" class="form-control"><option selected="selected" value="" >--- Select  Bank---</option>
 <?php while ($line2 = mysqli_fetch_array($result2, MYSQLI_ASSOC))
   { 
   ?><option value="<?php echo $line2['b_name'];?>"> <?php echo $line2['b_name'];?> </option>

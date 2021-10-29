@@ -2,11 +2,15 @@
 if(isset($_POST['addSession'])){
 $session = ucfirst($_POST['session']);
 $status = $_POST['status'];
+$lastcountn = $_POST['mcount'];
+if(empty($lastcountn)){$lastcount = "00000";}else{ $lastcount = $_POST['mcount'];}
 $semester = $_POST['enable2'];
 $Sstart = $_POST['Sstart'];
 $Send = $_POST['Send'];
 $f_prog = $_POST['f_pro'];
 $progn = getprog($f_prog);
+$clent = strlen($lastcount);
+$cpstatus = isset($_POST['pst']) ? $_POST['pst'] : '1';
 $query = mysqli_query($condb,"select * from session_tb where session_name = '".safee($condb,$session)."' and prog = '".safee($condb,$f_prog)."' ")or die(mysqli_error($condb));
 $count = mysqli_num_rows($query);
 $countfesh = mysqli_fetch_array($query);
@@ -26,7 +30,7 @@ if($action > 0){
 message("There is already Active Session for the Selected Programme, morethan one session cannot be active in the same Programme", "error");
 			redirect('add_Yearofstudy.php?id='.$get_RegNo);
 				}else{
-mysqli_query($condb,"update session_tb set session_name='".safee($condb,$session)."',start_date='".safee($condb,$Sstart)."',start_end='".safee($condb,$Send)."',term='".safee($condb,$semester)."',action='".safee($condb,$status)."',prog = '".safee($condb,$f_prog)."' where session_id ='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
+mysqli_query($condb,"update session_tb set session_name='".safee($condb,$session)."',start_date='".safee($condb,$Sstart)."',start_end='".safee($condb,$Send)."',term='".safee($condb,$semester)."',action='".safee($condb,$status)."',prog = '".safee($condb,$f_prog)."',lcount = '".safee($condb,$lastcount)."',slenght = '".safee($condb,$clent)."',epstatus = '".safee($condb,$cpstatus)."' where session_id ='".safee($condb,$get_RegNo)."' ")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','Default Session Titled $session was Updated for $progn ')")or die(mysqli_error($condb)); 
  ob_start();
@@ -34,7 +38,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 			redirect(host().'admin/');
 }
 }else{
-mysqli_query($condb,"update session_tb set session_name='$session',action='$status',prog = '".safee($condb,$f_prog)."' where session_id ='$get_RegNo'")or die(mysqli_error($condb));
+mysqli_query($condb,"update session_tb set session_name='$session',action='$status',prog = '".safee($condb,$f_prog)."',lcount = '".safee($condb,$lastcount)."',slenght = '".safee($condb,$clent)."',epstatus = '".safee($condb,$cpstatus)."'  where session_id ='$get_RegNo'")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Session Titled $session was Updated for $progn')")or die(mysqli_error($condb)); 
 // ob_start();
@@ -60,7 +64,7 @@ message("$session has Updated successfully!", "success");
                       
                       <span class="section">Edit Academic Session</a>  </span>
 <?php if($row_d2['action']=="1"){?>
-<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Program </label>
                             	  <select name='f_pro' id="f_pro" class="form-control" required>
                             <option value="<?php echo $row_d2['prog']; ?>"><?php echo getprog($row_d2['prog']); ?></option>
@@ -70,11 +74,20 @@ while($rsproe = mysqli_fetch_array($resultproe))
 {echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
                             </select>
                       </div>
-<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard">Session </label>
-                      
-                          <input type="text" class="form-control " name='session' id="session"   placeholder="Example : 2016/2017" value="<?php echo $row_d2['session_name']; ?>" readonly  required="required"> </div>
-                          
+                      <input type="text" class="form-control " name='session' id="session"   placeholder="Example : 2016/2017" value="<?php echo $row_d2['session_name']; ?>" readonly  required="required"> </div>
+                        <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Last Mat Count </label>
+                      <input type="text" class="form-control " name='mcount' id="mcount"   placeholder="Example : 20001" value="<?php echo $row_d2['lcount']; ?>" onkeypress="return check(event,value);"    required="required"> </div>
+                         <?php if($Rorder == 1 ){ ?>
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard"  >Check Payment Status </label>
+                      <select name='pst' id="pst" class="form-control">
+                            <option value="<?php echo $row_d2['epstatus']; ?>"><?php if ($row_d2['epstatus']==1){
+							echo "Enabled";}else{echo "Disabled";} ?></option>
+                             <option value="1">Enabled</option>
+                              <option value="0">Disabled</option></select> </div> <?php } ?>
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 					  <label for="heard"  >Set As Default Session </label>
                       
@@ -110,7 +123,7 @@ while($rsproe = mysqli_fetch_array($resultproe))
                     
                    	<?php 
 							}else{ ?>
-							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+							<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Program </label>
                             	  <select name='f_pro' id="f_pro" class="form-control" required>
                             <option value="<?php echo $row_d2['prog']; ?>"><?php echo getprog($row_d2['prog']); ?></option>
@@ -120,11 +133,20 @@ while($rsproe = mysqli_fetch_array($resultproe))
 {echo "<option value='$rsproe[pro_id]'>$rsproe[Pro_name]</option>";}?>
                             </select>
                       </div>
-							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+					<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 					  <label for="heard">Session </label>
-                      
-                          <input type="text" class="form-control " name='session' id="session"   placeholder="Example : 2016/2017" value="<?php echo $row_d2['session_name']; ?>"  required="required"> </div>
-                          
+                      <input type="text" class="form-control " name='session' id="session"   placeholder="Example : 2016/2017" value="<?php echo $row_d2['session_name']; ?>" readonly  required="required"> </div>
+                        <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Last Mat Count </label>
+                      <input type="text" class="form-control " name='mcount' id="mcount"   placeholder="Example : 20001" value="<?php echo $row_d2['lcount']; ?>" onkeypress="return check(event,value);"    required="required"> </div>
+                       <?php if($Rorder == 1 ){ ?>
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard"  >Check Payment Status </label>
+                      <select name='pst' id="pst" class="form-control">
+                            <option value="<?php echo $row_d2['epstatus']; ?>"><?php if ($row_d2['epstatus']==1){
+							echo "Enabled";}else{echo "Disabled";} ?></option>
+                             <option value="1">Enabled</option>
+                              <option value="0">Disabled</option></select> </div> <?php } ?>
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 					  <label for="heard"  >Set As Default Session </label>
                       

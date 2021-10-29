@@ -43,20 +43,14 @@ function checkUpload()
 <form name='frmResult' method="post" onsubmit='return checkUpload(this);' class="form-horizontal"  action="Result_am.php?view=v_re" enctype="multipart/form-data">
                     <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       <input type='hidden' name="userid" value="<?php echo $session_id ; ?>" >
+                       <input type='hidden' name="courseno" id="courseno" value="1" >
                       <span class="section">Import Student Result<?php
-                                        //  if($resi == 1)
-//{
-
-//echo $_COOKIE['showerror3'];
-//}
-?></span>
-
+                                    ?></span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
-                    </button>
+<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
           Note: That you will use The downloaded Excel template for entry of student scores and The Excel file will be in .xls and not .csv Formate. 
                   </div>
-                  
+                  <?php  if($Rorder !== "10"){    ?>
                   	  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
 					    
 						  	  <label for="heard"><?php echo $SCategory; ?> </label>
@@ -64,39 +58,20 @@ function checkUpload()
                             	  <select name='fac1' id="fac1" onchange='loadDept(this.name);return false;' class="form-control" >
                             <option value="">Select <?php echo $SCategory; ?></option>
                             <?php  
-//$resultfac = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//while($rsfac = mysql_fetch_array($resultfac))
-//{  
-//if($rsfac['fac_id']==@$cat){echo "<option selected value='$rsfac[fac_id]'>$rsfac[fac_name]</option>"."<BR>";}
-//else{echo "<option value='$rsfac[fac_id]'>$rsfac[fac_name]</option>";}
-//}
-
 $resultblocks = mysqli_query($condb,"SELECT DISTINCT fac_name,fac_id FROM faculty ORDER BY fac_name ASC");
-//$counter=1;
 while($rsblocks = mysqli_fetch_array($resultblocks))
-{
-	if($_GET['loadfac'] ==$rsblocks['fac_id'] )
-	{
-	echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
-//	$counter=$counter+1;
-	}
-	else
-	{
-	echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";
-	//$counter=$counter+1;
-	}
-}
-?>
-                            
-                          
-                          </select>
+{ if($_GET['loadfac'] ==$rsblocks['fac_id'] )
+	{ echo "<option value='$rsblocks[fac_id]' selected>$rsblocks[fac_name]</option>";
+}else{echo "<option value='$rsblocks[fac_id]'>$rsblocks[fac_name]</option>";}
+}?>
+ </select>
                       </div>
                      
                       
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
                        
 						  	  <label for="heard"><?php echo $SGdept1; ?></label>
-                            	  <select name='dept1' id="dept1" onchange='loadCourse(this.name);return false;' class="form-control"  >
+                            	  <select name='dept1' id="dept1" onchange='loadCourse(this.name,"1");return false;' class="form-control"  >
                            <option value=''>Select <?php echo $SGdept1; ?></option>
                           </select>
                       </div>
@@ -141,13 +116,28 @@ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";
 ?>
  </select>
                       </div>
-                    
-                      
-                     
+                    <?php }else{ ?>
+                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Allocated Courses</label>
+                            	  	 <select class="form-control" name="cos" id="cos" onchange="showcallot(this.value)" required="required">
+<option>Select Courses</option>
+<?php $staffmainid = getsusern($admin_username);
+$qeryalot = mysqli_query($condb,"SELECT * FROM  course_allottb where assigned ='". safee($condb,$staffmainid) ."'  ORDER BY session DESC");
+while($restallot = mysqli_fetch_array($qeryalot))
+{echo "<option value='$restallot[course]'>$restallot[course]</option>";	}
+?>
+ </select></div> 
+ <div  id="txtroomno" >
+ <input type="hidden" name="session" id="session"   tabindex="1"  class="form-control input-sm" readonly> 
+  <input type="hidden" name="semester" id="semester"   tabindex="1"  class="form-control input-sm" readonly> 
+   <input type="hidden" name="level" id="level"   tabindex="1"  class="form-control input-sm" readonly>
+   <input type="hidden" name="dept1" id="dept1"   tabindex="1"  class="form-control input-sm" readonly> 
+ </div >   
+     <?php } ?>                
                      
                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
                        
-						  	  <label for="heard">Select Excel File To Upload </label>
+						  	  <label for="heard">Select Excel File To Upload</label>
                             
                         <!--  <input name="fileName" class="input-file uniform_on" id="fileInput" type="file" readonly="readonly" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" >--!>
         <input name="fileName" class="input-file uniform_on" id="fileInput" type="file" readonly="readonly" accept="application/vnd.ms-excel" >

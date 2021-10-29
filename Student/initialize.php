@@ -5,14 +5,18 @@
 include('../admin/lib/dbcon.php'); 
 dbcon(); 
 $curl = curl_init();
-$scom = getcomm($_POST['ft_cat']);
-$scom2 = getcomm($_POST['ft_cat'],$_POST['ft_cat']);
+$scom = getcomm($_POST['ft_cat'],0,$_POST['matno'],$_POST['sec']);
+$scom2 = getcomm($_POST['ft_cat'],$_POST['ft_cat'],$_POST['matno'],$_POST['sec']);
 $email = $_POST['emailx'];
 $amountn = $_POST['total'] ;  //the amount in kobo. This value is actually NGN 300 for 30,000kobo
 $amount =  getsplit($amountn,1.526,1.5,15,$scom,$scom2,3) * 100; //amount to pay
+$amountcv =  getsplit($amountn,1.526,1.5,15,$scom,$scom2,3) ;  // transcharge 
 $amountsa =  getsplit($amountn,1.526,1.5,15,$scom,$scom2,1) * 100;
 $amountsb =  getsplit($amountn,1.526,1.5,15,$scom,$scom2,2) * 100;
-$bassamount = getsplit($amountn,1.526,1.5,15,$scom,$scom2,0) * 100;
+$bassamount = getsplit($amountcv,1.51,1.5,15,$scom,$scom2,0) * 100;
+//get panalty account
+$penaltyacct = t_ACCTSP ; 
+if(empty($scom) && ($_POST['ft_cat'] == "8") && !empty($penaltyacct)){$actno = t_ACCTSP ; }else{ $actno = t_ACCTS ; }
 // url to go to after payment
 $callback_url = host().'Student/callback.php';   
 $urllogin = host().'Student/';
@@ -31,7 +35,7 @@ if(empty($scom)){
   //'bearer' => "subaccount",
     "reference" => $_POST['merchant_ref3'],
     'callback_url' => $callback_url,
-    'subaccount' => t_ACCTS,//school account
+    'subaccount' => $actno,//school account
     'transaction_charge' => $bassamount,
    ]),
 CURLOPT_HTTPHEADER => [

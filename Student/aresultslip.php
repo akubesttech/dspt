@@ -17,7 +17,7 @@ $rsprint = mysqli_fetch_array($qsql); $regen = $rsprint['RegNo'];
 $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee($condb,$student_prog)."' and grade_group ='01' Order by b_min ASC ")or die(mysqli_error($condb));
 ?>
 
-<body style="background-color: rgb(59, 59, 59); padding: 5px; height: 800px;">
+<body style=" padding: 5px; height: 800px;">
   <div class="row-fluid">
                         <!-- block -->
  <div class="block1"  >
@@ -32,14 +32,14 @@ $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee
 </div>
 <div class="block-content2 collapse in"  >
                                 <div class="span121" style="background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('<?php if ($existl > 0 ){ echo "../admin/".$row['Logo'];
-	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: inline; -webkit-print-color-adjust: exact; ">
+	}else{ echo "css/images/logo.png";} ?>'); background-repeat: no-repeat;background-position: center;  background-size: 550px 500px;display: block; -webkit-print-color-adjust: exact; ">
 								
 								 <!--------------------form------------------->
 								<form method="post" enctype="multipart/form-data">
 					<div class="control-group">
                              <div class="controls">
                              
-                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;"  border="0">
+                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;background-color: transparent;"  border="0">
     <style type="text/css" media="print"> @media print { a[href]:after {content: none !important;} }
 .row1 {background-color: #EFEFEF;border: 1px solid #98C1D1;
 		height: 30px;	font-family:Verdana, Geneva, sans-serif; font-size:12px; }

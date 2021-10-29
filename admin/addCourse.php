@@ -71,25 +71,25 @@ else
 </script>
 
 <?php
-
+$amax  = 0; $amax2 = 0; $exmax = 0;
 if(isset($_POST['Addcourse'])){
 $Ctitle= ucfirst($_POST['Ctitle']);
 $Ccode = ucfirst(trim($_POST['Ccode']));
 $Cunit = $_POST['Cunit'];
 $semester = $_POST['semester'];
 $level = $_POST['level'];
-$other2 = $_POST['otherl'];
+$other2 =  isset($_POST['otherl']) ? $_POST['otherl'] : '';
 $dept_c = $_POST['dept1'];
 $facadd = $_POST['fac1'];
 $coursecat = $_POST['ccat'];
 $amax = $_POST['assmax']; $amax2 = $_POST['assmax2']; $exmax = $_POST['exammax'];
-$sump = $amax + $amax2 + $exmax;
+if(empty($amax2)){ $sump = $amax + $exmax;}else{$sump = $amax + $amax2 + $exmax;}
 $query = mysqli_query($condb,"select * from courses where C_code = '".safee($condb,$Ccode)."' and dept_c = '".safee($condb,$dept_c)."'")or die(mysqli_error($condb));
 $row_course = mysqli_num_rows($query);
 //$query_CO = mysqli_query($condb,"select * from courses where  C_title = '".safee($condb,$Ctitle)."'")or die(mysqli_error($condb));
 //$row_course_CO = mysqli_num_rows($query_CO);
 if ($row_course>0){
-message("The Course Code <strong> $Ccode </strong>  Entered  Already Exist in $dept_c Dept Try Again.", "error");
+message("The Course Code <strong> $Ccode </strong>  Entered  Already Exist in" .getdeptc($dept_c) ."Dept Try Again.", "error");
 		        redirect('add_Courses.php?view=addc');
 }elseif($sump!= 100){
 message("The sum of the Score inputs must be equal to 100", "error");
@@ -128,17 +128,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <input type="hidden" name="insid" value="<?php echo $_SESSION['insid'];?> " />
                       
                       <span class="section">Add Courses    <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
-?> </span>
+//if($resi == 1){ echo " <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center> ";}?> </span>
 
   <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback" >
 					    

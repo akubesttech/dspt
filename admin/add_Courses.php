@@ -18,7 +18,7 @@ authorize($_SESSION["access3"]["sConfig"]["avc"]["delete"]) ) {
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 } ?>
-  <?php $get_RegNo= $_GET['id']; ?>
+  <?php $get_RegNo =  isset($_GET['id']) ? $_GET['id'] : ''; ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">

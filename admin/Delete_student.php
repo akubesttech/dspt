@@ -8,6 +8,7 @@ for($i=0; $i < $N; $i++)
 {
 	$result = mysqli_query($condb,"DELETE FROM student_tb where stud_id='$id[$i]'");
 }
-header("location: Student_Record.php");
+//header("location: Student_Record.php");
+redirect("Student_Record.php");
 }
 ?>

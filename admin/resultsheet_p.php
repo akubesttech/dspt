@@ -11,11 +11,18 @@ $lev = $_GET['lev'];
 $query3 = mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));$rowdd = mysqli_fetch_array($query3);
 $title20 = $rowdd['SchoolName'];$motto = $rowdd['Motto'];$logoback = $rowdd['Logo'];$exists = imgExists($logoback);
 $saddress = $rowdd['Address']; $state = $rowdd['State'];$city = $rowdd['City'];
-$queryresultapp = mysqli_query($condb,"select * from resultapproval_tb WHERE prog = '".safee($condb,$class_ID)."' AND dept = '".safee($condb,$dept)."' AND session = '".safee($condb,$sess)."' AND level = '".safee($condb,$lev)."' AND apstatus = '1' ")or die(mysqli_error($condb));
+$queryrapp = "select * from resultapproval_tb WHERE prog = '".safee($condb,$class_ID)."' AND dept = '".safee($condb,$dept)."' AND session = '".safee($condb,$sess)."' AND level = '".safee($condb,$lev)."' AND apstatus = '1' ";
+if($sems != null){ $queryrapp .= " AND semester='$sems'";}
+$queryresultapp = mysqli_query($condb,$queryrapp)or die(mysqli_error($condb));
 $rowapp = mysqli_fetch_array($queryresultapp); $aptatus = mysqli_num_rows($queryresultapp); 
- if($aptatus > 0){ $course_approve = 1; $bst = "Approved"; $pbcstatus= "Result successfully Published for Student to access"; }else{ $course_approve = 0; $bst = "";} 
-					 ?>
-<!DOCTYPE html> 
+ if($aptatus > 0){ $course_approve = 1; $bst = "Approved"; $pbcstatus= "Result Successfully Published for Student to access"; }else{ $course_approve = 0; $bst = "";$pbcstatus="Result Has not been Published for Student to access";} 
+	$instidr = getinstitution($class_ID);
+$institu_nr = getincate($instidr);
+if($instidr == "1"){$mastersname = "Vice Chancelor"; 
+}elseif($instidr == "2"){$mastersname = "RECTOR'S"; 
+}else{$mastersname = "Provost";} 				
+                     ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Print View | <?php echo $title20;  ?></title>	
@@ -169,7 +176,7 @@ foreach ($first_sem_courses as $course){ $tu += $course['C_unit']; ?> <th><?php 
             if(count($first_sem_courses)>0){
                 foreach ($first_sem_courses as $course){
                     ?>
-                    <td><?php echo$course['C_unit']?></td>
+                    <td><?php echo $course['C_unit']?></td>
                     <?php
                 }
             }
@@ -220,7 +227,8 @@ foreach ($first_sem_courses as $course){ $tu += $course['C_unit']; ?> <th><?php 
                                     }
                                 }
                             }
-                            echo $scr." ".fetchGrade($scr,$class_ID);
+                            $nscore = $scr." ".fetchGrade($scr,$class_ID);
+                            echo getscorest($s_id,$dept,$course['C_code'],$nscore);
                             ?>
                         </td>
                         <?php
@@ -251,7 +259,7 @@ foreach ($first_sem_courses as $course){ $tu += $course['C_unit']; ?> <th><?php 
                    <td><?php echo $stu ?></td>
                     <td><?php echo $tp ?></td>
                     <td><?php
-                        if($stu != 0){ echo $mygpa = round($tp/$stu,2); }else{ echo $stu;}?></td>
+                        if($stu != 0){ echo $mygpa = round($tp/$stu,2); }else{ echo $mygpa = 0.00;}?></td>
                         <td><?php echo Resultremark($mygpa,$class_ID); ?></td>
                         <td> <?php if($mygpa < 2.00){ echo $stat = 'NIGS';}else{
                 echo $stat = 'IGS';} ?> </td> <?php }else{ ?>
@@ -259,12 +267,12 @@ foreach ($first_sem_courses as $course){ $tu += $course['C_unit']; ?> <th><?php 
                  <td><?php echo $stu ?></td>
                     <td><?php echo $tp ?></td>
                     <td><?php
-                        if($stu != 0){ echo $mygpa = round($tp/$stu,2); }else{ echo $stu;}?></td>
+                        if($stu != 0){ echo $mygpa = round($tp/$stu,2); }else{ echo $mygpa = 0.00;}?></td>
                         <td><?php echo $p_cu; ?></td>
                          <td><?php echo $p_gp; ?></td>
                            <td><?php
                         if($p_cu != 0){ echo $pmygpa = round($p_gp/$p_cu,2); }else{ echo $p_cu;}?></td>
-                 <td><?php $scgp = $mygpa + $pmygpa ; if($scgp != 0){ echo $cgpa = round($scgp / 2,2); }else{ echo $scgp;}?></td>
+                 <td><?php $scgp = $mygpa + $pmygpa ; if($scgp != 0){ echo $cgpa = round($scgp / 2,2); }else{ echo $scgp;} ?></td>
                         <td><?php echo Resultremark($mygpa,$class_ID); ?></td>
                         <td> <?php echo Resultremark($pmygpa,$class_ID); ?> </td>
                 <td> <?php if($cgpa < 2.00){ echo $stat = 'NIGS';}else{
@@ -289,7 +297,7 @@ foreach ($first_sem_courses as $course){ $tu += $course['C_unit']; ?> <th><?php 
   height:17.85pt'>
   <p class=MsoNormal align=center  style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
   normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
-  "Times New Roman","serif"'>RECTOR'S SIGNATURE<o:p></o:p></span></p>
+  "Times New Roman","serif"'><?php echo strtoupper($mastersname."  SIGNATURE"); ?><o:p></o:p></span></p>
   </td>
   <td width=376 valign=top style='width:281.85pt;padding:0in 5.4pt 0in 5.4pt;
   height:17.85pt'>

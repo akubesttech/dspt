@@ -1,7 +1,6 @@
-
-
 <?php
-
+$config2 = mysqli_fetch_array(mysqli_query($condb,"SELECT * FROM schoolsetuptd "));
+$smato = $config2['smat'];
 if(isset($_POST['suprof'])){
 //$sname = ucfirst($_POST['sname']) ; $mname = $_POST['mname'] ; $oname = $_POST['oname'] ;// $sex = $_POST['sex'];
 $Gender = $_POST['Gender'] ;  $hobbies = $_POST['hobbies'] ;
@@ -19,11 +18,7 @@ $config = mysqli_fetch_array(mysqli_query($condb,"SELECT * FROM schoolsetuptd ")
 	
 	$sql_phone_check = mysqli_query($condb,"SELECT * FROM student_tb WHERE phone='$phone' LIMIT 1");
 	$phone_check = mysqli_num_rows($sql_phone_check);
-	
-
-
-	
-//if ($count > 1){ 
+	//if ($count > 1){ 
 
 //$res="<font color='red'><strong>This Staff Record Already Exist,Try Again!</strong></font><br>";
 			//	$resi=1;
@@ -60,7 +55,7 @@ mysqli_query($condb,"update student_tb  set hobbies='$hobbies',phone='$phone',e_
                 <div class="x_content">
 	<?php
 $query_changes = mysqli_query($condb,"select * from student_tb where stud_id = '$session_id'")or die(mysqli_error($condb));$row_changes = mysqli_fetch_array($query_changes); $user_names = $row_changes['RegNo']; $stpro = $row_changes['app_type'];
-$existll = imgExists($row_changes['images']);
+$existll = imgExists($row_changes['images']); $sshow = $row['istatus'];  $semailo = $row['e_address'];
 								?>
                     		<form name="addFee1" method="post" enctype="multipart/form-data" id="addFee1">
 <input type="hidden" name="insids" value="<?php echo $_SESSION['insids'];?> " />
@@ -81,7 +76,13 @@ $existll = imgExists($row_changes['images']);
                          
                         </div>
                       </div>
-                      <h3><?php echo "Reg No :".$row['RegNo'];  ?></h3>
+                     
+                      
+                        <?php if(!empty($smato)){ if(empty($sshow)){  ?>
+                <h4> Username :<?php echo $semailo;  ?></h4><?php }else{ ?>
+                <h4>Matric No :<?php echo $row['RegNo'];  ?></h4>
+             <?php } }else{ ?>
+                <h4>Matric No :<?php echo $row['RegNo'];  ?></h4> <?php } ?>
 	<?php
 								$query_userrecord = mysqli_query($condb,"select * from student_tb where RegNo = '$student_RegNo'")or die(mysqli_error($condb));
 								$row_userrecord = mysqli_fetch_array($query_userrecord);

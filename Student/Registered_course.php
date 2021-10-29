@@ -6,10 +6,11 @@
 
 $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row_C = mysqli_fetch_array($query);
-							  $s_utme = $row_C['p_utme'];
-$depart = $_GET['dept1_find'];
-$level=$_GET['level'];
-$semester= $_GET['semester'];
+							  $s_utme = $row_C['p_utme'];$smato = $row_C['smat'];
+                              $depart = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
+                              $level = isset($_GET['level']) ? $_GET['level'] : '';
+                              $semester = isset($_GET['semester']) ? $_GET['semester'] : '';
+$sshow = $stud_row['istatus'];  $semailo = $stud_row['e_address'];
 						?>
                     <h2>Registered Courses For The Session:</h2>
                     <ul class="nav navbar-right panel_toolbox">
@@ -54,7 +55,7 @@ $semester= $_GET['semester'];
                          
                           <address>
   <strong>Student Name:</strong> <?php echo $stud_row['FirstName']." ".$stud_row['SecondName']." ".$stud_row['Othername'];?>
-                                          <br><b>Matric No:</b> <?php echo $stud_row['RegNo'];?>
+                                          <br><?php if(!empty($smato)){ if(empty($sshow)){ ?><b>Username: </b><?php echo $semailo; }else{ ?><b>Matric No:</b> <?php echo $stud_row['RegNo'];} }else{?><b>Matric No:</b> <?php echo $stud_row['RegNo'];}?>
                                           <br><b>Year of Study:</b> <?php echo $default_session;?>
                                           <br><b><?php echo $SCategory; ?> :</b><?php echo getfacultyc($stud_row['Faculty']);?>
                                           <br><b><?php echo $SGdept1; ?>:</b> <?php echo getdeptc($stud_row['Department']);?>
@@ -140,7 +141,7 @@ while($row_utme = mysqli_fetch_array($viewutme_query)){
 $coursstatus = $row_utme['c_cat']; if($coursstatus > 0){  $cstat = "Compulsory";}else{  $cstat = "Elective";}
 //$id = $row_utme['appNo'];
 if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select DISTINCT lect_approve  from coursereg_tb WHERE sregno = '".safee($condb,$student_RegNo)."' AND c_code = '".safee($condb,$row_utme['c_code'])."' and lect_approve = '1'")or die(mysqli_error($condb));
 ?>     
                         <tr class="<?php echo $classo1; ?>">
@@ -265,12 +266,12 @@ $viewutme_query2 = mysqli_query($condb,"select ctb.c_code,ctb.semester,ctb.c_uni
 </tr>
 <?php
 
-$serial=1;
+$serial=1; $io = 0;
 
 while($row_utme = mysqli_fetch_array($viewutme_query2)){
 if ($io%2) {$classo = 'row1';} else {$classo = 'row2';}$io += 1;
 $coursstatus2 = $row_utme['c_cat']; if($coursstatus2 > 0){  $cstat = "Compulsory";}else{  $cstat = "Elective";}
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $viewreg_query = mysqli_query($condb,"select DISTINCT lect_approve  from coursereg_tb WHERE sregno = '".safee($condb,$student_RegNo)."' AND c_code = '".safee($condb,$row_utme['c_code'])."' and lect_approve = '1' ")or die(mysqli_error($condb));
 ?>    
                         <tr class="<?php echo $classo; ?>">

@@ -23,7 +23,7 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 	$_SESSION['los']="";
 if(isset($_POST['viewras'])){
 $salot_dept = $_POST['dept1'];
-$semester = $_POST['semester'];
+$semester =  isset($_REQUEST['semester']) ? $_REQUEST['semester'] : '';
 $salot_los = $_POST['los'];
 $salot_session = $_POST['session'];
 $sfacu = $_POST['fac1'];
@@ -40,6 +40,7 @@ message("ERROR: No Result Annual Broad Sheet Found for ".getdeptc($salot_dept)."
 	$_SESSION['bfac']=$sfacu;
 //echo "<script>window.location.assign('resultsummary.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."');</script>";
 echo "<script>window.location.assign('resultsummary_p.php?Schd=".($salot_dept)."&sec=".($salot_session)."&lev=".($salot_los)."');</script>";
+
 }
 
 }//}$_SESSION['insidtime'] = rand();

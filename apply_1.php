@@ -77,7 +77,7 @@ function preview_image(event)
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
-if (!isset($_SESSION['temppin']) ||(trim ($_SESSION['temppin']) == '')) {
+if (!isset($_SESSION['temppin']) ||(trim ($_SESSION['temppin']) == '')){
 	//header("location:apply_b.php");
 	redirect("apply_b.php");
     exit();
@@ -384,7 +384,7 @@ if($num_pin1 > 0){?> <script language="JavaScript" type="text/javascript">
 			    					<div class="form-group"><input type="text" name="j_score" id="j_score" class="form-control input-sm" tabindex="1" onkeypress="return isNumber(event);" value="<?php echo $utmescore_e ;?>" <?php echo $req; ?>>    					
                                     </div>
 			    						<label class="head"><span>Upload Passport</span>
-                                        <font color="red" size="2">(NB:Size Not more than 300kb.)</font></label>
+                                        <font color="red" size="2">(NB:Size Not More than 300kb .)</font></label>
 <div class="form-group"><input name="image_name" class="form-control input-sm" id="fileInput" type="file" accept="image/*"  onchange="preview_image(event)"  style="width:260px;"></div>
 </div>
 			    		
@@ -691,8 +691,7 @@ message("This Jamb Registration Number '$_POST[j_reg2]' Has Applied Before", "er
 				}elseif(strpos($_POST['j_reg2']," ")){
 	message("Please! Jamb Reg Number can not Contain a Space", "error");
 				   redirect('apply_b.php?view=N_1'); */
-			
-				}else{
+}else{
 	for($cn=0; $cn<count($oselect); $cn++)
 		{ 
 		//$sql_OLEVEL=mysqli_query($condb,"REPLACE into olevel_tb2(oapp_No,oNo_re,oExam_t1,oExam_no1,oExam_y1,oSub1,oGrade_1)values('".safee($condb,$_POST['app_No'])."','1','".safee($condb,$_POST['exam_type'])."','".safee($condb,$_POST['e_number'])."','".safee($condb,$_POST['e_date'])."','".safee($condb,$osuba[$cn])."','".$ogradea[$cn]."')")  or die(mysqli_error($condb));

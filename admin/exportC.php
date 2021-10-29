@@ -35,13 +35,10 @@ $query = "SELECT DISTINCT course FROM course_allottb WHERE assigned='".safee($co
 						  	  <label for="heard">Academic Session</label>
                             <select name="session" id="session"  required="required" class="form-control">
   <option value="">Select Session</option>
-<?php  
-$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
-while($rssec = mysqli_fetch_array($resultsec))
-{
-echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	
-}
+<?php  //$resultsec = mysqli_query($condb,"SELECT * FROM session_tb where action = '1' ORDER BY session_name ASC");
+//while($rssec = mysqli_fetch_array($resultsec)){ echo "<option value='$rssec[session_name]'>$rssec[session_name]</option>";	}
 ?>
+<?php echo fill_sec(); ?>
 </select>
                       </div>
                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">

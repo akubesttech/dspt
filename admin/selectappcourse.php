@@ -23,8 +23,8 @@ message("ERROR:  No Programme Select,Please Select a Programme and continue.", "
 	$_SESSION['bfac'] = "";
 if(isset($_POST['sappc'])){
 $salot_dept = $_POST['dept1'];
-$semester = $_POST['semester'];
-$cosids = $_POST['cos'];
+//$semester = $_POST['semester'];
+//$cosids = $_POST['cos'];
 $salot_los = $_POST['los'];
 $salot_session = $_POST['session']; $salot_fac = $_POST['fac1'];
 //$result_alldept=mysqli_query($condb,"SELECT * FROM coursereg_tb WHERE dept ='".safee($condb,$salot_dept)."' and session ='".safee($condb,$salot_session)."' and  c_code ='".safee($condb,$cosids)."' ");

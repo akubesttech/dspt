@@ -3,10 +3,13 @@
 $usergen = $_GET['userId'];$gdp =$_GET['dp'];
 $find_d_load = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM student_tb where stud_id='".safee($condb,$_GET['userId'])."'"));
 $num_dep =trim($find_d_load['Department']) ;  $yearadd = substr($default_session,0,4); $sessionad  = $find_d_load['Asession'];
-$pro  = $find_d_load['app_type'];$levn  = $find_d_load['p_level'];
+$pro  = $find_d_load['app_type'];$levn  = $find_d_load['p_level']; $fac  = $find_d_load['Faculty'];
 $find_d_load = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM dept where dept_id='".safee($condb,$num_dep)."'"));
 if(empty($find_d_load['d_code'])){ $num_dept_id =$find_d_load['dept_id'] ; }else{ $num_dept_id =$find_d_load['d_code'] ; }
-$studentRegnon = getmatno($sessionad,$num_dep,$pro); $regcount = "1".getlstr($studentRegnon,3);
+$lcount = getlcount($pro); 
+$slen = strlen($lcount);
+$studentRegnon = getmatno($sessionad,$num_dep,$pro,$fac); //$regcount = "1".getlstr($studentRegnon,3);
+$regcount = getlstr($studentRegnon,$slen);
 if(empty($gdp)){$link2 = "Student_Record.php";  }else{ $link2 = "Student_Record.php?dept1_find=".$gdp."&session2=".$sessionad."&los=".$levn;; }
 //$yearadd=date('Y');
 //$chima='CSS/'.($yearadd - 1)."/".$num_dept_id."/";
@@ -80,7 +83,7 @@ if(!$output2){
 <?php
 //$s=3;while($s>0){$AppNo .= rand(0,9);$s-=1;	}
 	$find_d_load2 = mysqli_fetch_array(mysqli_query($condb," SELECT * FROM student_tb where stud_id='".safee($condb,$_GET['userId'])."'"));
-$num_dep =$find_d_load['Department'] ;
+$num_dep =$find_d_load2['Department'] ;
 
 ?>
 <div class="x_panel">
@@ -122,17 +125,7 @@ $num_dep =$find_d_load['Department'] ;
 $tran=mysqli_query($condb,"select max(reg_count) from student_tb WHERE Asession = '".safee($condb,$default_session)."' and Department ='".safee($condb,$find_d_load2['Department'])."' ");
 //$tran=mysqli_query($condb,"SELECT MAX(counted) FROM( SELECT COUNT(*) AS counted FROM student_tb WHERE Asession = '".$default_session."' and Department='".$num_dep."' GROUP BY Department ) AS counts");
 while($tid = mysqli_fetch_array($tran, MYSQLI_BOTH))
-{
-if($tid[0] == null)
-{
-$tmax="1001";
-}
-else
-{
-$tmax=$tid[0]+1;
-}
-}
-$maxadd = substr($tmax,1,4);
+{if($tid[0] == null){ $tmax="1001";}else{$tmax=$tid[0]+1;}}$maxadd = substr($tmax,1,4);
 //$chima='CSS/'.($yearadd - 1)."/".$num_dept_id."/";
 $genregnonew =($yearadd)."/".$num_dept_id."/".$maxadd;
      ?>

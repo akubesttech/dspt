@@ -14,26 +14,39 @@ $facn1 = isset($_GET['fac1']) ? $_GET['fac1'] : '';
 $dep1 = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $sec1 = isset($_GET['session2']) ? $_GET['session2'] : '';
 $los =  isset($_GET['c_choice']) ? $_GET['c_choice'] : '';
+if(empty($sec1)){ $secn = $default_secadmin;}else{ $secn = $sec1;}
  //$dep1 = $_GET['dept1_find']; $sec1 = $_GET['session2']; $los 	= $_GET['c_choice'];
- if(empty($dep1)){ $links = "new_apply.php"; $np = $default_secadmin;}else{ $links = "new_apply.php?dept1_find=".$dep1."&session2=".$sec1."&c_choice=".$los; $np = $sec1;}
+ if(empty($dep1)){ $links = "new_apply.php"; $np = $secn;}else{ $links = "new_apply.php?dept1_find=".$dep1."&session2=".$sec1."&c_choice=".$los; $np = $sec1;}
  ?>
 	
 		    	
 
  <?php include('admin_slidebar.php'); ?>
     <?php include('navbar.php');
-$queryapp = "SELECT * FROM new_apply1 WHERE adminstatus = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
-if($Rorder > 2){ $queryapp .= " AND Department = '$userdept'";}
+$queryapp = "SELECT * FROM new_apply1 WHERE reg_status = '1' AND adminstatus = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
+if($Rorder > 2){ $queryapp .= " AND first_Choice = '$userdept'";}
+if($Rorder < 3 && !empty($dep1)){ $queryapp .= " AND first_Choice = '$dep1'";}
  $queryapp .= "order by stud_id DESC "; $qeryno = mysqli_query($condb,$queryapp)or die(mysqli_error($condb));
     $clearno = mysqli_num_rows($qeryno);
-     $querydirect = "SELECT * FROM new_apply1 WHERE adminstatus = '0' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
-if($Rorder > 2){ $querydirect .= " AND Department = '$userdept'";}
+     $querydirect = "SELECT * FROM new_apply1 WHERE reg_status = '1' AND adminstatus = '0' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
+if($Rorder > 2){ $querydirect .= " AND first_Choice = '$userdept'";}
+if($Rorder < 3 && !empty($dep1)){ $querydirect .= " AND first_Choice = '$dep1'";}
  $querydirect .= "order by stud_id DESC "; $qerydirect = mysqli_query($condb,$querydirect)or die(mysqli_error($condb));
  $directno = mysqli_num_rows($qerydirect);
  $queryNO = "SELECT * FROM new_apply1 WHERE reg_status = '1' AND application_r = '0' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'FALSE'";
-if($Rorder > 2){ $queryNO .= " AND Department = '$userdept'";}
+if($Rorder > 2){ $queryNO .= " AND first_Choice = '$userdept'";}
+if($Rorder < 3 && !empty($dep1)){ $queryNO .= " AND first_Choice = '$dep1'";}
  $queryNO .= "order by stud_id DESC "; $queryNO1 = mysqli_query($condb,$queryNO)or die(mysqli_error($condb));
  $countappno = mysqli_num_rows($queryNO1);
+ 
+ $querytran = "SELECT * FROM new_apply1 WHERE reg_status = '1' AND application_r = '1' AND Asession = '".safee($condb,$np)."' AND app_type = '".safee($condb,$class_ID)."' AND verify_apply = 'TRUE'";
+if($Rorder > 2){ $querytran .= " AND first_Choice = '$userdept'";}
+if($Rorder < 3 && !empty($dep1)){if($los == "1"){ $querytran .= " AND first_Choice = '$dep1'";}
+if($los == "2"){ $querytran .= " AND Second_Choice = '$dep1'";}
+if($los == "3"){ $querytran .= " AND first_Choice = '$dep1'";}
+}
+ $querytran .= "order by stud_id DESC "; $querytran1 = mysqli_query($condb,$querytran)or die(mysqli_error($condb));
+ $counttrans = mysqli_num_rows($querytran1);
  
  $qedate = "SELECT * FROM utmedate WHERE prog = '".safee($condb,$class_ID)."'";
 if($dep1 > 0){ $qedate .= " AND dept = '$dep1'";}
@@ -92,31 +105,23 @@ message("You don't have the permission to access this page", "error");
 					$id=$_POST['selector'];
 $N = count($id);
 for($i=0; $i < $N; $i++)
-{ $sqlstud1=mysqli_query($condb,"select * from new_apply1 where stud_id ='".safee($condb,$id[$i])."' and app_type = '".safee($condb,$class_ID)."' and Asession = '".safee($condb,$default_secadmin)."' and adminstatus = '1' and reg_status = '1' and application_r = '0' ")or die(mysqli_error($condb));
+{ $sqlstud1=mysqli_query($condb,"select * from new_apply1 where stud_id ='".safee($condb,$id[$i])."' and app_type = '".safee($condb,$class_ID)."' and Asession = '".safee($condb,$secn)."' and adminstatus = '1' and reg_status = '1' ")or die(mysqli_error($condb));
 $row_b = mysqli_fetch_array($sqlstud1);  extract($row_b);
-$num_fchoice2 =$row_b['course_choice'] ; $entryyear   =	substr($default_secadmin,0,4);   $yog_t =  $entryyear + $p_duration; $modeentry = $row_b['moe']; $entrylev = getelevel($modeentry); $noapp = $row_b['appNo'];
+$num_fchoice2 =$row_b['course_choice'] ; $entryyear   =	substr($secn,0,4);   $yog_t =  $entryyear + $p_duration; $modeentry = $row_b['moe']; $entrylev = getelevel($modeentry); $noapp = $row_b['appNo'];
 if($num_fchoice2 == '1'){ $facnew =  $row_b['fact_1']; $depnew =  $row_b['first_Choice']; }else{  $facnew =  $row_b['fact_2']; $depnew =  $row_b['Second_Choice'];}
-	$sql_cstudent=mysqli_query($condb,"SELECT * FROM student_tb WHERE stud_id = '".safee($condb,$id[$i])."'");
+	$sql_cstudent=mysqli_query($condb,"SELECT * FROM student_tb WHERE appNo = '".safee($condb,$noapp)."'");
 				if(mysqli_num_rows($sql_cstudent)>0) 
 				{ 
 				$sql_ME=mysqli_query($condb,"UPDATE student_tb SET FirstName='".safee($condb,$row_b['FirstName'])."',SecondName='".safee($condb,$row_b['SecondName'])."',Othername='".safee($condb,$row_b['Othername'])."',Gender='".safee($condb,$row_b['Gender'])."',dob='".safee($condb,$row_b['dob'])."',hobbies='".safee($condb,$row_b['hobbies'])."',state='".safee($condb,$row_b['state'])."',lga='".safee($condb,$row_b['lga'])."',nation='".safee($condb,$row_b['nation'])."',religion='".safee($condb,$row_b['religion'])."',address='".safee($condb,$row_b['address'])."',e_address='".safee($condb,$row_b['e_address'])."',phone='".safee($condb,$row_b['phone'])."',postal_address='".safee($condb,$row_b['postal_address'])."',any_fchalenge='".safee($condb,$row_b['any_fchalenge'])."',State_chalenge='".safee($condb,$row_b['State_chalenge'])."',Faculty='".safee($condb,$facnew)."',Department='".safee($condb,$depnew)."',Age='".safee($condb,$row_b['Age'])."',bloodgroup='".safee($condb,$row_b['bloodgroup'])."',gtype='".safee($condb,$row_b['gtype'])."',RegNo='',app_type='".safee($condb,$row_b['app_type'])."',Asession='".safee($condb,$row_b['Asession'])."',Moe='".safee($condb,$modeentry)."',yoe='".safee($condb,$entryyear)."',yog='".safee($condb,$yog_t)."',prog_dura='".safee($condb,$p_duration)."',p_level='".safee($condb,$entrylev)."',images = '".safee($condb,$row_b['images'])."',appNo = '".safee($condb,$noapp)."',dateofreg=Now(),reg_status='1',verify_Data='FALSE',Cert_inview = '".safee($condb,$row_b['app_type'])."' WHERE stud_id = '".safee($condb,$id[$i])."'");
-				//	if($course_choice == '1'){
-	//mysqli_query($condb,"update student_tb set Department='".safee($condb,$row_b['first_Choice'])."',Faculty='".safee($condb,$row_b['fact_1'])."' where stud_id = '".safee($condb,$id[$i])."'");
-	//}elseif($course_choice == '2'){
-//mysqli_query($condb,"update student_tb set Department='".safee($condb,$row_b['Second_Choice'])."',Faculty='".safee($condb,$row_b['fact_2'])."' where stud_id = '".safee($condb,$id[$i])."'");
-//}
-$comfirmadd2 =mysqli_query($condb,"UPDATE new_apply1 SET application_r = '1' WHERE stud_id ='".safee($condb,$id[$i])."' ");
+	if($sql_ME){
+$comfirmadd2 =mysqli_query($condb,"UPDATE new_apply1 SET application_r = '1' WHERE stud_id ='".safee($condb,$id[$i])."' ");}
 			message("The Admitted Applicant(s) was Successfully Transfered To Students Register .", "success");
 		       redirect($links);
-		        exit(); 
+		        //exit(); 
 			}else{
 			$sql=mysqli_query($condb,"INSERT INTO student_tb (appNo,FirstName,SecondName,Othername,Gender,dob,hobbies,state,lga,nation,religion,address,e_address,phone,postal_address,any_fchalenge,State_chalenge,Faculty,Department,Age,bloodgroup,gtype,RegNo,app_type,Asession,Moe,yoe,yog,prog_dura,p_level,images,dateofreg,reg_status,verify_Data,Cert_inview)VALUES('".safee($condb,$noapp)."','".safee($condb,$row_b['FirstName'])."','".safee($condb,$row_b['SecondName'])."','".safee($condb,$row_b['Othername'])."','".safee($condb,$row_b['Gender'])."','".safee($condb,$row_b['dob'])."','".safee($condb,$row_b['hobbies'])."','".safee($condb,$row_b['state'])."','".safee($condb,$row_b['lga'])."','".safee($condb,$row_b['nation'])."','".safee($condb,$row_b['religion'])."','".safee($condb,$row_b['address'])."','".safee($condb,$row_b['e_address'])."','".safee($condb,$row_b['phone'])."','".safee($condb,$row_b['postal_address'])."','".safee($condb,$row_b['any_fchalenge'])."','".safee($condb,$row_b['State_chalenge'])."','".safee($condb,$facnew)."','".safee($condb,$depnew)."','".safee($condb,$row_b['Age'])."','".safee($condb,$row_b['bloodgroup'])."','".safee($condb,$row_b['gtype'])."','','".safee($condb,$row_b['app_type'])."','".safee($condb,$row_b['Asession'])."','".safee($condb,$modeentry)."','".safee($condb,$entryyear)."','".safee($condb,$yog_t)."','".safee($condb,$p_duration)."','".safee($condb,$entrylev)."','".safee($condb,$row_b['images'])."',Now(),'1','FALSE','".safee($condb,$row_b['app_type'])."')");
-				//if($course_choice == '1'){
-	//mysqli_query($condb,"update student_tb set Department='".safee($condb,$row_b['first_Choice'])."',Faculty='".safee($condb,$row_b['fact_1'])."' where stud_id = '".safee($condb,$id[$i])."'");
-//	}elseif($course_choice == '2'){
-//mysqli_query($condb,"update student_tb set Department='".safee($condb,$row_b['Second_Choice'])."',Faculty='".safee($condb,$row_b['fact_2'])."' where stud_id = '".safee($condb,$id[$i])."'");
-//}
-$comfirmadd2 =mysqli_query($condb,"UPDATE new_apply1 SET application_r = '1' WHERE stud_id ='".safee($condb,$id[$i])."' ");
+	if($sql){
+$comfirmadd2 =mysqli_query($condb,"UPDATE new_apply1 SET application_r = '1' WHERE stud_id ='".safee($condb,$id[$i])."' ");}
 	message("The Admitted Applicant(s) was Successfully Transfered To Students Register .", "success");
 	//unset($_SESSION['cr_session']);
 		        redirect($links);}
@@ -163,7 +168,7 @@ $msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
     Please Come with A Copy of your Application Slip!\n
     
     This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
-    For inquiry and complaint please email inquiry@deltasmartcity.ng \n
+    For inquiry and complaint please email ".$infomail." \n
 	
 	Thank You Admin!\n\n");
 
@@ -205,7 +210,7 @@ $msg = nl2br("Congratulations! ".$fulname.",.\n
     Note That This Admission will be withdrawn if you Violate The Terms and Condition of your Admission!\n
     
     This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
-    For inquiry and complaint please email inquiry@deltasmartcity.ng \n
+    For inquiry and complaint please email ".$infomail.". \n
 	
 	Thank You Admin!\n\n");
  
@@ -216,6 +221,25 @@ $mail_data = array('to' => $e_address, 'sub' => $subject, 'msg' => 'Notify','bod
     }
 	message($account." Applicant(s) was Successfully Admitted .", "success");
 	redirect($links); }}
+    // cancel Transfer
+    	if (isset($_POST['cancel_trans'])){
+	 if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect($links);
+			}elseif(empty($_POST['selector'])){
+				message("Select at least one applicant to proceed !", "error");
+		       redirect($links);
+				}else{ $id=$_POST['selector'];  $N = count($id);
+for($i=0; $i < $N; $i++){$row = mysqli_query($condb,"select * from new_apply1 where stud_id ='".safee($condb,$id[$i])."'  AND verify_apply ='TRUE'");
+	$count=mysqli_num_rows($row);$rown=mysqli_fetch_array($row);
+    if($count > 0){ extract($rown); 
+  if($application_r > 0){	$resultd = mysqli_query($condb,"DELETE FROM student_tb where appNo='".$appNo."'");
+  if($resultd){  $resultrecn = mysqli_query($condb,"UPDATE new_apply1 SET application_r ='0' where stud_id = '$id[$i]'");}
+    mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'".safee($condb,$admin_username)."','
+	Records Transfer of ".getname($appNo)." with Application No ".$appNo." admitted into ".$SGdept1." of ".getdeptc($adept)." (".getprog($app_type).") was Canceled by ". $admin_username.". ')")or die(mysqli_error($condb));
+}}
+message("The Admitted Applicant(s) Record Transfer To student Register was Successfully Canceled .", "success");
+	redirect($links); }}}
 ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">

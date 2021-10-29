@@ -3,7 +3,6 @@
 	
 	   <!--------------------------------------/.fluid-container-------------------------------------->
         <link href="admin/vendors/easypiechart/jquery.easy-pie-chart.css" rel="stylesheet" media="screen"> 
-       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min1.js"></script>
         <script src="admin/bootstrap1/js/bootstrap.min.js"></script>
         <script src="admin/vendors/easypiechart/jquery.easy-pie-chart.js"></script>
         <script src="admin/assets/scripts.js"></script>
@@ -58,6 +57,26 @@
 			<script src="admin/vendors/ckeditor/adapters/jquery.js"></script>
 			<script type="text/javascript" src="admin/vendors/tinymce/js/tinymce/tinymce.min.js"></script>
         <script>
+        
+  
+        	function searchFilter(page_num) {
+    page_num = page_num?page_num:0;
+    var keywords = $('#keywords').val();
+    var sortBy = $('#sortBy').val();
+    $.ajax({
+        type: 'POST',
+        url: 'getData.php',
+        data:'page='+page_num+'&keywords='+keywords+'&sortBy='+sortBy,
+        beforeSend: function () {
+            $('.loading-overlay').show();
+        },
+        success: function (html) {
+            $('#posts_content').html(html);
+            $('.loading-overlay').fadeOut("slow");
+        }
+    });
+}
+
         $(function() {
            <!-------------------------------Ckeditor standard-------------------------------------->
             $( 'textarea#ckeditor_standard' ).ckeditor({width:'98%', height: '150px', toolbar: [
@@ -81,6 +100,7 @@
 			<link href="admin/vendors/datepicker.css" rel="stylesheet" media="screen">
 			<script src="admin/vendors/bootstrap-datepicker.js"></script>
 						<script>
+                        
 						$(function() {
 							$(".datepicker").datepicker();
 							$(".uniform_on").uniform();
@@ -97,7 +117,7 @@ function loadDept(str)
 {var a=document.getElementById(str)[document.getElementById(str).selectedIndex].value;
 //var a=document.getElementById(str)[document.getElementById(str).selectedIndex].innerHTML;
 //document.getElementById("select_id").options[document.getElementById("select_id").selectedIndex].value;
-if(a=='Select Faculty'){ return;}
+if(a=='Select <?php echo $SCategory; ?>'){ return;}
 else{
 var e=document.getElementById('imgHolder2');
 e.style.visibility='visible';
@@ -184,7 +204,7 @@ function stateChanged20()
 
 function loaddept1(str1)
 {var a=document.getElementById(str1)[document.getElementById(str1).selectedIndex].value;
-if(a=='Select Faculty'){ return;}
+if(a=='Select <?php echo $SCategory; ?>'){ return;}
 else{
 var e=document.getElementById('imgHolder2');
 e.style.visibility='visible';
@@ -366,6 +386,8 @@ $('#add').click(function(){
     })
 });
 
+
+
     $(document).ready(function() {
         $('.btn-danger').click(function() {
             var id = $(this).attr("id");
@@ -380,32 +402,35 @@ $('#add').click(function(){
                     success: function(html) {
                         $(".row" + id).fadeOut('slow');
                         //window.location.href = 'apply_b.php?view=N_1';
-                        	
-                    }
-                });
+                        }});
+            } else {
+                return false;
+            }
+        });
+    });
+    $(document).ready(function() {
+        $('.btn-info').click(function() {
+            var id = $(this).attr("id");
+            if (confirm("Are you sure you want to delete this Course?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "deleteolevel2.php",
+                    data: ({
+                        id:id
+                    }),
+                   // cache: false,
+                    success: function(html) {
+                        $(".row" + id).fadeOut('slow');
+                        //window.location.href = 'apply_b.php?view=N_1';
+                        }});
             } else {
                 return false;
             }
         });
     });
 		
-		function searchFilter(page_num) {
-    page_num = page_num?page_num:0;
-    var keywords = $('#keywords').val();
-    var sortBy = $('#sortBy').val();
-    $.ajax({
-        type: 'POST',
-        url: 'getData.php',
-        data:'page='+page_num+'&keywords='+keywords+'&sortBy='+sortBy,
-        beforeSend: function () {
-            $('.loading-overlay').show();
-        },
-        success: function (html) {
-            $('#posts_content').html(html);
-            $('.loading-overlay').fadeOut("slow");
-        }
-    });
-}
+		
+	
 $('.count').each(function () {
     $(this).prop('Counter',0).animate({
         Counter: $(this).text()
@@ -445,11 +470,12 @@ if( obj != null ){
 }
 }
 
- function Clickheretoprint()
+   function Clickheretoprint()
 { 
 document.all.cccv.style.visibility = 'hidden';
 document.all.ccc2.style.visibility = 'hidden';
 document.all.ccc3.style.visibility = 'visible';
+
   var disp_setting="toolbar=yes,location=no,directories=no,menubar=yes,"; 
       disp_setting+="scrollbars=yes,width=870, height=400, left=100, top=25"; 
   var content_vlue = document.getElementById("print_content").innerHTML; 
@@ -483,6 +509,8 @@ document.all.ccc3.style.visibility = 'visible';
 
 } 
 
+
+
 function tablePrint3(){ 
  document.all.divButtons.style.visibility = 'hidden';  
   document.all.delete_course.style.visibility = 'hidden'; 
@@ -501,13 +529,25 @@ function tablePrint3(){
    
     return false;  
     } 
+     function calc() {
+  var tots = 0;
+  $(".uniform_on1:checked").each(function() {
+    var price = $(this).attr("payamt");
+    tots += parseFloat(price);
+  });
+  $('#tots').text(tots.toFixed(2));
+}
+$(function() {
+  $(document).on("change", ".uniform_on1", calc);
+  calc();
+});
+
   $(document).ready(function() {
     oTable = jQuery('#example').dataTable({
     "bJQueryUI": true,
     "sPaginationType": "full_numbers"
     } );
   });  
-
 
 
 						</script>

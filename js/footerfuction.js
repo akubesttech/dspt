@@ -1,3 +1,4 @@
+
  $(document).ready(function(){
 
             $(document).on('keydown', '.regno', function() {
@@ -244,7 +245,7 @@ if (xmlhttp.readyState==4)
   }
 }
 
-function loadCourse(str1)
+function loadCourse(str1,str2)
 {var a=document.getElementById(str1)[document.getElementById(str1).selectedIndex].value;
 if(a=='Select Department'){ return;}
 else{
@@ -259,9 +260,10 @@ setTimeout(function(){if (xmlhttp==null)
   }
 
 var p=document.getElementById(str1)[document.getElementById(str1).selectedIndex].value;
+//var p2 = str2.value;
 var url="loadCourse.php";
 url=url+"?loadcos="+p;
-url=url+"&sid="+Math.random();
+url=url+"&sid="+ str2; //Math.random();
 xmlhttp.onreadystatechange=stateChanged2;
 xmlhttp.open("GET",url,true);
 xmlhttp.send(null);},1000);
@@ -269,14 +271,43 @@ xmlhttp.send(null);},1000);
 }
 
 function stateChanged2()
-{
-if (xmlhttp.readyState==4)
+{ if (xmlhttp.readyState==4)
   {
   document.getElementById("cosload").innerHTML=xmlhttp.responseText;
   var f=document.getElementById('imgHolder2');
   f.style.visibility='hidden';
   }
 }
+
+//load faculty 2
+function loadsDep(str)
+{var a=document.getElementById(str)[document.getElementById(str).selectedIndex].value;
+if(a=='Select <?php echo $SCategory; ?>'){ return;}
+else{
+var e=document.getElementById('imgHolder2');
+e.style.visibility='visible';
+xmlhttp=GetXmlHttpObject();
+setTimeout(function(){if (xmlhttp==null)
+  { alert ("Your browser does not support AJAX!");
+  return;}
+
+var d=document.getElementById(str)[document.getElementById(str).selectedIndex].value;
+var url="loadDept.php";
+url=url+"?loadfac="+d;
+url=url+"&sid="+Math.random();
+xmlhttp.onreadystatechange=stateChangedn;
+xmlhttp.open("GET",url,true);
+xmlhttp.send(null);},1000);
+}}
+
+
+
+function stateChangedn()
+{ if (xmlhttp.readyState==4){
+  document.getElementById("dept_2").innerHTML=xmlhttp.responseText;
+  var f=document.getElementById('imgHolder2');
+  f.style.visibility='hidden';}}
+  
 function loadlga(str1)
 {var a=document.getElementById(str1)[document.getElementById(str1).selectedIndex].innerHTML;
 if(a=='- Select State -'){ return;}
@@ -572,10 +603,10 @@ window.location.href = 'process.php?action=status4&userId=' + userId + '&nst=' +
 	window.location.href = 'process.php?action=status5&id2=' + userId + '&nst=' + st;
 	}}
 //for staff course approval
-function changeUserStatus6(userId,couseid,status)
+function changeUserStatus6(userId,couseid,oid,user,status)
 {var st = status == '0' ? 'Approve' : 'Decline'
 if(confirm('Your About to ' + st+' this Student Course Registration Make Sure All Information are Correct?')) {
-	window.location.href = 'process.php?action=status6&userId=' + userId + '&cos=' + couseid + '&nst=' + st;}}
+window.location.href = 'process.php?action=status6&userId=' + userId + '&cos=' + couseid +'&oid=' + oid + '&usr=' + user +'&nst=' + st;}}
 	//for staff course approval
 function changeUserStatus60(userId,los,deptn,sess,status)
 {var st = status == '0' ? 'Approve' : 'Decline'
@@ -588,10 +619,10 @@ function changeUserStatus7(userId, status)
 window.location.href = 'process.php?action=status7&userId=' + userId + '&nst=' + st;
 	}
 }
-function changePayStatus2(userId, status,sess,dep,dop)
+function changePayStatus2(userId, status,sess,dep,dop,dop2)
 {var st = status == '0' ? 'Approve' : 'Decline'
 	if (confirm('Your About to ' + st+' this Student Payment Make Sure All Information are Correct?')) {
-window.location.href = 'process.php?action=status10&userId=' + userId + '&dep='+ dep +'&ses='+ sess +'&dop='+ dop +'&nst=' + st;
+window.location.href = 'process.php?action=status10&userId=' + userId + '&dep='+ dep +'&ses='+ sess +'&dop='+ dop +'&dop2='+ dop2 +'&nst=' + st;
 }}
 //for candidate  result
 function changeUserStatus8(userId, status)
@@ -724,8 +755,11 @@ function populate(selector) {
 function ShowHideDiv(chkPenalty){
             var penper = document.getElementById("penper");
             var pdate = document.getElementById("pdate");
+            var pdaten = document.getElementById("pdate3");
             penper.style.display = chkPenalty.checked ? "block" : "none";
-            pdate.style.display = chkPenalty.checked ? "block" : "none"; }
+            pdate.style.display = chkPenalty.checked ? "block" : "none";
+            pdaten.style.display = chkPenalty.checked ? "block" : "none"; }
+            
     $(document).ready(function(){
     $('#show').click(function() {
       $('.menu').toggle("slide");
@@ -735,12 +769,11 @@ function ShowHideDiv2(chkPenalty){
             var penper = document.getElementById("penper");
             var pdate = document.getElementById("changestatus");
             penper.style.display = chkPenalty.checked ? "none" : "block";
-            pdate.style.display = chkPenalty.checked ? "block" : "none"; }
-    $(document).ready(function(){
-    $('#show').click(function() {
-      $('.menu').toggle("slide");
-    });
-});   
+            pdate.style.display = chkPenalty.checked ? "block" : "none";
+            penper.style.width = chkPenalty.checked ? "15%" : "15%";
+            
+             }
+   
 
 function check(e, value) {
       //Check Charater
@@ -905,6 +938,44 @@ function check(e, value) {
                 } 
             });
         }
+        //get lecturer / academic staff
+        function getlecturer(val) {
+            $.ajax({
+                url: 'gettrans.php',
+                type: 'POST',
+                data: 'searchstaff='+val,
+                dataType: 'json',
+                success:function(data){
+                    var len = data.length;
+                    if(len > 0){
+                        var id = data[0]['staff_uid'];
+                          var Sid = data[0]['s_idno'];
+                        var fname = data[0]['f_name'];
+                        var cos = data[0]['cos'];
+                        var heq = data[0]['heq']; 
+                        var ccount = data[0]['ccount'];
+                         var email = data[0]['email'];
+                        var post = data[0]['post'];
+                        document.getElementById('staff_uid').value = id;
+                        document.getElementById('s_idno').value = Sid;
+                        document.getElementById('f_name').value = fname;
+                       document.getElementById('cos').value = cos;
+                        document.getElementById('heq').value = heq;
+                        document.getElementById('ccount').value = ccount;
+                        document.getElementById('email').value = email;
+                        document.getElementById('post').value = post;     
+                    }else{document.getElementById('staff_uid').value = "";
+                        document.getElementById('s_idno').value = "";
+                        document.getElementById('f_name').value = "";
+                        document.getElementById('cos').value = "";
+                     document.getElementById('heq').value = "";
+                        document.getElementById('ccount').value = "";
+                        document.getElementById('email').value = "";
+                        document.getElementById('post').value = "";
+                    }     //alert(fname);
+                } 
+            });
+        }
         $(document).ready(function() {   
 $('#jdesc').change(function(){   
 if($('#jdesc').val() === 'Others')   
@@ -942,3 +1013,95 @@ xmlhttp.onreadystatechange=function()
 xmlhttp.open("GET","loadd_group.php?q="+str,true);
 xmlhttp.send();
 }  
+function showcallot(str)
+{
+if (str=="")
+  {
+  //document.getElementById("txtroomno").innerHTML="Amount was Not Loaded Because Form Type was Not Selected";
+ // return;
+  } 
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();}
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");}
+xmlhttp.onreadystatechange=function(){
+  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+    document.getElementById("txtroomno").innerHTML=xmlhttp.responseText;}
+  }
+xmlhttp.open("GET","loadallot_details.php?q="+str,true);
+xmlhttp.send();
+}
+function showreport(str)
+{if (str==""){
+  //document.getElementById("txtroomno").innerHTML="Amount was Not Loaded Because Form Type was Not Selected";
+ // return;
+  } if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();}else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");}
+xmlhttp.onreadystatechange=function(){
+  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+    document.getElementById("txtrbutton").innerHTML=xmlhttp.responseText;}}
+xmlhttp.open("GET","loadreport_button.php?q="+str,true);
+xmlhttp.send();}
+
+
+
+function showDiv(Div) { var x = document.getElementById(Div);
+if(x.style.display=="none") { x.style.display = "block"; } else { x.style.display = "none"; } }
+ 
+
+
+function ShowHideDiv3(chkPenalty){
+            var cat = document.getElementById("cat"); 
+            var comp = document.getElementById("comp");
+            var txtrbut = document.getElementById("txtrbutton");
+            cat.style.display = chkPenalty.checked ? "none" : "block";
+            comp.style.display = chkPenalty.checked ? "block" : "none";
+            txtrbut.style.display = chkPenalty.checked ? "none" : "block";
+            //comp.style.width = chkPenalty.checked ? "15%" : "15%";
+             }
+
+ window.onload = function(){zoom(1)}
+         function zoom(zm) {
+             img=document.getElementById("zoom")
+             wid=img.width
+             ht=img.height
+             img.style.width=(wid*zm)+"px"
+             img.style.height=(ht*zm)+"px"
+             img.style.marginLeft = -(img.width/2) + "px";
+             img.style.marginTop = -(img.height/2) + "px";
+         }
+         
+          //check availiability of Matno
+        function checkMat(val) {
+            $.ajax({
+                url: 'gettrans.php',
+                type: 'POST',
+                data: 'sregNo='+val,
+                dataType: 'json',
+                success:function(data){
+                    var len = data.length;
+                    var sname = document.getElementById('sregNo');
+var sname1 = sname.value;
+var userID = document.getElementById('pass_word');
+userID.value = sname1;
+var txtrbut = document.getElementById("mstatus");
+                    if(len > 0){
+                     var id = data[0]['matid'];
+                          var Sid = data[0]['mstatus'];
+                      //document.getElementById('mstatus').value = Sid;
+                        txtrbut.style.display = "block";
+                       }else{
+                        //document.getElementById('mstatus').value = "Mat No Avaliable";
+                      txtrbut.style.display = "none";
+                       
+                    }     //alert(fname);
+                } 
+            });
+        }
+        
+       		       

@@ -6,7 +6,7 @@
 //ini_set('display_errors', 1);
 $depart = $_GET['Schd'];
 $session=$_GET['sec'];
-$coursecodes= $_GET['scos'];
+//$coursecodes= $_GET['scos'];
 $courselevel= $_GET['slos'];
   $serial=1;
    ?>
@@ -61,7 +61,7 @@ $courselevel= $_GET['slos'];
                          <!-- <th>Course Title</th>
                           <th>Course Code</th>--!>
                           <th><?php echo $SGdept1; ?></th>
-                          <th>Semester</th>
+                          <th>Session</th>
                           <th>Level</th>
                           <th>No Courses Registered</th>
                          <th>Remark</th>
@@ -72,7 +72,7 @@ $courselevel= $_GET['slos'];
  <tbody>
                  <?php
 //$viewcourseallot1=mysqli_query($condb,"select * from coursereg_tb where c_code ='". safee($condb,$coursecodes) ."' and session ='". safee($condb,$session) ."'  and dept='". safee($condb,$depart) ."' ");
-$viewcourseallot1=mysqli_query($condb,"select sregno,dept,session,level from coursereg_tb where level ='". safee($condb,$courselevel) ."' and session ='". safee($condb,$session) ."'  and dept='". safee($condb,$depart) ."' and creg_status = '1'  GROUP BY sregno");  
+$viewcourseallot1=mysqli_query($condb,"select sregno,dept,session,level,creg_id,course_id,lect_approve from coursereg_tb where level ='". safee($condb,$courselevel) ."' and session ='". safee($condb,$session) ."'  and dept='". safee($condb,$depart) ."' and creg_status = '1'  GROUP BY sregno");  
 		while($row_allot = mysqli_fetch_array($viewcourseallot1)){
 		$id = $row_allot['creg_id'];  $course_id = $row_allot['course_id'];
 		$course_approve = $row_allot['lect_approve']; $course_reg = $row_allot['sregno'];

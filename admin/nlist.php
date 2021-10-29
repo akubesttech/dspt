@@ -1,11 +1,12 @@
  <?php if($class_ID > 0){}else{
                   message("ERROR:  No Programme Select,Please Select a Programme and continue.", "error"); redirect('new_apply.php?view=spro');}
 	$protocol_n = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://"; 
-  
+  $sec2 = isset($_GET['sec']) ? $_GET['sec'] : '';
+  if(!empty($sec2)){ $nsec = $sec2; }else{ $nsec = $default_secadmin;} 
 //$depart = $_GET['dept1_find'];
 //$session=$_GET['session2'];
 //$c_choice= $_GET['c_choice']; 	
-						?>
+	?>
  <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
@@ -28,13 +29,14 @@
 <button class="btn btn-info" name="approveapp" title="Select Appropriate Record to Verify Application" id="com2"><i class="fa fa-check"></i> Verify Application</button>
 <button class="btn btn-info" name="Directadd"  data-placement="top" title="Click to Process <?php echo $directno; ?> Applicant (s) Admission  , For Direct Admission without PUTME/Entrance Examination" id="directadd"><i class="fa fa-circle-o icon-large"></i> Direct Admission <span class="badge bg-yellow"><?php echo $directno; ?></span></button>
 <button class="btn btn-info" name="bComfirm_record"  data-placement="top" title="Click to Transfer <?php echo $clearno; ?> admitted student  record (s) to Students Register" id="trans"><i class="fa fa-circle-o icon-large"></i> Transfer Record (s) <span class="badge bg-yellow"><?php echo $clearno; ?></span></button>
+<button class="btn btn-danger" name="cancel_trans"  data-placement="top" title="Click to Cancel Record Transfer of Selected  admitted student(s) from Total Transfer Record(s) of <?php echo $counttrans; ?>" id="cancelt"><i class="fa fa-remove icon-large"></i> Cancel Transfer Record (s) <span class="badge bg-yellow"><?php echo $counttrans; ?></span></button>
 		
 									<script type="text/javascript">
 									 $(document).ready(function(){
 									 $('#trans').tooltip('show'); $('#com2').tooltip('show'); $('#delete2').tooltip('show');$('#com').tooltip('show');
 									 $('#trans').tooltip('hide'); 	 $('#com2').tooltip('hide'); $('#delete2').tooltip('hide');$('#com').tooltip('hide');
 									 $('#back').tooltip('show'); $('#pappd').tooltip('show');$('#directadd').tooltip('show');  $('#directadd').tooltip('hide');
-                                     $('#back').tooltip('hide');  $('#pappd').tooltip('hide');
+                                     $('#back').tooltip('hide');  $('#pappd').tooltip('hide'); $('#cancelt').tooltip('show');  $('#cancelt').tooltip('hide');
                                      });
 									</script><?php } if(!empty($dep1) AND !empty($sec1)){ ?> 
 									<a 	onClick="window.location.href='Print_appd.php?dep=<?php echo $dep1; ?>&sec=<?php echo $sec1; ?>&ccho=<?php echo $los; ?>';" class="btn btn-info"  id="papp" data-placement="right" title="Click to Print Application Details" ><i class="fa fa-print icon-large"></i> Print Applicant(s)</a>
@@ -67,14 +69,15 @@
 
 //if($depart == Null AND $session == Null){
 if(empty($dep1) AND empty($sec1)){
-$view_queryn = "select * from new_apply1 where reg_status = '1' and Asession = '".safee($condb,$default_secadmin)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0'  ";
-if($Rorder > 2){ $view_queryn .= " AND first_Choice = '$userdept'";}
+$view_queryn = "select * from new_apply1 where reg_status = '1' and Asession = '".safee($condb,$nsec)."' and app_type = '".safee($condb,$class_ID)."' and application_r = '0'  ";
+if($Rorder > 2 ){ $view_queryn .= " AND first_Choice = '$userdept'";}
  $view_queryn .= "order by stud_id DESC limit 0,800";
     $viewutme_query = mysqli_query($condb,$view_queryn)or die(mysqli_error($condb));
 }else{
 $viewutmeQ = "select * from new_apply1 where  Asession = '".safee($condb,$sec1)."' and app_type = '".safee($condb,$class_ID)."' ";     
 if($los=='1'){ $viewutmeQ .= " and first_Choice ='".safee($condb,$dep1)."'";}
 if($los=='2'){ $viewutmeQ .= " and Second_Choice ='".safee($condb,$dep1)."'";}
+if($los=='3'){ $viewutmeQ .= " and first_Choice ='".safee($condb,$dep1)."'";}
 $viewutmeQ .= " order by stud_id DESC ";
 $viewutme_query = mysqli_query($condb,$viewutmeQ)or die(mysqli_error($condb));
 }
@@ -90,11 +93,13 @@ $sql_cstudent = mysqli_query($condb,"SELECT * FROM student_tb WHERE appNo = '".s
 ?>     <?php include('toolttip_edit_delete.php'); ?>
                         <tr>
                         	<td width="30">
-                        	<?php if($row_utme['adminstatus']=='1'){ ?>
+                        	<?php if($contstate > 0){  ?>
+                            <input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $new_a_id; ?>"   >
+                        	<?php   }else{  if($row_utme['adminstatus']=='1'){ ?>
 				<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $new_a_id; ?>" checked  >
 												<?php }else{ ?>
 				<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $new_a_id; ?>">
-												<?php } ?>
+												<?php }} ?>
 												</td>
 						  <td><!--<a rel="tooltip"  title="View Student Application Details" id="<?php echo $id; ?>"  onclick="window.open('?details&userId=<?php echo $new_a_id;?>&dept1_find=<?php echo $dep1; ?>&session2=<?php echo $sec1; ?>&c_choice=<?php echo $los; ?>','_self')" data-toggle="modal" class="btn btn-info"><i class=""> <?php 
 						  if($row_utme['adminstatus']=='1'){
@@ -123,11 +128,15 @@ $sql_cstudent = mysqli_query($condb,"SELECT * FROM student_tb WHERE appNo = '".s
 						  </td>
                           <td><?php echo getappstatus($row_utme['adminstatus']); ?></td>
                           	<td width="120"><?php   if (authorize($_SESSION["access3"]["adm"]["nsp"]["create"])){ 
-                          	 if($contstate > 0){echo "Records Transfered";}else{ if($row_utme['verify_apply']=='TRUE'){
-                          	    if($regstatus < 1){echo "<font color='red'>Edit Mode</font>";}else{ ?>
+                          	  if($row_utme['verify_apply']=='TRUE'){
+                          	    if($regstatus < 1){ if($contstate > 0 && $regstatus > 0  ){echo "Records Transfered";}else{ ?>
+                          	     <a rel="tooltip"  title="Click To Edit Applicant Course Information" id="<?php echo $new_a_id; ?>" href="javascript:void(0);" 	onClick="window.location.href='new_apply.php?view=P_admin&<?php echo 'userId='.$new_a_id; ?>&loc=<?php echo $current_url21; ?>';"
+ data-toggle="modal" class="btn btn-success"><i class="fa fa-pencil icon-large"> Edit Data</i></a>
+                                <?php  } }else{ if($contstate > 0 && $regstatus > 0 ){echo "Records Transfered";}else{?>
 <a rel="tooltip"  title="Click To Process Student Admission" id="<?php echo $new_a_id; ?>" href="javascript:void(0);" 	onClick="window.location.href='new_apply.php?view=P_admin&<?php echo 'userId='.$new_a_id; ?>&loc=<?php echo $current_url21; ?>';"
- data-toggle="modal" class="btn btn-success"><i class="fa fa-gears icon-large"> Process Data</i></a> <?php
-  }}else{ echo "-----";}} }?> </td> 
+ data-toggle="modal" class="btn btn-success"><i class="fa fa-gears icon-large"> Process Data</i></a> <?php }
+  }
+  }else{ echo "-----";} }?> </td> 
   </tr>
                      
                      

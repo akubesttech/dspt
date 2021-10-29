@@ -35,8 +35,8 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
     <!-- bootstrap-daterangepicker -->
     <link href="../vendors/bootstrap-daterangepicker/daterangepicker1.css" rel="stylesheet">
     <script type="text/javascript" src="../admin/bootstrap/js/datepicker.js"></script>
-        <link rel="shortcut icon" href="https://edu.smartdelta.com.ng/favicon2.ico" type="image/x-icon">
-    <link rel="icon" href="https://edu.smartdelta.com.ng/favicon2.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="https://edu.deltasmartcity.ng/favicon2.ico" type="image/x-icon">
+    <link rel="icon" href="https://edu.deltasmartcity.ng/favicon2.ico" type="image/x-icon">
         <link href="../admin/bootstrap/css/datepicker.css" rel="stylesheet" type="text/css" />
  <!-- Parsley -->
     <script src="../vendors/parsleyjs/dist/parsley.min.js"></script>

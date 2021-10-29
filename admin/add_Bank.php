@@ -16,7 +16,7 @@ authorize($_SESSION["access3"]["sConfig"]["abk"]["delete"]) ) {
 
  <?php include('admin_slidebar.php'); ?>
     <?php include('navbar.php') ?>
-  <?php $get_RegNo= $_GET['id'];
+  <?php $get_RegNo = isset($_GET['id']) ? $_GET['id'] : '';
   if ($status === FALSE) {
 //die("You dont have the permission to access this page");
 message("You don't have the permission to access this page", "error");
@@ -42,11 +42,8 @@ message("You don't have the permission to access this page", "error");
 				
 					<?php 
 					$num=$get_RegNo;
-				if ($num!==null){
-			include('editBank.php');
-			}else{
-			
-				include('addBank.php'); }?>
+                    if(!empty($get_RegNo)){ include('editBank.php');}else{ include('addBank.php'); }
+			?>
 				
                    <!-- /Organization Setup Form End -->
                  
@@ -110,13 +107,11 @@ message("You don't have the permission to access this page", "error");
                         	<td width="30">
 												<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
 												</td>
-												
-                          <td><?php echo $row_b['b_name']; ?></td>
+							<td><?php echo getfeecat($row_b['f_cate']); ?></td>	
+                          <td><?php echo $row_b['b_name']." (".$row_b['b_code'].")"; ?></td>
                           <td><?php echo $row_b['acc_name']; ?></td>
                           <td><?php echo $row_b['acc_num']; ?></td>
                           <td><?php echo $row_b['b_sort']; ?></td>
-                        
-                          
                           	<td width="120"><?php   if (authorize($_SESSION["access3"]["sConfig"]["abk"]["edit"])){ ?>
 												<a rel="tooltip"  title="Edit Bank Details" id="<?php echo $id; ?>" href="add_Bank.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-success"><i class="fa fa-pencil icon-large"> Edit Record</i></a> <?php } ?>
 												</td>

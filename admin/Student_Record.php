@@ -1,4 +1,3 @@
-
 <?php  include('header.php'); ?>
 <?php include('session.php');
 /*	$status = FALSE;
@@ -14,7 +13,7 @@ $depart = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $session = isset($_GET['session2']) ? $_GET['session2'] : '';
 $pro_level =  isset($_GET['los']) ? $_GET['los'] : '';
 $return_url = isset($_GET['return_urlx']) ? $_GET['return_urlx'] : '';
- if(empty($depart)){ $links = "Student_Record.php"; $return_url = "";}else{ $return_url 	= base64_decode($return_url);
+ if(empty($depart)){ $links = "Student_Record.php"; $return_url = "";}else{ $return_url = base64_decode($return_url);
     $links = "Student_Record.php?dept1_find=".$depart."&session2=".$session."&los=".$pro_level."&fac1=".$fac;}
     //$links = "Student_Record.php?dept1_find=".$dep1."&session2=".$sec1."&los=".$los;
  ?>
@@ -93,8 +92,14 @@ for($i=0; $i < $N; $i++){$status = "TRUE";  $urllogin = host();
     $getsup=mysqli_query(Database ::$conn,"SELECT * FROM student_tb WHERE  stud_id ='".safee($condb,$id[$i])."' AND reg_status = '1'");
   $countv=mysqli_num_rows($getsup);$rown=mysqli_fetch_array($getsup);
   if($countv > 0){ extract($rown); 
-  $sessionad  = $Asession; $department  = $Department; $pro = $app_type;
-    $studentRegno = getmatno($sessionad,$department,$pro); $regcount = "1".getlstr($studentRegno,3);  $p_email = $e_address;
+  $sessionad  = $Asession; $department  = $Department; $pro = $app_type; $fac  = $Faculty; $mmat = $RegNo;
+  $lcount = getlcount($pro);
+$sleno = strlen($lcount);
+if(empty($sleno)){$slen = $default_clento;}else{$slen = $sleno;}
+  if(!empty($mmat)){ $studentRegno = $mmat; }else{ $studentRegno = getmatno($sessionad,$department,$pro,$fac);}
+    $regcount = getlstr($studentRegno,$slen); 
+    //$regcount = "1".getlstr($studentRegno,3);  
+    $p_email = $e_address;
   $regNo1 = $RegNo; if(strlen($password < 1)){ $pass_word = substr(md5($regNo1.SUDO_M),14); $pshow = $studentRegno; }else{$pass_word = $password; $pshow = " Use password created during Registration "; }
 $yearofgrag = $yoe + $prog_dura;
 $msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
@@ -107,7 +112,7 @@ $msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
     Please Login and reset your Password!\n
     
     This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
-    For inquiry and complaint please email info@smartdelta.com.ng \n
+    For inquiry and complaint please email ".$infomail." \n
 	
 	Thank You Admin!\n\n");
 
@@ -139,8 +144,12 @@ for($i=0; $i < $N; $i++){$status = "TRUE";  $urllogin = host(); $staff = getstaf
   $countv=mysqli_num_rows($getsup);$rown=mysqli_fetch_array($getsup); $rowi=mysqli_fetch_array($getccourse);
   if($countv > 0){ extract($rown); extract($rowi); $cf = $n_fac; 
   $sessionad  = $Asession; $department  = $Department; $pro = $app_type; $cd = strtoupper(getdeptc($c_dept)); $nd = strtoupper(getdeptc($n_dept));
-    $studentRegno = getmatno($sessionad,$department,$pro); $p_email = $e_address;
-   if(empty($a_app)){ $regcount = "1".getlstr($studentRegno,3); }else{$regcount = $reg_count ;} 
+    $lcount = getlcount($pro); 
+    $slen = strlen($lcount);
+    $studentRegno = getmatno($sessionad,$department,$pro,$cf); 
+    $p_email = $e_address;
+   //if(empty($a_app)){ $regcount = "1".getlstr($studentRegno,3); }else{$regcount = $reg_count ;}
+   if(empty($a_app)){ $regcount = getlstr($studentRegno,$slen); }else{$regcount = $reg_count ;}  
   $regNo1 = $RegNo; $pass_word = substr(md5($studentRegno.SUDO_M),14);
   //if(empty($a_app)){ $pass_word = substr(md5($regNo1.SUDO_M),14); $pshow = $studentRegno; }else{$pass_word = $password; $pshow = " Use password created during Registration "; }
 $std = getsnameid($sid);
@@ -153,7 +162,7 @@ $msg = nl2br("Dear $FirstName $SecondName $Othername,.\n
     Please Login and reset your Password!\n
     
     This Message was Sent From " .$schoolNe ." @ ".$_SERVER['HTTP_HOST']." dated ".date('d-m-Y').".\n
-    For inquiry and complaint please email info@smartdelta.com.ng \n
+    For inquiry and complaint please email ".$infomail." \n
 	
 	Thank You Admin!\n\n");
 $subject="Change Of Course Validation CMS";
@@ -215,7 +224,25 @@ while(($impData = fgetcsv($file, 1000, ',')) !== FALSE){
   }else{ message("File empty", "error");
 		           redirect($links);}
 } } 
-
+//issue mat no so student can see it
+if (isset($_POST['issuemat'])){
+	 if(empty($class_ID)){
+				message("No Programme Record Selected Yet,please select to continue", "error");
+				redirect($links);
+			}elseif(empty($_POST['selector'])){
+				message("Select at least one Student to proceed !", "error");
+		        redirect($links);
+				}else{ $id=$_POST['selector'];  $N = count($id);
+for($i=0; $i < $N; $i++){$status = "TRUE";  
+$getsup=mysqli_query(Database ::$conn,"SELECT * FROM student_tb WHERE  stud_id ='".safee($condb,$id[$i])."' AND reg_status = '1' AND RegNo IS NOT NULL "); $countv=mysqli_num_rows($getsup);$rown=mysqli_fetch_array($getsup);
+  if($countv > 0){ extract($rown); 
+   $st1  = $istatus; //if(strlen($RegNo < 1)){
+if(!empty($st1)){
+  $sql = mysqli_query(Database ::$conn,"UPDATE student_tb SET istatus='0' WHERE stud_id = '".safee($condb,$id[$i])."'"); //redirect("Student_Record.php?details&userId=");
+}else{ $sql = mysqli_query(Database ::$conn,"UPDATE student_tb SET istatus = '1' WHERE stud_id = '".safee($condb,$id[$i])."'"); //redirect("Student_Record.php?details&userId=");
+}}}
+	message(" Matric Number Issuance Record Successfully updated for selected Student (s) .", "success");
+	redirect($links); }}
  ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">

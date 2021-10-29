@@ -2,17 +2,19 @@
 
   
   <?php 
-session_start();
+//session_start();
 
 include('lib/dbcon.php'); 
-dbcon(); 
+dbcon();
+
+ session_start();
 require_once './function.php';
 ?>
 <?php 
 
 $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row = mysqli_fetch_array($query);
-							  $s_utme = $row['p_utme'];
+							  $s_utme = $row['p_utme'];  $shows = $row['smat'];
 						?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +70,11 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
  <link href="assets/js/jquery-ui.min.css" type="text/css" rel="stylesheet" >
   <script src="assets/js/jquery-ui.min.js" type="text/javascript"></script>
     <link href="bootstrap/js/facebox.css" media="screen" rel="stylesheet" type="text/css" />
-  <script src="bootstrap/js/facebox.js" type="text/javascript"></script> 
+  <script src="bootstrap/js/facebox.js" type="text/javascript"></script>
+  
+    
+    
+    
 	<style>
 	.txtedit{
     display: none;
@@ -128,8 +134,6 @@ position: fixed;
 }
 .clickable2-row {cursor: pointer;}
 	</style>
-
-
 
   </head>
 <body class="nav-md" onload="StartTimers();" onmousemove="ResetTimers();">

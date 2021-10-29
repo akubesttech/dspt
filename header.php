@@ -163,10 +163,10 @@ background-blend-mode: lighten;
 $(document).ready(function () {
  
 window.setTimeout(function() {
-    $(".alert").fadeTo(1000, 0).slideUp(5000, function(){
+    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
         $(this).remove(); 
     });
-}, 20000);
+}, 5000);
  
 });
  jQuery(document).ready(function($) {
@@ -355,7 +355,7 @@ background-repeat:no-repeat;
        <!-- <a onclick="doSomething()"><i class="fa fa-home"></i></a>  --!> 
     </li>
                 <li>
-                    <a href="post.php?view=Program">School Program</a>
+                    <a href="prog.php?view=Program">School Program</a>
                         <ul class="menu hidden-md hidden-lg">
                                 <li>
                                     <a href="#">Before You Start</a>
@@ -422,7 +422,7 @@ background-repeat:no-repeat;
     </div>
 </header>
 <?php 
-define(PW_SALT,'(+3%_');
+//define(PW_SALT,'(+3%_');
 function birthday($birthday){ 
     $age = strtotime($birthday);
     

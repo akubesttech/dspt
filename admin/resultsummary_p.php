@@ -46,6 +46,7 @@ include 'Classes/PHPExcel/Cell.php';
 
 $avaluen = ""; 
 $valuem = "";
+$avaluen2 = "";
 $resultsec2 = mysqli_query(Database::$conn,"SELECT level_order,level_name FROM level_db where prog = '$class_ID'  ORDER BY level_order ASC");
 $sql_gradeset = mysqli_query(Database::$conn,"select * from grade_tb where prog ='".safee($condb,$class_ID)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error($condb)); 
 $getmg = mysqli_fetch_array($sql_gradeset); $getpass = $getmg['b_max'];
@@ -190,7 +191,10 @@ function setInvisible($col,$objExcel){
         ->getColumnDimension($col)
         ->setVisible(false);
 }
-
+function fetchGrade($cgpa,$class_ID){ $con = new Database();
+    $q = "Select grade from grade_tb WHERE b_min <= '$cgpa' and b_max >= '$cgpa' AND grade_group  ='01' AND prog = '".safee($con,$class_ID)."'";
+    $gclass = $con->getData($q); if(count($gclass) > 0){ return $gclass[0]['grade'];}
+    return '';}
 function fetchGradeClass($cgpa,$class_ID){ $con = new Database();
     $q = "Select gradename from grade_tb WHERE gpmin <= '$cgpa' and gpmax >= '$cgpa' AND grade_group  ='01' AND prog = '".safee($con,$class_ID)."'";
     $gclass = $con->getData($q); if(count($gclass) > 0){ return $gclass[0]['gradename'];}
@@ -340,6 +344,7 @@ foreach ($levels as $level=>$level_number){
         }else{
             //$course_name =  $courses[$c]['course_code']."(".$courses[$c]['c_unit'].")";
              $course_name =  $courses[$c]['C_code']."(".$courses[$c]['C_unit'].")";
+           
         }
 
         $objExcel->getActiveSheet()->mergeCells($cols[$ind].'14:'.$cols[$ind+1].'14');
@@ -432,6 +437,7 @@ foreach ($levels as $level=>$level_number){
             }else{
                 //$results =  $sts[$courses[$c1]['course_code']];
                 $results =  $sts[$courses[$c1]['C_code']];
+                $ncourse =  $courses[$c1]['C_code'];
                 if(count($results) > 0){
                     foreach ($results as $result){
                         if($result['student_id'] == $student['student_id']){
@@ -452,8 +458,11 @@ foreach ($levels as $level=>$level_number){
 
 
             }
-            setValues($cols[$ind].$row,$score,$objExcel);
-            setValues($cols[$ind + 1].$row,$grade,$objExcel);
+            $nscore = $score." ".fetchGrade($score,$class_ID);
+           $fscore =  getscorest($s_id,$dept,$ncourse,$nscore);
+                            
+            setValues($cols[$ind].$row,$fscore,$objExcel);
+            //setValues($cols[$ind + 1].$row,$ncourse,$objExcel);
             $objExcel->getActiveSheet()
                 ->getStyle($cols[$ind].$row.":".$cols[$ind + 1].$row)
                 ->applyFromArray($sty);

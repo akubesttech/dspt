@@ -43,7 +43,7 @@ if('success' == $tranx->data->status){
   // if the email matches the customer who owns the product etc
   // Give value
   $qpayn = mysqli_query($condb,"SELECT * FROM payment_tb WHERE  trans_id ='".safee($condb,$refme)."'");
-	$hpeno = mysqli_fetch_array($qpayn); $feetp1 = $hpeno['fee_type']; $paid = $hinfoo1['dueamount'];
+	$hpeno = mysqli_fetch_array($qpayn); $feetp1 = $hpeno['fee_type']; $paid = $hpeno['dueamount'];
   $sql2_up = mysqli_query($condb,"UPDATE payment_tb SET pay_status='1',paid_amount ='".safee($condb,$paid)."' WHERE trans_id ='".safee($condb,$refme)."' ")or die(mysqli_error($condb));
   $sql2_up1 = mysqli_query($condb,"UPDATE feecomp_tb SET pstatus = '1' WHERE Batchno ='".safee($condb,$feetp1)."' ")or die(mysqli_error($condb));
   //echo "<h2>Thank you for making a purchase. Your file has bee sent your email.</h2>"

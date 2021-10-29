@@ -1,43 +1,4 @@
-<script type="text/javascript">   
-$(document).ready(function() {   
-$('#paytype').change(function(){   
-if($('#paytype').val() === 'Paycard')   
-   {   
-   $('#pin').show();   $('#pin2').show();    $('#pin3').show(); $('#pin4').show(); $('#pin5').show();$('#pin1').show();
-   }   
-else 
-   {   
-   $('#pin').hide();    $('#pin2').hide();    $('#pin3').hide();  $('#pin4').hide();  $('#pin5').hide();  $('#pin1').hide();
-   }   
-});   
-});   
-</script>
-<script type='text/javascript'>
-function preview_image(event) 
-{
- var reader = new FileReader();
- reader.onload = function()
- {
-  var output = document.getElementById('output_image');
-  output.src = reader.result;
- }
- reader.readAsDataURL(event.target.files[0]);
-}
-</script>
-<script>
 
-function sync(){
-var sname = document.getElementById('nappNo21');
-var sname1 = sname.value;
-var userID = document.getElementById('userID');
-//var number = Math.floor(Math.random() * 100) +4;
-
-userID.value = sname1+number;
-//userID.value.changeToUpperCase();
-}
-
-
-</script>
 <?php
 
 	//function createRandomPassword() {
@@ -53,35 +14,10 @@ if(isset($_POST['Login_Reprint'])){
 //$paytype = $_POST['paytype'];
 $nappNo21 = $_POST["nappNo21"];
 $Pin = $_POST["pin"];
-$transid = createRandomPassword();
-$paidamt = $_POST["paidamt"];
-$date = $_POST["end_date"];
-//$bank = $_POST["bank"];
-	//$_SESSION['sessionpay']=$Session_checker1;
+//$transid = createRandomPassword();
+//$paidamt = $_POST["paidamt"];
+//$date = $_POST["end_date"];
 
-/*	$sql_load="SELECT * FROM new_apply1 WHERE Asession ='".safee($condb,$Session_checker1)."' AND appNo ='".safee($condb,$nappNo21)."' or JambNo ='".safee($condb,$nappNo21)."' and adminstatus ='1'";$result_load = mysqli_query($condb,$sql_load);
-$num_pinr = mysqli_num_rows($result_load);
-$find_student = mysqli_fetch_array($result_load);
-$c_cho= $find_student['course_choice'];
-$deep1= $find_student['first_Choice'];
-$deep2= $find_student['Second_Choice']; $payemail = $find_student['e_address']; $phonepay = $find_student['phone']; 
-$programs = $find_student['app_type'];
-$payeefullname = $find_student['FirstName']." ".$find_student['SecondName']." ".$find_student['Othername'];
-//$num_serialNo = $num_serialr['SerialNo'];
- if($c_cho==1){
-							$pdepart = $deep1;
-							}else{
-							$pdepart = $deep2;}
-$sql2="SELECT * FROM pin_fee WHERE pinnumber='".safee($condb,$Pin)."' AND status='NOTUSED'";
-$result10=mysqli_query($condb,$sql2);
-$numPin=mysqli_num_rows($result10);
-$loadfeeamount=mysqli_query($condb,"SELECT * FROM fee_db WHERE f_dept ='".safee($condb,$pdepart)."'  AND feetype ='School fee' AND program ='".safee($condb,$programs)."'");
-$find_amountp = mysqli_fetch_array($loadfeeamount); $payamount2 = $find_amountp['f_amount'];
-$paystatus1=mysqli_query($condb,"SELECT * FROM payment_tb WHERE app_no ='$nappNo21'  AND session='".safee($condb,$Session_checker1)."' AND level ='".safee($condb,$level)."'");
-$paystatus12=mysqli_num_rows($paystatus1);$paystatus13=mysqli_fetch_array($paystatus1); $appnop =$paystatus13['app_no'];
-$paystatuspin=mysqli_query($condb,"SELECT * FROM payment_tb WHERE pin ='$Pin' and app_no ='".safee($condb,$nappNo21)."' AND session='".safee($condb,$Session_checker1)."' AND level ='".safee($condb,$level)."'  ");
-$paystatus13 =mysqli_num_rows($paystatuspin);
-*/
 $sql_appNo_check = mysqli_query($condb,"SELECT * FROM new_apply1 WHERE appNo='".safee($condb,$nappNo21)."' and adminstatus ='1' or JambNo='".safee($condb,$nappNo21)."' ");
 $appNo_check = mysqli_num_rows($sql_appNo_check);
 $sql_session_check = mysqli_query($condb,"SELECT Asession FROM new_apply1 WHERE  appNo='".safee($condb,$nappNo21)."' and Asession ='".safee($condb,$Session_checker1)."' or JambNo ='".safee($condb,$nappNo21)."'");
@@ -102,7 +38,7 @@ message("Please! Application Id can not Contain a Space", "error");
 }else{
 
 //$_SESSION['paydepart'] = $pdepart;
-$_SESSION['spayid'] = $nappNo21;
+//$_SESSION['spayid'] = $nappNo21;
 //$_SESSION['Fnamep'] = $payeefullname;
 //$_SESSION['mobile'] = $phonepay;
 //$_SESSION['emailp'] = $payemail;

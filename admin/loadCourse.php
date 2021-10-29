@@ -12,11 +12,12 @@ return $nameclass22;
 } */
 
 $find_dept=$_GET['loadcos'];
+$find_dept2=$_GET['sid'];
 echo "<option value=''>Select Course Code</option>";
-$resultrooms = mysqli_query($condb,"SELECT DISTINCT C_code FROM courses where dept_c = '$find_dept' ORDER BY C_code  ASC");
+$resultrooms = mysqli_query($condb,"SELECT DISTINCT C_code,C_id FROM courses where dept_c = '$find_dept' ORDER BY C_code  ASC");
 while($rsdep = mysqli_fetch_array($resultrooms))
-{
-echo "<option value='$rsdep[C_code]'>$rsdep[C_code]</option>";   	
+{ if($find_dept2 == "1"){ echo "<option value='$rsdep[C_id]'>$rsdep[C_code]</option>";}else{
+echo "<option value='$rsdep[C_code]'>$rsdep[C_code]</option>";  } 	
 }
                         
                          

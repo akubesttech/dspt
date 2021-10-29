@@ -1,14 +1,20 @@
   <?php
 include("header1.php");
 //include("dbconnection.php")
-
+include("admin/qrcode.php");
+$showf = showfullresult;
+$qr = new qrcode();
+$session_id = 0;
 $sql_tranid = "SELECT * FROM payment_tb WHERE md5(trans_id) ='".safee($condb,$_GET['p_id'])."'";
 $sql_tranid1=mysqli_query($condb,$sql_tranid);
 $dform_checkexist20 = mysqli_num_rows($sql_tranid1);
 $rsprint = mysqli_fetch_array($sql_tranid1);
 $applcation_id = $rsprint['app_no'];
-$student_reg = $rsprint['stud_reg']; $tranD = MD5($rsprint['trans_id']);
- if(empty($student_reg)){ $student_level = $rsprint['level']; $student_prog = $rsprint['prog']; $idtype = "Application Number:"; }else{ include('Student/session.php'); $idtype = "Matric Number:"; }
+$student_reg = $rsprint['stud_reg']; $tranD = MD5($rsprint['trans_id']);  $smato = $row['smat'];  $student_email = $rsprint['email'];
+ if(empty($student_reg)){  $mat2 = $applcation_id;
+    $student_level = $rsprint['level']; $student_prog = $rsprint['prog']; $idtype = "Application Number "; }else{
+        include('Student/session.php');   if(!empty($smato)){ $idtype = "Username "; $mat2 = $student_reg;  }else{
+        $idtype = "Matric Number "; $mat2 = $student_reg; }}
   $existl = imgExists("admin/".$row['Logo']);
 if($dform_checkexist20 < 1){ //message("The page you are trying to access is not Available.", "error");
 echo "<script>alert('The page you are trying to access is not Available!');</script>";
@@ -19,7 +25,13 @@ redirect('Userlogin.php'); }
 $sql2 = "SELECT * FROM new_apply1 left join payment_tb ON payment_tb.app_no = new_apply1.appNo WHERE  appNo ='".safee($condb,$applcation_id)."' and md5(trans_id) ='".safee($condb,$_GET['p_id'])."' ";
 }else{ $sql2 = "SELECT * FROM student_tb left join payment_tb ON payment_tb.stud_reg = student_tb.RegNo WHERE  stud_reg ='".safee($condb,$student_reg)."' and md5(trans_id) ='".safee($condb,$_GET['p_id'])."' ";}
 //$qsql1=mysqli_query($condb,$sql2);$rsprint1 = mysqli_fetch_array($qsql1);
-if(!$qsql1=mysqli_query($condb,$sql2)) { echo mysqli_error($condb); } $rsprint1 = mysqli_fetch_array($qsql1);$feecategory = $rsprint1['ft_cat'];
+if(!$qsql1=mysqli_query($condb,$sql2)) { echo mysqli_error($condb); } $rsprint1 = mysqli_fetch_array($qsql1);  $feecategory = $rsprint1['ft_cat'];
+$cchoicen = isset($rsprint1['course_choice']) ? $rsprint1['course_choice'] : '';
+ $lev =$rsprint1['level'];  $pro =$rsprint1['prog'];  $scan =$rsprint1['stud_cat']; $sec =$rsprint1['session'];
+$getdueamt = getDueamt($feecategory,$pro,$lev,$scan);
+echo $currentbal = getpayamt($mat2,$feecategory,$pro,$lev,$sec);
+$linkno = host()."paymentslip.php?p_id=".$_GET['p_id'];
+$qr->text($linkno);
 ?>
 <style>#imgn::before {
   content: "";
@@ -43,6 +55,7 @@ z-index: -9;
 .row2 {background-color: transparent;border: 1px solid #98C1D1;height: 30px; font-family:Verdana, Geneva, sans-serif; 
 	font-size:12px; }
 	@page { size: A4 landscape }
+    
 </style>
 <?php  //$sql3 = "SELECT * FROM student_tb left join payment_tb ON payment_tb.stud_reg = student_tb.RegNo WHERE  stud_reg ='".safee($condb,$student_reg)."' and md5(trans_id) ='".safee($condb,$_GET['p_id'])."' "; 
 //if(!$qsql=mysqli_query($condb,$sql3)) { echo mysqli_error($condb); } $rsprint = mysqli_fetch_array($qsql);$feecategory = $rsprint1['ft_cat']; ?>
@@ -70,28 +83,51 @@ z-index: -9;
                                 <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;" border="0">
     
 	<tr style="background-color:#FFC;">
-            <td height="25" colspan="2"> <div class="rounded">
-    <main class="container clear"> 
+            <td height="25" colspan="4">
+             
+    
       <!-- main body -->  <?php $ptitle = "STUDENT ".getfeecat($feecategory)." RECEIPT"; $ptitle2 = "STUDENT ".getftype($rsprint1['fee_type'])." RECEIPT"; ?>
       <!-- ################################################################################################ -->
 <center><font size="+2" style="color: #000088;"> <?php if(substr($rsprint1['fee_type'],0,1) == "B"){echo strtoupper($ptitle); }else{  echo strtoupper($ptitle2); } ?> </font></center>
      <center><font size="+1" ><?php echo  $rsprint['session']." Academic Sesssion";  ?></font></center>
      <p></p>
-<p><font size="+2" ><?php if($rsprint1['course_choice'] == '1'){ $facnew =  getfacultyc($rsprint1['fact_1']); $depnew = $rsprint1['first_Choice'];
-}elseif($rsprint1['course_choice'] == '2'){ $facnew =  getfacultyc($rsprint1['fact_2']); $depnew = $rsprint1['Second_Choice'];} ?></font></p>
+<p><font size="+2" ><?php if($cchoicen == '1'){ $facnew =  getfacultyc($rsprint1['fact_1']); $depnew = $rsprint1['first_Choice'];
+}elseif($cchoicen == '2'){ $facnew =  getfacultyc($rsprint1['fact_2']); $depnew = $rsprint1['Second_Choice'];} ?></font></p>
       
-      <?php if($session_id > 0){ $regno = $rsprint1['stud_reg'];?>
-      <?php }else{ $regno = $rsprint1['app_no']; ?><p>Your can Reprint this Payment Receipt with This   <font color="red"> <?php echo ucfirst($regno);  ?></font> Application  Number.</p> <?php }?>
-      <p><div style="font-size:15px; color:red;">You will be required to present this receipt on the Day of Examination .</div></p>
+      <?php if($session_id > 0){if(!empty($smato)){ $regno = $student_email; }else{$regno = $rsprint1['stud_reg'];}}else{ $regno = $rsprint1['app_no']; }?>
+     
       <!-- ################################################################################################ --> 
       <!-- / main body -->
-      <div class="clear"><hr></div>
-    </main>
-  </div></td>
+      
+    
+  </td>
+     
+          </tr>
+          
+          <tr ><td style="font-size:12px;font-family:Verdana, Geneva, sans-serif;width: 355px;text-align: justify;" colspan="1" height="30">
+<p><?php echo $idtype; ?> : <?php echo $regno ?></p>
+<p><?php echo $SCategory; ?> : <?php  if(empty($student_reg)){ echo $facnew; }else{ echo getfacultyc($rsprint1['Faculty']) ;} ?></p>
+<p><?php echo $SGdept1; ?>: <?php  if(empty($student_reg)){ echo getdeptc($depnew);  }else{ echo getdeptc($rsprint1['Department']);}?></p>
+<p>Level: <?php echo getlevel($student_level,$student_prog); ?></p><?php if(!empty($student_reg)){  ?>
+<p style="color: red;">You will be required to present this receipt on the Day of Examination <font color="red"> <?php //echo ucfirst($rsprint1['appNo']);  ?></font>.
+</p> <?php }else{ ?>
+<p style="color: black;">Your can Reprint this Payment Receipt with This   <font color="red"> <?php echo ucfirst($regno);  ?></font> Application  Number. 
+</p><?php } ?>
+</td>
+            <td height="30" colspan="1" style="text-align: center;width: 190px;">
+   <img  src="<?php $existn = imgExists("Student/".$rsprint1['images']);
+		  		  if ($existn > 0 ){ echo "Student/".$rsprint1['images']; }else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+	 ?>" width="140" height="120" style=" border-radius: 50%;" >
+  </td><td height="30"  colspan="1" style="text-align: center;font-family:Verdana, Geneva, sans-serif;355px;">
+  <?php echo strtoupper(getprog($student_prog)); ?>
+  <p><img src="<?php echo $qr->get_link(); ?>" width="130" height="130" style="margin-bottom: 2px;" border='0'/> </p>
+  </td>
      
           </tr>
 
-<tr ><td style="position: absolute;font-size:13px;font-family:Verdana, Geneva, sans-serif;" colspan="1" height="32"><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $idtype." ". $regno; ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $SCategory; ?> :   <?php  if(empty($student_reg)){ echo $facnew; }else{ echo getfacultyc($rsprint1['Faculty']) ;} ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $SGdept1; ?>:&nbsp;<?php  if(empty($student_reg)){ echo getdeptc($depnew);  }else{ echo getdeptc($rsprint1['Department']);}?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;
+<tr style="display: none;" ><td style="position: absolute;font-size:13px;font-family:Verdana, Geneva, sans-serif;" colspan="1" height="32">
+<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $idtype." ". $regno; ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $SCategory; ?> :   <?php  if(empty($student_reg)){ echo $facnew; }else{ echo getfacultyc($rsprint1['Faculty']) ;} ?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<?php echo $SGdept1; ?>:&nbsp;<?php  if(empty($student_reg)){ echo getdeptc($depnew);  }else{ echo getdeptc($rsprint1['Department']);}?><br><br>&nbsp;&nbsp;&nbsp;&nbsp;
 Level: <?php echo getlevel($student_level,$student_prog); ?></td>
             <td height="32" colspan="1"> <div class="rounded" align="center">
    <img id="admin_avatar" class="img-circle" src="<?php $existn = imgExists("Student/".$rsprint1['images']);
@@ -100,13 +136,17 @@ Level: <?php echo getlevel($student_level,$student_prog); ?></td>
   </div></td> <td style="margin-left: 30px;" colspan="1"></td>
      
           </tr>
+          
+          
 
-<tr ><td height="32" colspan="2" style="font-size:22px;font-weight: bold;color: blue; font-family:vandana;text-shadow: 1px 1px gray;"> <div class="rounded" align="center"><br>
+<tr ><td height="25" colspan="4" style="font-size:22px;font-weight: bold;color: blue; font-family:vandana;text-shadow: 1px 1px gray;"> <div class="rounded" align="center">
  <div style="font-size:18px; color:black;"> Transaction Reference:<?php echo  " ".$rsprint1['trans_id']; ?></div>
-  <?php if(empty($student_reg)){ echo strtoupper($rsprint1['FirstName']." ".$rsprint1['SecondName']." ".$rsprint1['Othername']); }else{ echo strtoupper(getname($regno));} ?>
+  <?php if(empty($student_reg)){ echo strtoupper($rsprint1['FirstName']." ".$rsprint1['SecondName']." ".$rsprint1['Othername']); }else{ echo strtoupper(getname($rsprint1['stud_reg']));} ?>
   </div></td> <td style="margin-left: 30px;" colspan="1"></td>
      
           </tr>
+          
+          
 <div class="rounded">
         <table style="margin:5px; font-size:15px; font-family: Verdana;  font-weight:bold; width:900px;">
       <!--  <tr ><td height="36" colspan="4" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong>Student details:</strong> <hr style="border-top: 1px solid black; background: transparent;"></td>
@@ -178,26 +218,45 @@ if(mysqli_num_rows($qsql1)==0){
           <td height=\"30\">No payment Found For This Session</td>
         </tr>"; }else{ //$rsprint1 = mysqli_fetch_array($qsql1);
 		 $feetp = $rsprint1['fee_type']; $transession = $rsprint1['session']; $fcate = $rsprint1['ft_cat'];  ?>
-     <?php if(substr($feetp,0,1) == "B"){ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' and pstatus = '1' ");
-$serial=1;		 while($row_utme = mysqli_fetch_array($paycomponent)){ if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
-$ftypecon = $row_utme['feetype']; $amount = $row_utme['f_amount'];
-$paysession = $row_utme['session']; $feecategory = $row_utme['fcat']; $penalty = $row_utme['penalty']; if($penalty > 0){ $pens = " ( penalty inclusive).";}else{ $pens ="";} ?>
-  <tr  class="<?php echo $classo1; ?>" align="center" height="30" width="30" > <td><?php echo $serial++; ?></td>
+     <?php if(substr($feetp,0,1) == "B"){ if($showf =="yes"){
+   $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' and pstatus = '1' "); }else{
+   $paycomponent=mysqli_query($condb,"SELECT * FROM payment_tb WHERE md5(trans_id) ='".safee($condb,$_GET['p_id'])."' and pay_status = '1' "); }
+$serial=1;	$i = 0;	 
+while($row_utme = mysqli_fetch_array($paycomponent)){ 
+    if ($i%2) {$classo1 = 'row1';} else {$classo1 = 'row2';}$i += 1;
+    	 $feetype = $row_utme['fee_type']; $transession = $row_utme['session']; $fcate = $row_utme['ft_cat']; $amountn = $row_utme['paid_amount']; 
+    if(substr($feetype,0,1) == "B"){ $feet = getfeecat($fcate);}else{ $feet = getftype($feetype);}
+//$ftypecon = $row_utme['feetype']; $amount = $row_utme['f_amount'];
+//$paysession = $row_utme['session']; $feecategory = $row_utme['fcat']; $penalty = $row_utme['penalty']; if($penalty > 0){ $pens = " ( penalty inclusive).";}else{ $pens ="";} ?>
+ <!-- <tr  class="<?php echo $classo1; ?>" align="center" height="30" width="30" > <td><?php //echo $serial++; ?></td>
                       <td><?php echo getftype($ftypecon) ;?></td>
                         <td><?php echo "Payment Of " .getftype($ftypecon)." For ".$transession ;?></td>
-                          <td><?php echo number_format($amount,2); ?></td>   </tr>
-    <?php	}}else{  ?> 
+                          <td><?php echo number_format($amount,2); ?></td>   </tr> --!>
+                          
+                      <tr  class="<?php echo $classo1; ?>" align="center" height="30" width="30" > <td><?php echo $serial++; ?></td>
+                      <td><?php echo $feet ;?></td>
+                        <td><?php echo "Payment Of " .$feet." For ".$transession ;?></td>
+                          <td><?php echo number_format($amountn,2); ?></td>   </tr>    
+    <?php	} 
+    
+         }else{  ?> 
 	<tr  align="center" height="30" width="30" class="row1" > <td><?php echo $serial++; ?></td>
                       <td><?php echo getftype($feetp) ;?></td>
                         <td><?php echo "Payment Of " .getftype($feetp)." For ".$transession ;?></td>
                           <td><?php echo number_format($rsprint1['paid_amount'],2); ?></td>   </tr> <?php }} ?>
    <tr ><td colspan="4" height="30">&nbsp;</td></tr>
-<tfoot>
-    <tr class="row2" height="30"> <td colspan="3"><strong>Total Amount Paid:</strong></td>
+<tfoot><?php if($currentbal > $getdueamt){ $bal = "0.00";}else{ $bal = $getdueamt - $currentbal; } ?>
+    <tr class="row2" height="30"><td colspan="2"></td> <td colspan="1" align='right'><strong>Total Scheduled Payment</strong></td>
+<td align='center' ><strong><font color="black">&#8358;<?php echo number_format($getdueamt,2); ?></font></strong></td></tr>
+<tr class="row2" height="30"><td colspan="2"></td> <td colspan="1" align='right'><strong>Total Amount Paid</strong></td>
 <td align='center' ><strong><font color="green">&#8358;<?php echo number_format($rsprint1['paid_amount'],2); ?></font></strong></td></tr>
+<tr class="row2" height="30" style="display: none;"><td colspan="2"></td> <td colspan="1" align='right'><strong>Total Balance</strong></td>
+<td align='center' ><strong><font color="black">&#8358;<?php echo number_format($bal,2); ?></font></strong></td></tr>
+
 <tr class="row1"><td colspan="4"height="30" align='center' style="font-color:gray; font-weight:normal;"><strong>
 <?php echo numtowords($rsprint1['paid_amount'])." Naira Only. "; ?></strong></td></tr>
- </tfoot> <?php  $date20 = str_replace('/', '-', $rsprint1['pay_date'] );  $newDate20 = date("Y-m-d", strtotime($date20));
+ </tfoot> 
+ <?php  $date20 = str_replace('/', '-', $rsprint1['pay_date'] );  $newDate20 = date("Y-m-d", strtotime($date20));
    $timestamp = strtotime($newDate20); $datetime	= date('l, jS F Y', $timestamp);?>
     </table> <?php if($rsprint1['pay_mode'] == "Online"){  }else{?>
 	<table border ="1" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;">
@@ -220,8 +279,8 @@ $paysession = $row_utme['session']; $feecategory = $row_utme['fcat']; $penalty =
 <td ><strong><font color="green"> <?php echo  getpaystatus($rsprint1['pay_status']); ?>&nbsp;</font></strong></td>
     </tr> </table>
     
-    <table><!-- <tr style="border-style:hidden;"><td colspan="4">&nbsp;</td></tr>--!>
-       <tr><td colspan="4"><span class="style5">The student has satisfied the School   requirement, I recomend that the payment of fees of the above  session be approved</span></td></tr>
+    <table><!-- <tr style="border-style:hidden;"><td colspan="4">&nbsp;</td></tr>--!><?php if($rsprint1['pay_mode'] !== "Online"){ ?>
+       <tr><td colspan="4"><span class="style5">The student has satisfied the School   requirement, I recomend that the payment of fees of the above  session be approved</span></td></tr> <?php } ?>
        <!-- <tr>
          <td colspan="4">&nbsp;</td>
        </tr>--!>
@@ -233,12 +292,12 @@ $paysession = $row_utme['session']; $feecategory = $row_utme['fcat']; $penalty =
          <td colspan="4">&nbsp;</td>
        </tr>
        <tr>
-         <td colspan="2">________________________________________</td>
-         <td colspan="3"> ____________________________________ </td>
+         <td colspan="2">________________________________________&nbsp;&nbsp;&nbsp;&nbsp;</td>
+         <td colspan="2"> ____________________________________ </td>
        </tr>
        <tr>
-         <td colspan="2"><strong>STUDENT SIGNATURE AND DATE </strong></td>
-         <td colspan="3"><strong>BUSARY SIGNATURE AND DATE</strong> </td>
+         <td colspan="2"><strong>STUDENT SIGNATURE AND DATE &nbsp;&nbsp;&nbsp;&nbsp;</strong></td>
+         <td colspan="2"><strong>BURSARY SIGNATURE AND DATE</strong> </td>
        </tr>
       
        <tr>

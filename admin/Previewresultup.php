@@ -1,13 +1,15 @@
 <?php 
-
+//course_code
 $file= $_FILES['fileName']['name'];
 $tempName = $_FILES['fileName']['tmp_name'];
 $course_e=$_POST['cos'];
+$course_name = getccode2($course_e);
 $session2=$_POST['session'];
 $semester=$_POST['semester'];
 $level=$_POST['level'];
 $deptd = $_POST['dept1'];
-$query_recover = mysqli_query($condb,"SELECT * FROM results WHERE course_code='".safee($condb,$course_e)."' AND  session='".safee($condb,$session2)."' AND semester='".safee($condb,$semester)."' AND level ='".safee($condb,$level)."'")or die(mysqli_error($condb)); 
+$dig = 0;
+$query_recover = mysqli_query($condb,"SELECT * FROM results WHERE course_id='".safee($condb,$course_e)."' AND  session='".safee($condb,$session2)."' AND semester='".safee($condb,$semester)."' AND level ='".safee($condb,$level)."'")or die(mysqli_error($condb)); 
 $num_recover = mysqli_num_rows($query_recover);//$row_recover = mysqli_fetch_array($query_recover); $annSubject = $row_recover['subject']; $adminid = $row_recover['admin_id']; $adminuser = $row_recover['username'];
 
 if($num_recover > 0){ 
@@ -16,7 +18,7 @@ if($num_recover > 0){
 
  
 				//setcookie("showerror3","<div class=\"alert alert-warning\"><i class=\"icon-info-sign\"><font color='Red'>".$showerror2."</font><br></i> </div>",time()+5);
-echo "<script>alert('ERROR:  This Result with this Course code $course_e has been Uploaded Before in this Semester ,Please Comfirm and Try Again.');</script>";
+echo "<script>alert('ERROR:  This Result with this Course code $course_name has been Uploaded Before in this Semester ,Please Comfirm and Try Again.');</script>";
 			
 			redirect("Result_am.php?view=aimp_re");
 }
@@ -25,6 +27,7 @@ if ($_FILES["fileName"]["error"] > 0)
 {
 	echo "Error: " . $_FILES["file"]["error"] . "<br>";
 	exit;
+	if(file_exists("temp/".$file)){unlink("temp/".$file);}
 } 
 else
 {
@@ -153,7 +156,7 @@ function make_alpha_from_numbers($number)
               
                     
                       
-                      <span class="section">Preview of imported Excel Data Sheet for <?php echo ucwords($course_e." Course in ". $session2." Session ."); ?> <?php
+                      <span class="section">Preview of imported Excel Data Sheet for <?php echo ucwords($course_name." Course in ". $session2." Session ."); ?> <?php
                                           if($resi20 == 1)
 {
 
@@ -298,7 +301,7 @@ echo "</PRE>";
 */
 //echo "<br><a  rel='tooltip' href='uploadNow2.php?file=".safee($condb,$file)."&level=".safee($condb,$level)."&reco=".safee($condb,$course_e)."&c_seme=".safee($condb,$semester)."&session=".safee($condb,$session2)."&staffID=".safee($condb,$admin_id)."' id='submit'  class='btn btn-primary col-md-2' title='Click to Complete $course_e Result Processing'><i class='fa fa-gears'></i> Process Result</i></a>";
 ?>
-<br><a  rel='tooltip' onClick="window.location.href='uploadNow2.php?file=<?php echo safee($condb,$file);?>&level=<?php echo safee($condb,$level);?>&reco=<?php echo safee($condb,$course_e);?>&c_seme=<?php echo safee($condb,$semester);?>&session=<?php echo safee($condb,$session2);?>&staffID=<?php echo safee($condb,$admin_id);?>&dep=<?php echo safee($condb,$deptd);?>';" id='submit'  class='btn btn-primary col-md-2' title='Click to Complete <?php echo $course_e; ?> Result Processing'><i class='fa fa-gears'></i> Process Result</i></a>
+<br><a  rel='tooltip' onClick="window.location.href='uploadNow2.php?file=<?php echo safee($condb,$file);?>&level=<?php echo safee($condb,$level);?>&reco=<?php echo safee($condb,$course_e);?>&c_seme=<?php echo safee($condb,$semester);?>&session=<?php echo safee($condb,$session2);?>&staffID=<?php echo safee($condb,$admin_id);?>&dep=<?php echo safee($condb,$deptd);?>';" id='submit'  class='btn btn-primary col-md-2' title='Click to Complete <?php echo $course_name; ?> Result Processing'><i class='fa fa-gears'></i> Process Result</i></a>
 
 
 												<script type="text/javascript">

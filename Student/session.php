@@ -23,7 +23,7 @@ if(isset($_SESSION['loggedAt2']) && (time() - $sessionlock > 1800)) {
 $_SESSION['loggedAt2'] = time();
 }
 */
-$session_id=$_SESSION['student_id'];
+$session_id = $_SESSION['student_id']; 
 
 $user_query = mysqli_query($condb,"select * from student_tb where stud_id = '".safee($condb,$session_id)."'")or die(mysqli_error($condb));
 $user_row = mysqli_fetch_array($user_query);
@@ -48,7 +48,7 @@ $newl = $student_level + 100;
 $user_query1 = mysqli_query($condb,"select * from session_tb where action='1' and prog = '".safee($condb,$student_prog)."'")or die(mysqli_error($condb));
 $user_row2 = mysqli_fetch_array($user_query1);
 $default_session=$user_row2['session_name']; $esetSession   =	substr($user_row2['session_name'],5,10);
-$acasemestertag =$user_row2['term']; $setendst=$user_row2['start_end'];
+$acasemestertag =$user_row2['term']; $setendst=$user_row2['start_end']; $epenable = $user_row2['epstatus'];
 $_SESSION['regno'] = $student_RegNo;
 $diffsession = $esetSession - $regSession;
 $sessionGP = getcgpa($student_RegNo,$student_prog,$s_session,$student_level);

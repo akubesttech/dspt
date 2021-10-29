@@ -12,9 +12,9 @@ $Cname = $_POST['Cname'];$initial=$_POST['initial'];$SchoolAddess = $_POST['Cadd
 $OfficeEmail = $_POST['Cemail'];$OfficePhone = $_POST['Onumber'];$State = $_POST['Cstate'];$City= $_POST['Ccity'];
 $Provience= $_POST['Cprov'];$Pcode = $_POST['Cpaddress'];$Remark = $_POST['message'];$WebAddress = $_POST['Waddress'];
 $captcha = $_POST['Ccaptcha'];$everify = $_POST['Cverify'];$p_utmev= $_POST['p_utme'];$Snoti = $_POST['Snoti'];
-$exam_date = $_POST['exam_date'];$set_time = $_POST['set_time'];
+$exam_date = $_POST['exam_date'];$set_time = $_POST['set_time']; $smatview = $_POST['smat2'];
 if ($_FILES['image']['size'] == Null){
-mysqli_query($condb,"update schoolsetuptd set SchoolName = '".safee($condb,$Cname)."',initial= '".safee($condb,$initial)."',Address ='".safee($condb,$SchoolAddess)."',Motto='".safee($condb,$Motto)."',SEmail='".safee($condb,$OfficeEmail)."',OfficePhone='".safee($condb,$OfficePhone)."',State='".safee($condb,$State)."',City='".safee($condb,$City)."',Pro='".safee($condb,$Provience)."',PCode='".safee($condb,$Pcode)."',Remark='".safee($condb,$Remark)."',WebAddress='".safee($condb,$WebAddress)."',DateCreated=NOW(),captcha='".safee($condb,$captcha)."',emailver='".safee($condb,$everify)."',Snoti='".safee($condb,$Snoti)."',p_utme='".safee($condb,$p_utmev)."',e_date='".safee($condb,$exam_date)."',e_time='".safee($condb,$set_time)."',Createdby='".safee($condb,$admin_username)."' where id='".safee($condb,$get_RegNo)."'") 
+mysqli_query($condb,"update schoolsetuptd set smat = '".safee($condb,$smatview)."', SchoolName = '".safee($condb,$Cname)."',initial= '".safee($condb,$initial)."',Address ='".safee($condb,$SchoolAddess)."',Motto='".safee($condb,$Motto)."',SEmail='".safee($condb,$OfficeEmail)."',OfficePhone='".safee($condb,$OfficePhone)."',State='".safee($condb,$State)."',City='".safee($condb,$City)."',Pro='".safee($condb,$Provience)."',PCode='".safee($condb,$Pcode)."',Remark='".safee($condb,$Remark)."',WebAddress='".safee($condb,$WebAddress)."',DateCreated=NOW(),captcha='".safee($condb,$captcha)."',emailver='".safee($condb,$everify)."',Snoti='".safee($condb,$Snoti)."',p_utme='".safee($condb,$p_utmev)."',e_date='".safee($condb,$exam_date)."',e_time='".safee($condb,$set_time)."',Createdby='".safee($condb,$admin_username)."' where id='".safee($condb,$get_RegNo)."'") 
 or die(mysqli_error($condb));
 message("Company Configuration Information Successfully Updated", "success");
 		        redirect('Create_New_Org.php');
@@ -32,7 +32,7 @@ message("Company Configuration Information Successfully Updated", "success");
 	   message("File size should be less than 400kb.", "error");
 		        redirect('Create_New_Org.php?id='.$get_RegNo);
 }else{
-mysqli_query($condb,"update schoolsetuptd set SchoolName = '".safee($condb,$Cname)."',initial= '".safee($condb,$initial)."',Address ='".safee($condb,$SchoolAddess)."',Motto='".safee($condb,$Motto)."',SEmail='".safee($condb,$OfficeEmail)."',OfficePhone='".safee($condb,$OfficePhone)."',State='".safee($condb,$State)."',City='".safee($condb,$City)."',Pro='".safee($condb,$Provience)."',PCode='".safee($condb,$Pcode)."',Remark='".safee($condb,$Remark)."',WebAddress='".safee($condb,$WebAddress)."',DateCreated=NOW(),captcha='".safee($condb,$captcha)."',emailver='".safee($condb,$everify)."',Snoti='".safee($condb,$Snoti)."',p_utme='".safee($condb,$p_utmev)."',e_date='".safee($condb,$exam_date)."',e_time='".safee($condb,$set_time)."',Createdby='".safee($condb,$admin_username)."' where id='".safee($condb,$get_RegNo)."'") 
+mysqli_query($condb,"update schoolsetuptd SET smat = '".safee($condb,$smatview)."',SchoolName = '".safee($condb,$Cname)."',initial= '".safee($condb,$initial)."',Address ='".safee($condb,$SchoolAddess)."',Motto='".safee($condb,$Motto)."',SEmail='".safee($condb,$OfficeEmail)."',OfficePhone='".safee($condb,$OfficePhone)."',State='".safee($condb,$State)."',City='".safee($condb,$City)."',Pro='".safee($condb,$Provience)."',PCode='".safee($condb,$Pcode)."',Remark='".safee($condb,$Remark)."',WebAddress='".safee($condb,$WebAddress)."',DateCreated=NOW(),captcha='".safee($condb,$captcha)."',emailver='".safee($condb,$everify)."',Snoti='".safee($condb,$Snoti)."',p_utme='".safee($condb,$p_utmev)."',e_date='".safee($condb,$exam_date)."',e_time='".safee($condb,$set_time)."',Createdby='".safee($condb,$admin_username)."' where id='".safee($condb,$get_RegNo)."'") 
 or die(mysqli_error($condb));
 
 if ($_FILES['image']['size'] != Null){
@@ -55,7 +55,7 @@ if ($_FILES['image']['size'] != Null){
                                   move_uploaded_file($_FILES["image"]["tmp_name"], "uploads/$uploadfile");
                                 $adminthumbnails = "uploads/" .$newname;
                                 
-								mysqli_query($condb,"update schoolsetuptd set Logo = '".safee($condb,$adminthumbnails)."' where id='".safee($condb,$get_RegNo)."' ");
+								mysqli_query($condb,"update schoolsetuptd SET Logo = '".safee($condb,$adminthumbnails)."' where id='".safee($condb,$get_RegNo)."' ");
 								unset($dig);
 $r=0;
 unlink("$row[Logo]");
@@ -193,23 +193,26 @@ echo 'Auto';}elseif($row['p_utme']=='0'){ echo 'Manual';} ?></option>
                             <option value="0">Manual</option>
                           
                           </select> </div>
-                          
-						  
-						  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+					  <label for="heard">Set Mat No Issuance</label>
+                      <select name='smat2' id="smat2" class="form-control" >
+                            <option value="<?php echo $row['smat']; ?>"><?php if($row['smat']=='0'){
+echo 'Manual';}elseif($row['smat']=='1'){ echo 'Auto';} ?></option>
+                            <option value="1">Auto</option>
+                            <option value="0">Manual</option>
+                            </select> </div>
+                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Upload Company Logo ? </label>
                             	<input name="image" class="input-file uniform_on" id="fileInput" type="file"  dir="<?php echo $row['Logo']; ?>"   style="width:200px;" >
                       </div>
-                      
-                        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                       <label for="message">Remarks (20 chars min, 100 max) :</label>
-                          <textarea id="message" required="required" class="form-control" name="message" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="Come on! You need to enter at least a 20 caracters long comment.."
+                          <textarea id="message" required="required" class="form-control" name="message" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message ="Come on! You need to enter at least a 20 caracters long comment.."
                             data-parsley-validation-threshold="10"><?php echo $row['Remark']; ?></textarea></div>
                      
-               <div class="ln_solid"></div>
-                      <div  class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback>
-                        <div class="col-md-6 col-md-offset-3">
-                          <?php   if (authorize($_SESSION["access3"]["sConfig"]["asi"]["edit"])){ ?>
-                        <button type="submit" name="update"  id="update" data-placement="right" class="btn btn-primary col-md-4" title="Click Here to Update Details" id="signin"><i class="fa fa-sign-in"></i> Update</button><?php } ?>
+ <div  class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+              <?php   if (authorize($_SESSION["access3"]["sConfig"]["asi"]["edit"])){ ?>
+                        <button type="submit"  name="update"  id="update" data-placement="right" class="btn btn-primary" title="Click Here to Update Details" ><i class="fa fa-sign-in"></i> Update</button><?php } ?>
                         </div>
                        
                          

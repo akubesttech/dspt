@@ -1,5 +1,7 @@
   <?php
 include("header1.php");
+include("admin/qrcode.php");
+$qr = new qrcode();
 //include("dbconnection.php");
 $sql1 = "SELECT * FROM student_tb  WHERE md5(RegNo) ='".safee($condb,$_GET['stid'])."'";
 $qsql1=mysqli_query($condb,$sql1);
@@ -9,10 +11,17 @@ if($dform_checkexist20 < 1){ message("The page you are trying to access is not A
 //echo "<script>alert('The page you are trying to access is not Available!');</script>";
 redirect(host()); }
 $rsprint1 = mysqli_fetch_array($qsql1);
+$matno = $rsprint1['RegNo']; $fullname = $rsprint1['FirstName']." ".$rsprint1['SecondName']." ".$rsprint1['Othername'];
+$progm = strtoupper(getprog($rsprint1['app_type'])); $fac = getfacultyc($rsprint1['Faculty']); $dep = ucfirst(getdeptc($rsprint1['Department']));
+$level = ucfirst(getlevel($rsprint1['p_level'],$rsprint1['app_type'])); $sec = ucfirst($rsprint1['Asession']);$email = $rsprint1['e_address'];
+$dateofreg = $rsprint1['dateofreg'];
+$cont =  $matno." | ".$fullname." | ".$progm." | ".$level." | ".$fac." | ".$dep." | ".$sec." | ".$email." | ".$dateofreg." .";
+$qr->text($cont);
 
 ?>
 
-<body style="background-color: rgb(59, 59, 59); padding: 4px; height: 800px;">
+<!--<body style="background-color: rgb(59, 59, 59); padding: 4px; height: 800px;"> --!>
+<body >
   <div class="row-fluid">
                         <!-- block -->
  <div class="block1">
@@ -30,52 +39,65 @@ $rsprint1 = mysqli_fetch_array($qsql1);
 					<div class="control-group">
                              <div class="controls">
                              
-                                <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;" border="0" class="tble">
+ <table  align="center" style="margin:5px; font-size:15px;  font-weight:bold; width:900px;" border="0" class="tble2">
     
 	<tr style="background-color:#FFC">
-            <td height="30" colspan="2"> <div class="rounded">
-    <main class="container clear"> 
+            <td height="30" colspan="4"> <!-- <div class="rounded"> <main class="container clear"> --!>
       <!-- main body --> 
       <!-- ################################################################################################ -->
      <center><font size="+2">STUDENT'S INFORMATION FORM</font></center>
-      <p>Date Of Registration: <?php echo $rsprint1['dateofreg']; ?></p>
+     <!-- <p>Date Of Registration: <?php echo $rsprint1['dateofreg']; ?></p>
       <p>Please print a copy of this form and return to Admin Block for Verification.</p>
-      <p>You can Reprint this Form with your Matric Number.</p>
+      <p>You can Reprint this Form with your Matric Number.</p> --!>
       <!-- ################################################################################################ --> 
       <!-- / main body -->
-      <div class="clear"><hr></div>
-    </main>
-  </div></td>
+     <!-- <div class="clear"><hr></div></main></div> --!>
+  </td>
      
           </tr>
+          <?php $sql = "SELECT * FROM student_tb  WHERE md5(RegNo) ='".safee($condb,$_GET['stid'])."'";
+   if(!$qsql=mysqli_query($condb,$sql)){ echo mysqli_error($condb);}
+$rsprint = mysqli_fetch_array($qsql);$existn = imgExists("Student/".$rsprint['images']); $getpro = $rsprint['app_type']; ?>
 
-<tr >
+<tr style="display: none;" >
             <td height="32" colspan="2"> <div class="rounded" align="center">
    <img id="admin_avatar" class="img-circle" width="200" height="130" src="<?php 
    $sql = "SELECT * FROM student_tb  WHERE md5(RegNo) ='".safee($condb,$_GET['stid'])."'";
-   
-if(!$qsql=mysqli_query($condb,$sql))
-{
-	echo mysqli_error($condb);
-}
-$rsprint = mysqli_fetch_array($qsql);
- $existn = imgExists("Student/".$rsprint['images']);
+   if(!$qsql=mysqli_query($condb,$sql)){ echo mysqli_error($condb);}
+$rsprint = mysqli_fetch_array($qsql);$existn = imgExists("Student/".$rsprint['images']);
   if ($existn > 0 ){ echo "Student/".$rsprint['images'];
 	}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
-//if($rsprint['images']==NULL ){print "uploads/NO-IMAGE-AVAILABLE.jpg";}else{print $rsprint['images'];}
-				  
-				  
-				 // echo $row['adminthumbnails']; ?>" style=" border-radius: 50%;">
+?>" style=" border-radius: 50%;">
   </div></td>
      
           </tr>
+          
+          <tr ><td style="font-size:12px;font-family:Verdana, Geneva, sans-serif;width: 355px;text-align: justify;" colspan="1" height="30">
+<p>Date Of Registration: <?php echo $dateofreg; ?></p>
+<p style="color: black;">Please print a copy of this form and return to Admin Block for Verification.</p>
+<p style="color:black;">You can Reprint this Form with your Matric Number.</p>
+</td>
+            <td height="30" colspan="1" style="text-align: center;width: 190px;">
+   <img  src="<?php if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
+  ?>" width="150" height="120" style=" border-radius: 50%;" >
+  </td>
+  <td height="30"  colspan="1" style="text-align: center;font-family:Verdana, Geneva, sans-serif;">
+  <?php echo strtoupper(getprog($getpro)); ?>
+  <p style="font-size:14px;font-weight: bold;color: black; font-family:Verdana;">Matric Number:<font color="green">
+  <?php echo  $rsprint['RegNo']; ?></font></p>
+  <p><img src="<?php echo $qr->get_link(); ?>" width="130" height="130" style="margin-bottom: 2px;" border='0'/> </p></td>
+     
+          </tr>
+          
+          
 
-<tr >
+<tr style="display: none;">
             <td height="30" colspan="2"> <div class="rounded" align="center"><br><br>
   Slip Number:<?php echo  $rsprint['appNo']; ?>
   </div></td>
      
           </tr>
+          
 <div class="rounded">
         <table style="margin:4px; font-size:14px; font-family: Verdana;  font-weight:bold; width:900px;">
           <tr style="background-color:lightblue;box-shadow: 2px 2px gray;">
@@ -83,7 +105,7 @@ $rsprint = mysqli_fetch_array($qsql);
           </tr>
           <tr >
             <td width="27%" height="40">Matric Number:</td>
-            <td width="24%" id="firstname" style="font-color:gray;  font-weight:normal;">    <?php echo  ucfirst($rsprint['RegNo']); ?></td>
+            <td width="24%" id="firstname" style="font-color:gray;  font-weight:normal;">    <?php echo  ($rsprint['RegNo']); ?></td>
             <td width="26%">Programme of study:</td>
             <td width="23%" style="font-color:gray;  font-weight:normal;">    <?php echo  ucfirst(getprog($rsprint['app_type'])); ?></td>
           </tr>

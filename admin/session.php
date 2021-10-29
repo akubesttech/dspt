@@ -48,12 +48,12 @@ function getlevelnce($statnum2)
 }
 
  function getfcate($statnum20 ="",$n = "")
-{  if(empty($n)){
-if ($statnum20==1){ return "Fee";} else if($statnum20==2){
+{ if(empty($n)){
+if ($statnum20==1){ return "School Fee(s)";} else if($statnum20==2){
 return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
-}else if($statnum20==0){ return "Others"; }
+}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==7){return "Change of Course"; }else if($statnum20==8){return "Pena1ty";}
 }else{ $output = '';  
-	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Others" =>"0"); 
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Change of Course" =>"7","Penalty" =>"8"); 
 foreach($arr as $val => $nvalue)
 	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
  return $output;}
@@ -114,7 +114,7 @@ $date1=date("Y/m/d");
 $nback   =	(int)substr($default_session,5,10) + 1;
 $nfront   =	(int)substr($default_session,0,4) + 1;
 $default_secadmin = $nfront ."/".$nback;
-
+$default_clento=$user_row2['slenght'];
 if ($date_now >= $date2){
 mysqli_query($condb,"UPDATE session_tb SET action='0' WHERE session_name='".safee($condb,$default_session)."' and prog = '".$class_ID."'")
 or die(mysqli_error($condb));

@@ -19,7 +19,7 @@ include('session.php');
 $bs_dept=$_GET['Schd'];
 $bs_sec=$_GET['sec'];
 $bs_lev =$_GET['lev'];
-$bs_sem =$_GET['sem'];
+$bs_sem = isset($_GET['sem']) ? $_GET['sem'] : '';
 //substr($warning_data2['session_name'],5,10);
  $lsec = substr($_GET['sec'],0,4) - 1;
  $lright = substr($_GET['sec'],5,8) - 1;
@@ -59,6 +59,7 @@ $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee
         font-weight: 500;
         line-height: 1.1;
         color: inherit;
+          
     }
     table {
         border-collapse: collapse;
@@ -74,7 +75,7 @@ $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee
 background-repeat: no-repeat;
 background-position: center;
  background-size: 200px 200px;
- background-position: center center;
+ background-position: center;
 /*opacity: 0.5;
   filter: alpha(opacity=50); /* For IE8 and earlier */
    
@@ -103,7 +104,7 @@ $viewprintco = mysqli_query(Database::$conn,"SELECT DISTINCT student_id FROM  re
         <div class="col-lg-2"></div>
         <div class="col-lg-5">
             <p><strong><font size="4" color="blue" ><?php echo $title; ?></font></strong><br />
-                <?php echo $motto;//$saddress." .".$city." ".$state." State ."; ?></p>
+                <?php echo $motto ;//$saddress." .".$city." ".$state." State ."; ?></p>
             <p><strong>RESULT SUMMARY</strong></p>
         </div>
         <div class="col-lg-4">
@@ -141,11 +142,11 @@ $viewprintco = mysqli_query(Database::$conn,"SELECT DISTINCT student_id FROM  re
                     <th colspan="5">SUMMARY OF <br /> SESSION</th>
                     <th colspan="1" class="table-no-border" style="border:0;" ></th>
                 </tr>
-                </thead>
-                <tbody>
+                
+                
                 <tr class="test">
                     <td class="table-no-border"  ><h5><strong>MATRIC. NO.</strong></h5></td>
-                    <td class="table-no-border" ><h5><strong>NAMES (SURNAME FIRST)</strong></h5></td>
+                    <td class="table-no-border"><h5><strong>NAMES (SURNAME FIRST)</strong></h5></td>
                     <td><h4>TOTAL UNITS TAKEN SO FAR</h4></td>
                     <td ><h4>TOTAL UNITS PASSED SO FAR</h4></td>
                     <td ><h4>CUMM. GRADE POINT</h4></td>
@@ -165,6 +166,7 @@ $viewprintco = mysqli_query(Database::$conn,"SELECT DISTINCT student_id FROM  re
                     <td><h4>CUMM. GRADE POINT AVERAGE</h4></td>
                     <td class="table-no-border"><h5><strong>OUTSTANDING COURSES</strong></h5></td>
                 </tr>
+                </thead>
                 <?php $firstsem = "First"; $Secondsem = "Second"; //and course_code = '".safee($condb,$coursecode)."' 
 					  while($row = mysqli_fetch_array($viewprintco)){
 					  //summary first Semester
@@ -196,8 +198,10 @@ $vcousegrade30 = mysqli_query(Database::$conn,"SELECT SUM(gpoint * c_unit) as to
 					   $viewtcousepass = mysqli_query(Database::$conn,"SELECT SUM(c_unit) as cregu FROM results  WHERE  student_id ='".safee($condb,$sregno)."' and level='".safee($condb,$bs_lev)."' and  session='".safee($condb,$bs_sec)."' and dept ='".safee($condb,$bs_dept)."' and total > '".safee($condb,$getpass)."' Order by course_code ASC ")or die(mysqli_error($condb)); $creditpass = mysqli_fetch_array($viewtcousepass);
 					   
 $viewtcousefail = mysqli_query(Database::$conn,"SELECT SUM(c_unit) as cregu FROM results  WHERE  student_id ='".safee($condb,$sregno)."' and level='".safee($condb,$bs_lev)."' and  session='".safee($condb,$bs_sec)."' and dept ='".safee($condb,$bs_dept)."' and total <= '".safee($condb,$getpass)."' Order by course_code ASC ")or die(mysqli_error($condb)); $creditfail = mysqli_fetch_array($viewtcousefail);
+
 $viewtcousegrade = mysqli_query(Database::$conn,"SELECT SUM(gpoint * c_unit) as totalgpoint FROM results  WHERE  student_id ='".safee($condb,$sregno)."' and level='".safee($condb,$bs_lev)."'  and session='".safee($condb,$bs_sec)."' and dept ='".safee($condb,$bs_dept)."'  Order by course_code ASC ")or die(mysqli_error($condb)); $tgpoint = mysqli_fetch_array($viewtcousegrade);
 					    ?>
+                        <tbody>
                 <tr>
                     <td><?php echo $sregno; ?></td>
                     <td><?php echo getsname($sregno); ?></td>
@@ -222,7 +226,7 @@ $viewtcousegrade = mysqli_query(Database::$conn,"SELECT SUM(gpoint * c_unit) as 
                     <td><?php echo $tgpoint['totalgpoint']; ?></td>
                    <?php if($tgpoint['totalgpoint'] > 0){ $gpa = $tgpoint['totalgpoint'] / $creditreg['cregu'];}else{ $gpa = "0"; } ?>
                             <td><?php echo  round($gpa,2); ?></td>
-                     <td> <?php while($get_failc = mysqli_fetch_array($viewtcousefail2)){ $coursefailed = $get_failc['course_code']; ?>
+                      <td><?php while($get_failc = mysqli_fetch_array($viewtcousefail2)){ $coursefailed = $get_failc['course_code']; ?>
                             <?php echo $coursefailed." "; ?>
                            <?php }  ?>&nbsp;<?php if($countfail < 1 ){ ?>
                             <?php echo " - "; } ?>&nbsp;</td>
@@ -230,8 +234,10 @@ $viewtcousegrade = mysqli_query(Database::$conn,"SELECT SUM(gpoint * c_unit) as 
                 </tbody>
                
             </table>
-<table> <tr  style="border:0;"><br>
-				<td colspan="20"> <div id="ccc2"> <button data-placement="right" title="Click to Print " id="reset" name="B2" class="btn btn-info" onClick="myFunction()" type="reset"><i class="icon-file icon-large"></i> Print </button><a href="javascript:void(0);" onclick="window.open('Result_am.php?view=ras','_self')" class="btn btn-info"  id="delete2" data-placement="right" title="Click to Go back" ><i class="fa fa-backward icon-large"></i> Close </a></div></td>
+<table > <tr ><br>
+				<td colspan="20" class="table-no-border" style="border:0;"> <div id="ccc2"> <button data-placement="right" title="Click to Print " id="reset" name="B2" class="btn btn-info" onClick="myFunction()" type="reset"><i class="icon-file icon-large"></i> Print </button>&nbsp;
+<a href="javascript:void(0);" onclick="window.open('Result_am.php?view=ras','_self')" class="btn btn-info"  id="delete2" data-placement="right" title="Click to Go back" ><i class="fa fa-backward icon-large"></i> Close </a>
+				</div></td>
 				</tr></table>
         </div>
     </div>

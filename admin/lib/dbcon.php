@@ -308,7 +308,7 @@ return $gd[0];
 function gradpoint($marks,$class_name20){ 
 $grade = mysqli_query(Database::$conn,"SELECT gp,grade_group,prog FROM grade_tb WHERE b_min <= round($marks) and b_max >= round($marks) and prog='".($class_name20)."' and grade_group ='01'");
 $gd =mysqli_fetch_row($grade);
-return $gd[0];
+return round($gd[0],2);
 }
 function Resultremark($marks,$class_name20){ 
 $grade = mysqli_query(Database::$conn,"SELECT gradename,grade_group,prog FROM grade_tb WHERE gpmin <= round($marks,2) and gpmax >= round($marks,2) and prog='".($class_name20)."' and grade_group ='01'");
@@ -425,11 +425,10 @@ $count_fac = mysqli_fetch_array($query2_fac);
 return $nameclass2;
 }
 
-       function getstaff($get_fac2)
-{ 
-$query2 = mysqli_query(Database::$conn,"select lastname,firstname from admin where admin_id = '".safee($condb,$get_fac2)."' ")or die(mysqli_error($condb));
+ function getstaff($get_fac2,$no=""){ 
+$query2 = mysqli_query(Database::$conn,"select lastname,firstname,username from admin where admin_id = '".safee(Database::$conn,$get_fac2)."' ")or die(mysqli_error(Database::$conn));
 $count = mysqli_fetch_array($query2);
- $nameclass2=$count['lastname']." ".$count['firstname'];
+if($no == "1"){$nameclass2=$count['username'];}else{ $nameclass2=$count['lastname']." ".$count['firstname'];}
 return $nameclass2;
 }
 //$age = array("Peter"=>"35", "Ben"=>"37", "Joe"=>"43");
@@ -845,13 +844,13 @@ function FeesCalc($Fees,$per,$sdate){
         $date_now =  date("Y-m-d");
         if($date_now >= $newDate2){ $late = ($per / 100) * $Fees;
             return $TotalFees = $late+$Fees;}else{ return $TotalFees = $Fees; }}
- function getfeecat($statnum20 ="",$n = ""){
+function getfeecat($statnum20 ="",$n = ""){
  if(empty($n)){
 if ($statnum20==1){ return "School Fee(s)";} else if($statnum20==2){
 return "Dues";}else if($statnum20==3){ return "Form";}else if($statnum20==4){ return "Acceptance";}else if($statnum20==5){ return "Hostel";
-}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==7){return "Change of Course"; }
+}else if($statnum20==6){return "Reseat Fee";}else if($statnum20==7){return "Change of Course"; }else if($statnum20==8){return "Pena1ty";}
 }else{ $output = '';  
-	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Change of Course" =>"7"); 
+	$arr = array("Fee" =>"1","Dues" =>"2","Form" =>"3","Acceptance" =>"4","Hostel" =>"5","Reseat Fee" =>"6","Change of Course" =>"7","Penalty" =>"8"); 
 foreach($arr as $val => $nvalue)
 	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
  return $output;}
@@ -1015,12 +1014,143 @@ $amt = $shareamount - $diffcharge;
 if ($var==1){ return $schshare; }else if($var==2){return $benamt;}else if($var==3){return $amountp;}else{ return $smartamount;}
 }
 //get default commission 1 and 2
- function getcomm($statnum,$camt2 = 0)
-{ if(empty($camt2)){ if ($statnum==0){return 0;}else if($statnum==1){return 4000;}
-else if($statnum==3){return 200;}else if($statnum==2){return 0;}else if($statnum==4){return 500;}else if($statnum==5){return 0;} }else{
+ function getcomm($statnum,$camt2 = 0,$matno = "",$sec = "")
+{ $qpayn = mysqli_query(Database::$conn,"SELECT * FROM payment_tb WHERE  ( stud_reg ='".safee(Database::$conn,$matno)."' OR app_no ='".safee(Database::$conn,$matno)."') AND session = '".safee(Database::$conn,$sec)."' and pay_status = 1 AND paid_amount > 0 AND ft_cat = '".safee(Database::$conn,$statnum)."' ");
+    $countn = mysqli_num_rows($qpayn); if($countn > 0){ 
+    if(empty($camt2)){ if ($statnum==0){return 0;}else if($statnum==1){return 0;}
+else if($statnum==3){return 0;}else if($statnum==2){return 0;}else if($statnum==4){return 500;}else if($statnum==5){return 0;}else if($statnum==8){return 0;} }else{
+if ($statnum==0){return 0;}else if($statnum==1){return 0;}
+else if($statnum==3){return 0;}else if($statnum==2){return 0;}else if($statnum==4){return 0;}else if($statnum==5){return 0;}else if($statnum==8){return 0;}    
+}}else{
+if(empty($camt2)){ if ($statnum==0){return 0;}else if($statnum==1){return 4000;}
+else if($statnum==3){return 200;}else if($statnum==2){return 0;}else if($statnum==4){return 500;}else if($statnum==5){return 1000;}else if($statnum==8){return 0;}
+ }else{
 if ($statnum==0){return 0;}else if($statnum==1){return 1000;}
-else if($statnum==3){return 0;}else if($statnum==2){return 0;}else if($statnum==4){return 0;}else if($statnum==4){return 0;}    
+else if($statnum==3){return 0;}else if($statnum==2){return 0;}else if($statnum==4){return 0;}else if($statnum==5){return 0;}else if($statnum==8){return 0;}    
+}   
 }}
+//get mode of entry code
+function getscorest($matno,$dept,$ccode,$value="")
+{ $mcode_query = mysqli_query(Database::$conn,"SELECT r.total,r.exam FROM results r LEFT JOIN coursereg_tb cr ON r.course_code = cr.c_code WHERE r.student_id ='".safee(Database::$conn,$matno)."' AND r.dept = '".safee(Database::$conn,$dept)."' AND r.course_code = '".safee(Database::$conn,trim($ccode))."' ") or die(mysqli_error(Database::$conn));
+$count_hod = mysqli_fetch_array($mcode_query); $exam = $count_hod['exam']; $total = $count_hod['total'];
+if($total < 1){ $nameclass22 = " - ";}elseif($exam < 1){ $nameclass22 = " ABS ";}else{$nameclass22 = $value; }
+ return $nameclass22;}
+ //get department group
+function getdgroup($get_dep) {
+    $query2_hod = mysqli_query(Database::$conn,"select d_name,d_group from dept where dept_id = '$get_dep' ")or die(mysqli_error($condb));
+$count_hod = mysqli_fetch_array($query2_hod); $dgroup = $count_hod['d_group']; $dept=$count_hod['d_name'];
+$ndept = strtok($dept, '/'); if(empty($dgroup)){$nameclass22 = $ndept;}else{ $nameclass22 = $dgroup;}
+return $nameclass22;}
+function getinstalment($tp=0,$noi=0,$spay=0){ $inpay = 0;
+ if($noi > 0) {$inpay = round((double)$tp / (int)$noi,2) ;}else{ $inpay = $spay ;} 
+return  $inpay;
+}
+// get due amount
+function getDueamt($fcat,$prog,$lev,$scan,$fid=0){ $conn = 0; //$sh = 0;
+$qcompamt = "select * from fee_db where  level= '".safee(Database::$conn,$lev)."' AND program='".safee(Database::$conn,$prog)."' AND ft_cat ='".safee(Database::$conn,$fcat)."' AND Cat_fee = '".safee(Database::$conn,$scan)."' ";            
+if($fcat == "4"){ }else{if(!empty($fid)){ $qcompamt .= " and feetype = '".safee(Database::$conn,$fid)."'";}}
+$qcompamtd = mysqli_query(Database::$conn,$qcompamt) or die(mysqli_error(Database::$conn));
+$sumcreditm=0;
+while($row_camt = mysqli_fetch_array($qcompamtd)){ 
+$paysidm = $row_camt['fee_id']; $dpercm = $row_camt['pper']; 
+$psdatem = $row_camt['psdate'];  $famountm =$row_camt['f_amount'];
+$date20m = str_replace('/', '-', $psdatem );  $newDate20m = date("Y-m-d", strtotime($date20m));  $date_nowm =  date("Y-m-d");
+$penaltysumm = FeesCalc($famountm,$dpercm,$newDate20m); $difpm = $penaltysumm - $famountm ;
+if($dpercm > 0 and $date_nowm >= $newDate20m){  $namountm = $penaltysumm; }else{  $namountm = $famountm; }
+$sumcreditm += $namountm;  }
+if(empty($sumcreditm)){ return "0.00"; }else{ return $sumcreditm;}
+}
+function getpayamt($appNo,$fcat,$prog,$lev,$sec,$fid = 0){ $conn = 0;
+$que_paid = "select SUM(f_amount) as samount from feecomp_tb where session ='".safee(Database::$conn,$sec)."' and pstatus='1' and  level = '".safee(Database::$conn,$lev)."' and prog = '".safee(Database::$conn,$prog)."'";
+  if($fcat == "4"){$que_paid .= " and regno = '".safee(Database::$conn,$appNo)."' and fcat = '4'";}else{ $que_paid .= " and regno ='".safee(Database::$conn,$appNo)."' and fcat = '$fcat'"; }
+  if(!empty($fid)){ $que_paid .= " and feetype = '".safee(Database::$conn,$fid)."' ";}
+  $que_checkpay = mysqli_query(Database::$conn,$que_paid)or die(mysqli_error($condb));
+  $warning_count2=mysqli_num_rows($que_checkpay);$warning_data=mysqli_fetch_array($que_checkpay);   
+  $sumpay = $warning_data['samount'];
+  if(empty($sumpay)){ return "0.00"; }else{ return $sumpay;}
+  }
+function Dueamt($fcat,$prog,$sec,$dept = 0,$fid=0){$conn = 0;  
+$stud_rec1 = "select * from student_tb WHERE app_type ='".safee(Database::$conn,$prog)."' and Asession = '".safee(Database::$conn,$sec)."' "; //total student
+ if(!empty($dept)){ $stud_rec1 .= " and Department = '".safee(Database::$conn,$dept)."'";}
+$stud_rec = mysqli_query(Database::$conn,$stud_rec1)or die(mysqli_error(Database::$conn));
+$stud_count = mysqli_num_rows($stud_rec);
+$stud_rec20 = "select * from student_tb WHERE app_type ='".safee(Database::$conn,$prog)."' AND Asession = '".safee(Database::$conn,$sec)."' AND state = 'Delta' "; //total student delta 
+ if(!empty($dept)){ $stud_rec20 .= " and Department = '".safee(Database::$conn,$dept)."'";}
+$stud_rec2 = mysqli_query(Database::$conn,$stud_rec20)or die(mysqli_error(Database::$conn));
+$stud_count2 = mysqli_num_rows($stud_rec2);   $nonIndigene = $stud_count - $stud_count2;
+$nooflevel=mysqli_query(Database::$conn,"SELECT DISTINCT level FROM fee_db where  ft_cat = '$fcat' and Cat_fee = '1'  and program ='".safee(Database::$conn,$prog)."' "); $clind = mysqli_num_rows($nooflevel);//no of level indigene
+$noofleveln=mysqli_query(Database::$conn,"SELECT DISTINCT level FROM fee_db where  ft_cat = '$fcat' and Cat_fee = '0'  and program ='".safee(Database::$conn,$prog)."'  "); $clnind = mysqli_num_rows($noofleveln);//no of level noindigene
+$qindigene=mysqli_query(Database::$conn,"SELECT  SUM(f_amount)as totalamounti  FROM fee_db where  ft_cat = '$fcat' and Cat_fee = '1'  and program ='".safee(Database::$conn,$prog)."' "); //Indigene
+$get_amountin = mysqli_fetch_assoc($qindigene);  if($clind > 0 ){$amountin = $get_amountin['totalamounti']/$clind;}else{ $amountin = $get_amountin['totalamounti'];} 
+$amountinet = $amountin * $stud_count2;
+$qnon_indigene=mysqli_query(Database::$conn,"SELECT SUM(f_amount)as totalamountn FROM fee_db where  ft_cat = '$fcat' and Cat_fee = '0' and program ='".safee(Database::$conn,$prog)."' "); //Non Indigene
+$get_amountnon = mysqli_fetch_assoc($qnon_indigene);  
+if($clnind > 0 ){$amountnon = $get_amountnon['totalamountn']/$clnind;}else{ $amountnon = $get_amountnon['totalamountn']; }
+$amountnonnet = $amountnon * $nonIndigene; $expectedrevenue = $amountinet + $amountnonnet;
+if(empty($expectedrevenue)){ return "0.00 "; }else{ return $expectedrevenue;}
+}
+//find per %
+ function get_percentage($total, $number)
+    {   if ( $number > 0 ) { return round(100 * ($total / $number),2);
+      } else {  return 0;  }}
+      //get Mat Number default last count 
+function getlcount($prog) {
+$query2_hod = mysqli_query(Database::$conn,"select lcount,prog from session_tb where prog = '$prog' and action = '1' ")or die(mysqli_error($condb));
+$count_hod = mysqli_fetch_array($query2_hod); $lcount = $count_hod['lcount']; 
+if(empty($lcount)){$nameclass22 = "00000";}else{ $nameclass22 = $lcount;}
+return $nameclass22;}
+
+function getfcode($statnum20 =""){
+if ($statnum20==1){ return "FEE-";} else if($statnum20==2){
+return "DUE-";}else if($statnum20==3){ return "FOM-";}else if($statnum20==4){ return "ACP-";}else if($statnum20==5){ return "HTL-";
+}else if($statnum20==6){return "RSF-";}else if($statnum20==7){return "COC-"; }else if($statnum20==8){return "PEN-";}
+return $output;}
+  //pay refrence gen
+  function createpayref($qtd){
+//Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
+    $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+    $QuantidadeCaracteres = strlen($Caracteres);
+    $QuantidadeCaracteres--;
+$Hash=NULL;
+for($x=1;$x<=$qtd;$x++){
+        $Posicao = rand(0,$QuantidadeCaracteres);
+        $Hash .= substr($Caracteres,$Posicao,1);
+    }
+return $Hash;
+}
+//get last payment date
+function getlpdate($matno,$fcat,$prog,$lev,$sec,$scan,$dateS = ""){ $conn = 0; $date_now =  date("Y-m-d");
+$qcompamt = "select * from fee_db where  level= '".safee(Database::$conn,$lev)."' AND program='".safee(Database::$conn,$prog)."' AND ft_cat ='8' AND Cat_fee = '".safee(Database::$conn,$scan)."' AND edate > '$date_now' ";            
+$qcompamtd = mysqli_query(Database::$conn,$qcompamt) or die(mysqli_error(Database::$conn));
+$result = mysqli_fetch_array($qcompamtd); $statdate = $result['psdate']; $endtdate = $result['edate'];
+$date = str_replace('/', '-', $statdate ); $newDate = date("Y-m-d", strtotime($date));
+$date2 = str_replace('/', '-', $endtdate);$newDate2 = date("Y-m-d", strtotime($date2));
+$date_now2 = new DateTime($date_now); $enddate    = new DateTime($date2);
+
+$duam = getDueamt("1",$prog,$lev,$scan);
+$sump = getpayamt($matno,"1",$prog,$lev,$sec);
+//if(($sump < $duam) && ($date_now2 <= $enddate)){ $no = "1";}else{ $no = "0";}
+if(empty($sump) && ($date_now2 <= $enddate)){ $no = "1";}else{ $no = "0";}
+if($sump < 1){$nop = "1";}else{ $nop = $no; } 
+
+$que_lpdate = "select *  from payment_tb where ( stud_reg ='".safee(Database::$conn,$matno)."' OR app_no ='".safee(Database::$conn,$matno)."' ) AND session ='".safee(Database::$conn,$sec)."' AND pay_status='1' AND level = '".safee(Database::$conn,$lev)."' AND prog = '".safee(Database::$conn,$prog)."' AND ft_cat = '".safee(Database::$conn,"1")."' AND pay_date BETWEEN '".safee(Database::$conn,$newDate)."' AND '".safee(Database::$conn,$newDate2)."' Order by pay_date DESC limit 1 ";
+$que_cpd = mysqli_query(Database::$conn,$que_lpdate)or die(mysqli_error($condb));
+  $warning_data=mysqli_fetch_array($que_cpd);   $count = mysqli_num_rows($que_cpd);
+ //if(empty($dateS)){if(($pdate <= $date_set) && ($edate <=  $nowd)){ return "0"; }else{return "1";} }else{
+    if(empty($dateS)){if(empty($count)){ return $nop; }else{return "1";} }else{
+  return $statdate ; 
+}}
+ function getSem($sval = "")
+{    if(empty($sval)){echo "<option value=''>Semester</option>"; }else{echo '<option value="'.$sval.'">'.$sval.'</option>'; }
+	$arr = array("First" =>"First","Second" =>"Second"); 
+foreach($arr as $val => $nvalue)
+	{$output .= '<option value="'.$nvalue.'">'.$val.'</option>';}
+ return $output;
+  }
+   function getRlev($pval = ""){
+$resultsec2 = mysqli_query(Database::$conn,"SELECT * FROM level_db WHERE prog = '".safee(Database::$conn,$pval)."'  ORDER BY level_order ASC");
+while($rssec2 = mysqli_fetch_array($resultsec2))
+{echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";}}
 // // time zone manager
 /*if(!isset($_SESSION['timezone']))
 {if(!isset($_REQUEST['offset']))

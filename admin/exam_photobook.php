@@ -116,7 +116,7 @@ normal'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>
 <div class="pull-left"> 
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
 normal'><span style='font-size:13.0pt;mso-bidi-font-size:11.0pt;font-family:"Times New Roman","serif"'>
-<?php  if($_SESSION['los']==Null){echo "The Following Student(s) are qualified to Seat For Exam in <b>".getdeptc($departmen)."</b> For ".$_SESSION['vsession'];}else{echo "The Following  <b>".getlevel($_SESSION['los'],$class_ID)."</b> Level Student(s) are qualified to Seat For Exam in <b>".getdeptc($departmen)."</b> For ".$_SESSION['vsession'];
+<?php  if(empty($_SESSION['los'])){echo "The Following Student(s) are qualified to Seat For Exam in <b>".getdeptc($departmen)."</b> For ".$_SESSION['vsession'];}else{echo "The Following  <b>".getlevel($_SESSION['los'],$class_ID)."</b> Level Student(s) are qualified to Seat For Exam in <b>".getdeptc($departmen)."</b> For ".$_SESSION['vsession'];
 }  ?><br>And There Seating Arrangement is as Follows. <o:p></o:p></span></p>
 
 <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
@@ -163,9 +163,11 @@ normal'><span style='font-size:12.0pt;mso-bidi-font-size:11.0pt;font-family:
 
 
 if($_SESSION['los'] == NULL){
-$student_query = mysqli_query($condb,"SELECT * FROM payment_tb pt LEFT JOIN student_tb st ON  st.RegNo = pt.stud_reg WHERE session ='".safee($condb,$_SESSION['vsession'])."' and md5(pt.department)='".safee($condb,$_GET['Schd'])."' and pay_status ='1' ORDER BY RAND()") or die(mysqli_error($condb));
+$student_query = mysqli_query($condb,"SELECT * FROM payment_tb pt LEFT JOIN student_tb st ON  st.RegNo = pt.stud_reg WHERE session ='".safee($condb,$_SESSION['vsession'])."' and md5(pt.department)='".safee($condb,$_GET['Schd'])."' and pay_status ='1' GROUP BY stud_reg ORDER BY RAND()") or die(mysqli_error($condb));
 }else{
-$student_query = mysqli_query($condb,"SELECT * FROM payment_tb pt LEFT JOIN student_tb st ON  st.RegNo = pt.stud_reg WHERE session ='".safee($condb,$_SESSION['vsession'])."' and md5(pt.department)='".safee($condb,$_GET['Schd'])."' and pay_status  ='1' and  level='".safee($condb,$_SESSION['los'])."' ORDER BY RAND()") or die(mysqli_error($condb));
+//$student_query = mysqli_query($condb,"SELECT * FROM payment_tb pt LEFT JOIN student_tb st ON  st.RegNo = pt.stud_reg WHERE session ='".safee($condb,$_SESSION['vsession'])."' and md5(pt.department)='".safee($condb,$_GET['Schd'])."' and pay_status  ='1' and  level='".safee($condb,$_SESSION['los'])."' ORDER BY RAND()") or die(mysqli_error($condb));
+$student_query = mysqli_query($condb,"SELECT * FROM student_tb st  LEFT JOIN payment_tb pt ON  st.RegNo = pt.stud_reg WHERE session ='".safee($condb,$_SESSION['vsession'])."' and md5(pt.department)='".safee($condb,$_GET['Schd'])."' and pay_status  ='1' and  level='".safee($condb,$_SESSION['los'])."' GROUP BY stud_reg  ORDER BY RAND()") or die(mysqli_error($condb));
+
 }	//or die(mysqli_error($condb));
 $num_rows =mysqli_num_rows($student_query);
 		$serial=1;

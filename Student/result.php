@@ -121,7 +121,7 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
 $viewutme_query = mysqli_query($condb,"select * from results where student_id = '".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."'  and level ='".safee($condb,$level)."'  order by semester ASC ")or die(mysqli_error($condb)); }else{ $viewutme_query = mysqli_query($condb,"select * from results where student_id = '".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level ='".safee($condb,$level)."'  order by session DESC ")or die(mysqli_error($condb));
  }?><?php if(mysqli_num_rows($viewutme_query)<1){ if($semester == "Annual"){ echo "<tr class='row1'><td colspan='10' style='text-align:centre;'><strong>No result found in the database For This $semester   Result. </strong></td></tr>"; }else{ echo "<tr class='row1'><td colspan='10' style='text-align:centre;'><strong>No result found in the database For This $semester   Semester. </strong></td></tr>"; } }?>
 <?php
-$serial=1; $i= 0;
+$serial=1; $i= 0; $sumgp = 0;
 while($row_utme = mysqli_fetch_array($viewutme_query)){ $escore = $row_utme['exam'];
 if($resultview == "yes"){ $cell = 5; $cell2 = 4; }else{ $cell = 2; $cell2 = 1;}
 $new_a_id = $row_utme['student_id'];
@@ -158,9 +158,9 @@ if ($i%2) {$class = 'row1';}
 							<td style="text-align:justify;"><?php echo $row_utme['exam']; ?></td>	
 							<td style="text-align:justify;"><?php echo $row_utme['total']; ?></td>	<?php }?>
 							<td style="text-align:justify;"><?php echo grading($row_utme['total'],$student_prog); ?></td> 
-							<td style="text-align:justify;"><?php echo gradpoint($row_utme['total'],$student_prog); ?></td>		</tr>
+							<td style="text-align:justify;"><?php echo $gpoint = gradpoint($row_utme['total'],$student_prog); ?></td>		</tr>
                         
-                    <?php } }?><?php  if($semester == "Annual"){ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and level ='".safee($condb,$level)."' and exam > 0 "; }else{ 
+                    <?php } $sumgp += $gpoint; }?><?php  if($semester == "Annual"){ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and level ='".safee($condb,$level)."' and exam > 0 "; }else{ 
 $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$student_RegNo)."' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level ='".safee($condb,$level)."' and exam > 0 ";
 }
   $resultsumnet = mysqli_query($condb,$sumnet); 
@@ -180,7 +180,8 @@ $sumnet="select SUM(c_unit) from results where student_id ='".safee($condb,$stud
     $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit) as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."'  and level='".safee($condb,$level)."' and exam > 0 ");
    }else{ $resultgP = mysqli_query($condb,"select SUM(gpoint) as totalgpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."' and exam > 0");
     $resultQP = mysqli_query($condb,"select SUM(gpoint * c_unit)as totalqpoint from results where student_id ='$student_RegNo' and session ='".safee($condb,$asession)."' and semester='".safee($condb,$semester)."' and level='".safee($condb,$level)."' and exam > 0");
-   } $num_rows2 =mysqli_num_rows($resultgP); $get_gp = mysqli_fetch_array($resultgP);$get_qp = mysqli_fetch_array($resultQP);  if($get_gp['totalgpoint'] > 0){ echo $get_gp['totalgpoint'];}else{echo "0";} $sumqp = $get_qp['totalqpoint']; ?></strong></td>
+   } $num_rows2 =mysqli_num_rows($resultgP); $get_gp = mysqli_fetch_array($resultgP);$get_qp = mysqli_fetch_array($resultQP);  
+   if($get_gp['totalgpoint'] > 0){ echo $get_gp['totalgpoint'];}else{echo "0.00";} $sumqp = $get_qp['totalqpoint']; ?></strong></td>
     </tr>
     
     <tr><td colspan="10" >&nbsp;</td></tr>

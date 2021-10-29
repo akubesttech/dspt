@@ -17,14 +17,14 @@ else
 </script>
 
 <?php
-
 if(isset($_POST['addfac'])){
 $fac_name= ucwords($_POST['fac_name']);
 $fac_desc = $_POST['fac_desc'];
 $fac_email = $_POST['fac_email'];
 $fac_phone = $_POST['fac_phone'];
 $fac_dean = ucfirst($_POST['fac_dean']);
-$query_fac = mysqli_query($condb,"select * from faculty where fac_name = '$fac_name' ")or die(mysqli_error($condb));
+$fcode = strtoupper($_POST['fcode']);
+$query_fac = mysqli_query($condb,"select * from faculty where fac_name = '$fac_name' AND fcode = '$fcode' ")or die(mysqli_error($condb));
 //$row = mysql_fetch_array($query);
 $row_fac = mysqli_num_rows($query_fac);
 if ($row_fac>1){
@@ -42,7 +42,7 @@ message("The ".$SCategory." Entered  Already Exist Try Again!", "error");
 	
 }else{
 //if($level=="Others"){
-mysqli_query($condb,"update  faculty set fac_name='$fac_name',fac_desc='$fac_desc',fac_email='$fac_email',fac_phone='$fac_phone',fac_dean='$fac_dean' where fac_id ='$get_RegNo'") or die(mysqli_error($condb));
+mysqli_query($condb,"update  faculty set fac_name='$fac_name',fac_desc='$fac_desc',fcode = '$fcode',fac_email='$fac_email',fac_phone='$fac_phone',fac_dean='$fac_dean' where fac_id ='$get_RegNo'") or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Faculty Titled $fac_name was Add')")or die(mysqli_error($condb)); 
  ob_start();
@@ -69,16 +69,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <input type="hidden" name="insidd" value="<?php echo $_SESSION['insidd'];?> " />
                       
                       <span class="section">Edit <?php echo $SCategory; ?> <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
+//if($resi == 1){echo " <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>";}
 ?> </span>
 
 
@@ -91,7 +82,10 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 						  	  <label for="heard"><?php echo $SCategory; ?> Description </label>
                             	  <input type="text" class="form-control " name='fac_desc' id="fac_desc" value="<?php echo $row_f['fac_desc']; ?>"  required="required">
                       </div>
-                      
+                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+						  	  <label for="heard"><?php echo $SCategory; ?> Short Code </label>
+                            	  <input type="text" class="form-control " name='fcode' id="fcode" maxlength="3"  value="<?php echo $row_f['fcode']; ?>" placeholder="i.e SOE "  required="required">
+                      </div>
                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 						  	  <label for="heard"><?php echo $SCategory; ?> Email Address </label>
                             	  <input type="text" class="form-control " name='fac_email' id="fac_email" value="<?php echo $row_f['fac_email']; ?>"  >

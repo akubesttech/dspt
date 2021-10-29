@@ -1,6 +1,6 @@
 
 <div class="x_panel">
-                
+                <?php echo $student_level; ?>
              
                 <div class="x_content">
 	                <form method="get" class="form-horizontal"  action="result_manage.php?view=l_res" enctype="multipart/form-data">

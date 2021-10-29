@@ -1,11 +1,16 @@
   <?php
 include("header1.php");
+include("admin/qrcode.php");
+$qr = new qrcode();
 //include("dbconnection.php");
 //$sql1 = "SELECT * FROM new_apply1 left join olevel_tb ON olevel_tb.oPin = new_apply1.Pin WHERE md5(new_apply1.appNo) ='".safee($condb,$_GET['applicationid'])."'";
 $existl = imgExists("admin/".$row['Logo']);
 $Motto = $row['Motto'];
 $sql1 = mysqli_query($condb,"select * from new_apply1  where md5(appNo) ='".safee($condb,$_GET['applicationid'])."'")or die(mysqli_error($condb));
 $rsprint1 = mysqli_fetch_array($sql1);
+$instid = getinstitution($rsprint1['app_type']);
+$linkno = host()."studentappprint.php?applicationid=".$_GET['applicationid'];
+$qr->text($linkno);
 $sql_oresult1=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$rsprint1['appNo'])."' AND oNo_re = '1'");
 $sql_oresult2=mysqli_query($condb,"SELECT * FROM olevel_tb2 WHERE oapp_No='".safee($condb,$rsprint1['appNo'])."' AND oNo_re = '2'");
 $count_olresult1 = mysqli_num_rows($sql_oresult1);
@@ -22,7 +27,7 @@ $countnosub = mysqli_num_rows($sql_oresult20);
 .row2 {background-color: #DEDEDE;border: 1px solid #98C1D1;height: 30px; font-family:Verdana, Geneva, sans-serif; 
 	font-size:12px; }  @page {margin: 0;size: portrait;}
 					  </style>
-<body style="background-color: rgb(59, 59, 59); padding: 5px; height: 700px; ">
+<body style=" padding: 5px; height: 700px; ">
   <div class="row-fluid">
                         <!-- block -->
  <div class="block1">
@@ -80,7 +85,9 @@ Please Come along with This Application Slip on the Day Of Screening Excesice .<
    <img  src="<?php if ($existn > 0 ){ echo "Student/".$rsprint['images'];}else{ echo "Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
   ?>" width="150" height="120" style=" border-radius: 50%;" >
   </td><td height="30"  colspan="1" style="text-align: center;font-family:Verdana, Geneva, sans-serif;355px;">
-  <?php echo strtoupper(getprog($getpro)); ?><p style="font-size:15px;font-weight: bold;color: black; font-family:Verdana;">Application Number:<font color="green"><?php echo  $rsprint['appNo']; ?></font></p></td>
+  <?php echo strtoupper(getprog($getpro)); ?><p style="font-size:15px;font-weight: bold;color: black; font-family:Verdana;">Application Number:<font color="green"><?php echo  $rsprint['appNo']; ?></font></p>
+  <p><img src="<?php echo $qr->get_link(); ?>" width="130" height="130" style="margin-bottom: 2px;" border='0'/> </p>
+  </td>
      
           </tr>
 

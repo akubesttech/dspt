@@ -6,6 +6,7 @@
 if(isset($_POST['viewOrder'])){
 $sprog1 = $_POST['f_pro'];
 $paydate = $_POST['pdate'];
+$pdate2 = $_POST['pdate2'];
 //$salot_los = $_POST['los'];
 $salot_session = $_POST['session'];
 $result_alldept = mysqli_query($condb,"SELECT * FROM fshop_tb WHERE session ='".safee($condb,$salot_session)."' and ftype ='".safee($condb,$sprog1)."'");
@@ -16,11 +17,10 @@ $num_alldept = mysqli_num_rows($result_alldept);
 if($num_alldept < 1){
 	message("No Order Record Found for ".getprog($sprog1)." Programm in $salot_session , Please Try Again", "error");
 		        redirect('formSales.php?view=formOrder'); 
-      
 }else{
 	$_SESSION['vsession']=$salot_session;
 
-echo "<script>window.location.assign('formSales.php?view=fDetails&xpo=".($sprog1)."&xsec=".($salot_session)."&xdop=".$paydate."');</script>";}
+echo "<script>window.location.assign('formSales.php?view=fDetails&xpo=".($sprog1)."&xsec=".($salot_session)."&xdop=".$paydate."&xd2=".$pdate2."');</script>";}
 
 }
 ?>
@@ -32,18 +32,17 @@ echo "<script>window.location.assign('formSales.php?view=fDetails&xpo=".($sprog1
 
                     		<form name="user" method="post" enctype="multipart/form-data" id="user">
 <input type="hidden" name="insidtime" value="<?php echo $_SESSION['insidtime'];?> " />
+<input type="hidden" name='fee' id="fee" value="3" />
                       
                       <span class="section">Search Record </span>
-<div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback"  >
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" style="display: none;" >
 						  	  <label for="heard"   id="enable3" >Fee Type *</label>
-          <select name='fee' id="fee" class="form-control" onchange="getformamount(this.value)" required>
-                            <option value="">Select Fee</option>
-                           <?php 
-$resultfee = mysqli_query($condb,"SELECT * FROM ftype_db WHERE f_category = '3'  ORDER BY f_type  ASC");
-while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'>$rsfee[f_type]</option>";}?>
-                        </select>
-                      </div>
-                       <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+          <select name='fee2' id="fee2" class="form-control" onchange="getformamount(this.value)" >
+                            <option value="3">Select Fee</option>
+<?php $resultfee = mysqli_query($condb,"SELECT * FROM ftype_db WHERE f_category = '3'  ORDER BY f_type  ASC");
+while($rsfee = mysqli_fetch_array($resultfee)){ echo "<option value='$rsfee[id]'>$rsfee[f_type]</option>";}?></select></div>
+
+                       <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Program *</label>
                             	  <select name='f_pro' id="f_pro" class="form-control" required>
                             <option value="">Select Program</option>
@@ -52,15 +51,18 @@ while($rsproe = mysqli_fetch_array($resultproe)){echo "<option value='$rsproe[pr
                             </select>
                       </div>
    
-  <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Academic Session *</label>
 							   <select class="form-control"   name="session" id="session" required >
   <option value="">Select Session</option>
 <?php echo fill_sec(); ?></select></div>
        
- <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Payment Date</label>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+						  	  <label for="heard">From </label>
 <input  type="text" name="pdate" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed1"   readonly="readonly" style="height:32px;"></div>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+						  	  <label for="heard">To</label>
+<input  type="text" name="pdate2" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed"   readonly="readonly" style="height:32px;"></div>
                     
                       
                   <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">

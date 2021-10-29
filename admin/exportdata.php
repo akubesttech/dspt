@@ -5,7 +5,7 @@ include('lib/dbcon.php');
 dbcon();
 include('session.php');
 require_once 'Excel/reader.php'; 
-$session_id = $_GET['userid'];
+//$session_id = $_GET['userid'];
 $session = $_GET['session'];
 $course_e = $_GET['cos'];
 $dept = $_GET['dept1'];
@@ -14,6 +14,7 @@ $c_choice = $_GET['semester'];
 $level = $_GET['level'];
 $table = 'coursereg_tb';
 $pmaxn = getpmax($course_e,$dept);
+
 
 //$query = "SELECT sregno,c_code,c_unit,assesment,exam FROM $table where c_code = '$course_e' && session = '$session' && level = '$level'&& semester = '$c_choice' && creg_status='1'";  
 
@@ -80,7 +81,7 @@ $p_assess = $CA2." ".$pmaxn." %";
     				<tbody>
     		";
      
-    		$query = mysqli_query($condb,"SELECT sregno,c_code,c_unit,assesment,exam,p_assess  FROM coursereg_tb where c_code = '$course_e' AND session = '$session' AND level = '$level' AND semester = '$c_choice' AND creg_status='1' ") or die(mysqli_errno($condb));
+    		$query = mysqli_query($condb,"SELECT sregno,c_code,c_unit,assesment,exam,p_assess,dept  FROM coursereg_tb where dept = '$dept' AND c_code = '$course_e' AND session = '$session' AND level = '$level' AND semester = '$c_choice' AND creg_status='1' ") or die(mysqli_errno($condb));
     		$countt = mysqli_num_rows($query);
 			while($fetch = mysqli_fetch_array($query)){
      $output .= "

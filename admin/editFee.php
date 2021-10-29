@@ -73,16 +73,21 @@ else
 if(isset($_POST['editFee'])){
 $fee = $_POST['fee'];
 $f_pro = $_POST['f_pro'];
-$Dept = $_POST['dept1'];
-$Dfac = $_POST['fac1'];
-$otherl = ucfirst($_POST['otherl']);
+//$Dept = $_POST['dept1'];
+//$Dfac = $_POST['fac1'];
+//$otherl = ucfirst($_POST['otherl']);
 $amount = $_POST['amount'];
 $status = $_POST['status'];
 $flevel = $_POST['level'];
 $Cat_fee = $_POST['cat_fee'];
-$Cpen = $_POST['chkPenalty']; if(empty($Cpen)){$Penper = 0; $pendate = $_POST['pdate'];}else{
-$Penper = $_POST['penper']; $pendate = $_POST['pdate'];
+$Cpen = gnum($_POST['chkPenalty']); 
+if(empty($Cpen)){$Penper = 0; $pendate = $_POST['pdate'];$enddate = $_POST['pdate3'];}else{
+$Penper = $_POST['penper']; $pendate = $_POST['pdate']; $enddate = $_POST['pdate3'];
 }
+$edt = str_replace('/', '-', $enddate );  $edtt = date("Y-m-d", strtotime($edt));
+$end_ts = strtotime($edtt);
+$curdateset=date("Y-m-d");
+$currentdate_ts = strtotime($curdateset);
 $query_f = mysqli_query($condb,"select * from fee_db where level = '".safee($condb,$flevel)."' and program = '".safee($condb,$f_pro)."' and Cat_fee = '".safee($condb,$Cat_fee)."' and feetype = '".safee($condb,$fee)."' ")or die(mysqli_error($condb));
 //$row_fee = mysqli_fetch_array($query);
 $row_fee = mysqli_num_rows($query_f);
@@ -92,9 +97,12 @@ if ($row_fee>1) {
 				}elseif(!ctype_digit($amount)){
 					message("ERROR: Incorrect Format For Amount  it should be a Digit", "error");
 		            redirect('add_Fees.php?id='.$get_RegNo);
-}else{
+                    }elseif(($currentdate_ts > $end_ts) && !empty($Cpen) ){
+			message("End date should not be in the Past !", "error");
+		       redirect('add_Fees.php?id='.$get_RegNo);
+}else{ //,f_dept='".safee($condb,$Dept)."'
 //if($Dfac==""){
-mysqli_query($condb,"update  fee_db set feetype='".safee($condb,$fee)."',ft_cat='".getftcat($fee)."',program='".safee($condb,$f_pro)."',level='".safee($condb,$flevel)."',f_dept='".safee($condb,$Dept)."',f_amount='".safee($condb,$amount)."',status='".safee($condb,$status)."',Cat_fee='".safee($condb,$Cat_fee)."',penalty = '".safee($condb,$Cpen)."',pper = '".safee($condb,$Penper)."',psdate = '".safee($condb,$pendate)."' where fee_id ='".safee($condb,$get_RegNo)."'") or die(mysqli_error($condb));
+mysqli_query($condb,"update  fee_db set feetype='".safee($condb,$fee)."',ft_cat='".getftcat($fee)."',program='".safee($condb,$f_pro)."',level='".safee($condb,$flevel)."',f_amount='".safee($condb,$amount)."',status='".safee($condb,$status)."',Cat_fee='".safee($condb,$Cat_fee)."',penalty = '".safee($condb,$Cpen)."',pper = '".safee($condb,$Penper)."',psdate = '".safee($condb,$pendate)."',edate = '".safee($condb,$enddate)."' where fee_id ='".safee($condb,$get_RegNo)."'") or die(mysqli_error($condb));
 //}else{ 
 //mysqli_query($condb,"update  fee_db set feetype='$fee',ft_cat='".getftcat($fee)."',program='$f_pro',level='$flevel',f_dept='$Dept',f_fac='".getfaculty2($Dfac)."',f_amount='$amount',status='$status',Cat_fee='$Cat_fee' where fee_id ='$get_RegNo'") or die(mysqli_error($condb));
 //}
@@ -113,7 +121,7 @@ message("New Fee [". getftype($fee) ."] was Successfully Updated for ".getlevel(
                 <div class="x_content">
 <?php
 								$query_f2 = mysqli_query($condb,"select * from fee_db where fee_id ='$get_RegNo' ")or die(mysqli_error($condb));
-								$row_f = mysqli_fetch_array($query_f2); $cpenalty= $row_f['penalty'];
+								$row_f = mysqli_fetch_array($query_f2); $cpenalty= $row_f['penalty'];  $fprog = $row_f['ft_cat'];
 								?>
                     			<form name="register" method="post" enctype="multipart/form-data"  id="register">
 <input type="hidden" name="insidd2" value="<?php echo $_SESSION['insidd2'];?> " />
@@ -216,24 +224,33 @@ while($rssec2 = mysqli_fetch_array($resultsec2))
 }?></select></div>
                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Fee Status </label><select name='status' id="status" class="form-control" >
-<option value="<?php echo $row_f['status']; ?>"><?php if ($row_f['status']=1){ echo "Enabled";}else{echo "Disabled";} ?></option>
-                             <option value="1">Enabled</option> <option value="0">Disabled</option></select> </div>
+<option value="<?php echo $row_f['status']; ?>"><?php if ($row_f['status']=1){ echo "compulsory";}else{echo "Optional";} ?></option>
+                             <option value="1">compulsory</option>
+                              <option value="0">Optional</option></select> </div>
                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 		<label for="chkPenalty"> </label><br><br>
-    <label class="chkPenalty"><input type="checkbox" id="chkPenalty"  onclick="ShowHideDiv(this)" name="chkPenalty" value="1" <?php echo ($cpenalty == '1')?"checked":"" ; ?> /> Add penalty </label></div>
+    <label class="chkPenalty"><input type="checkbox" id="chkPenalty"  onclick="ShowHideDiv(this)" name="chkPenalty" value="1" <?php echo ($cpenalty == '1')?"checked":"" ; ?> /><?php echo ($fprog == '8')?" Add penalty Period":" Add penalty by Amount Per (%)" ; ?> </label></div>
     <?php if($cpenalty == "1"){?>
-    <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback "  id="penper">
+    <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback "  id="penper">
 					  <label for="heard">Penalty fee in percent (%)</label> <input type="text" class="form-control " name='penper' id="penper" placeholder="example 1.5 % of the Fee Amount" onkeyup="checkDec(this);" maxlength="3"  value="<?php echo $row_f['pper']; ?>"  > 
 					  </div>
 					 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  id="pdate">
 					  <label for="heard">Penalty Start Date </label> <input type="text"  name='pdate'   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed" style="height:32px;"  readonly="readonly" value="<?php echo $row_f['psdate']; ?>" size="29"  > </div>
-					  <?php }else{ ?>
-					  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback " style="display:none; " id="penper">
+					  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  id="pdate3">
+					  <label for="heard">Penalty End Date </label> 
+                      <input type="text"  name='pdate3'   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed1" style="height:32px;"  readonly="readonly" value="<?php echo $row_f['edate']; ?>" size="29"  > </div>
+					  
+                      <?php }else{ ?>
+					  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback " style="display:none; " id="penper">
 					  <label for="heard">Penalty fee in percent (%)</label> <input type="text" class="form-control " name='penper' id="penper" placeholder="example 1.5 % of the Fee Amount" onkeyup="checkDec(this);" maxlength="3"  value="<?php echo $row_f['pper']; ?>"  > 
 					  </div>
 					 <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" style="display:none; " id="pdate">
 					  <label for="heard">Penalty Start Date </label> <input type="text"  name='pdate'   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed" style="height:32px;"  readonly="readonly" value="<?php echo $row_f['psdate']; ?>" size="29"  > </div>
-					  <?php } ?>
+					  <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" style="display:none; " id="pdate3">
+					  <label for="heard">Penalty End Date </label> 
+                      <input type="text"  name='pdate3'   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed1" style="height:32px;"  readonly="readonly" value="<?php echo $row_f['edate']; ?>" size="29"  > </div>
+					  
+                      <?php } ?>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                         

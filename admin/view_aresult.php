@@ -10,6 +10,12 @@ $sql="select * from uploadrecord where up_id='".safee($condb,$_GET['userId'])."'
 $session=$row_fend['session'];
 $level= $row_fend['level']; $dept = $row_fend['dept'];
 $pmaxn = getpmax($recode,$dept);
+$queryrapp = "select * from resultapproval_tb WHERE prog = '".safee($condb,$class_ID)."' AND dept = '".safee($condb,$dept)."' AND session = '".safee($condb,$session)."' AND level = '".safee($condb,$level)."' AND apstatus = '1' ";
+if($semester != null){ $queryrapp .= " AND semester='$semester'";}
+$queryresultapp = mysqli_query($condb,$queryrapp)or die(mysqli_error($condb));
+$rowapp = mysqli_fetch_array($queryresultapp); $aptatus = mysqli_num_rows($queryresultapp); 
+ if($aptatus > 0){  $bst = "disabled"; $pbcstatus= "Result Successfully Published for Student to access, Edit is Not Possible"; }else{ $bst = "";$pbcstatus="Result Has not been Published for Student to access Edit is possible";} 
+	
 	//extract($row);
 	$serial=1;
                   ?>
@@ -36,12 +42,14 @@ $pmaxn = getpmax($recode,$dept);
  <div class="alert alert-info alert-dismissible fade in" role="alert"  id="ccc2"><font color="white" style="text-shadow:0 1px 1px #ff0;">
 Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".getlevel($level,$class_ID); ?> level. </font></div>
   <table id="datatable-responsive" class="table table-striped jambo_table bulk_action" cellspacing="0" width="100%" border="1">
-  <div class="panel-heading" style="color:blue;font-size:15px;padding: 9px 6px 9px 0px;" id="ccc3"><b> <center> Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".getlevel($level,$class_ID)."  level ,".$session; ?> .</center></b></div>
+  <div class="panel-heading" style="color:blue;font-size:15px;padding: 9px 6px 9px 0px;" id="ccc3"><b> <center> Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".getlevel($level,$class_ID)."  level ,".$session; ?> .</center></b>
+</div>
                     <!--<table  class="table table-striped jambo_table bulk_action" border="1"> <div class="btn-group" id="divButtons" name="divButtons">  --!> 
                <div class="btn-group" id="cccv" > 
                   <a data-placement="top" title="Click to Save Result"   data-toggle="modal" href="#save_upresult" id="divButton2"  class="btn btn-primary" name="divButton2"  ><i class="fa fa-save icon-large"> Save</i></a>&nbsp;&nbsp;
                     <a data-placement="top" title="Click Here to Go Back"    href="#" onClick="window.location.href='Result_am.php?view=v_upa';" id="divButton2"  class="btn btn-primary" name="divButton2"  ><i class="fa fa-arrow-left icon-large"> Go Back</i></a>
                       <input type="button" value="Print" onClick="return Clickheretoprint();" class="btn btn-info">
+                     <div style="text-align: center;width: 750px;color: green;margin-top: -10px;margin-left: 40px;"><b> <?php echo $pbcstatus; ?></b> </div>
                       	 </div><br><br> <!--	
 								<a href="new_apply.php?view=imp_a" class="btn btn-info"  id="delete2" data-placement="right" title="Click to import Student UTME Exam Result" ><i class="fa fa-file icon-large"></i> Import Data</a> --!>
 									<script type="text/javascript">
@@ -55,7 +63,7 @@ Student Results On <?php echo $recode; ?> For <?php echo $semester." Semester ".
                         <tr>
                          <th></th>
                          <th>S/N<!--<input type="checkbox" name="chkall" id="chkall" onclick="return checkall('selector[]');">--!></th>
-                         <th>Registration No</th>
+                         <th>Mat No</th>
                           <th>Student Name</th>
                           <th>Course Title</th>
                           <th>Credit Unit</th>
@@ -91,15 +99,15 @@ $viewupco=mysqli_query($condb,"select * from results where course_code ='". safe
 						<td><?php  echo $row_upfile['student_id']; ?></td>
                           <td><?php echo getsname($row_upfile['student_id']); ?></td>
                           <td><?php echo getcourse($row_upfile['course_code']); ?></td>
-                          <td><input type="text" class="form-control " name='chour[]' id="chour" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['c_unit']; ?> "    maxlength="2" readonly ></td>
+                          <td><input type="text" class="form-control " name='chour[]' id="chour" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['c_unit']; ?> " style="<?php echo $bst; ?>"   maxlength="2" readonly ></td>
                           <?php if(empty($escore)){ ?>
                             <td colspan="<?php echo $cell; ?>" style="text-align: center;font-size: medium;color: red;"> Absent </td>
                           <?php }else{?>
-                          <td> <input type="text" class="form-control " name='assess[]' id="assess" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['assessment']; ?>"    maxlength="2" ></td>
+                          <td> <input type="text" class="form-control " name='assess[]' id="assess" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['assessment']; ?>"  <?php echo $bst; ?> maxlength="2" ></td>
                           <?php if(!empty($pmaxn)){ ?>
-                           <td> <input type="text" class="form-control " name='assess2[]' id="assess2" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['passessment']; ?>"    maxlength="2" ></td>
+                           <td> <input type="text" class="form-control " name='assess2[]' id="assess2" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['passessment']; ?>"  <?php echo $bst; ?>  maxlength="2" ></td>
                            <?php } ?>
-                          <td><input type="text" class="form-control " name='exams[]' id="exams" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['exam']; ?>"    maxlength="3" ></td>
+                          <td><input type="text" class="form-control " name='exams[]' id="exams" onkeyup="calculate();javascript:checkNumber(this); " onkeypress="return isNumber(event);" value="<?php echo $row_upfile['exam']; ?>" <?php echo $bst; ?>   maxlength="3" ></td>
                            <td><?php echo $row_upfile['total']; ?></td>
                            <td><?php echo grading($row_upfile['total'],$stprogram); ?></td><?php } ?>
 <!--		<td width="90">

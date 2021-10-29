@@ -16,6 +16,7 @@ authorize($_SESSION["access3"]["fIn"]["conp"]["delete"]) ) {
 $dep1 = isset($_GET['dept1_find']) ? $_GET['dept1_find'] : '';
 $sec1 = isset($_GET['session2']) ? $_GET['session2'] : '';
 $los =  isset($_GET['dop']) ? $_GET['dop'] : '';
+$edate =  isset($_GET['dop2']) ? $_GET['dop2'] : '';
 //$dep1 = $_GET['dept1_find']; $sec1 = $_GET['session2']; $los 	= $_GET['dop'];
 if(empty($dep1)){ $links = "View_Payment.php";}else{ $links = "View_Payment.php?dept1_find=".$dep1."&session2=".$sec1."&dop=".$los;}
  ?>
@@ -151,7 +152,7 @@ if(empty($student_num)){
 $sql2 = "SELECT * FROM new_apply1 left join payment_tb ON payment_tb.app_no = new_apply1.appNo WHERE  appNo ='".safee($condb,$app_number)."' and md5(trans_id) ='".safee($condb,$encryptid)."' ";
 }else{ $sql2 = "SELECT * FROM student_tb left join payment_tb ON payment_tb.stud_reg = student_tb.RegNo WHERE  stud_reg ='".safee($condb,$student_num)."' and md5(trans_id) ='".safee($condb,$encryptid)."' ";} 
 if(!$qsql1=mysqli_query($condb,$sql2)) { echo mysqli_error($condb); } $rsprint1 = mysqli_fetch_array($qsql1);$feecategory = $rsprint1['ft_cat'];
-$chot = $row_utme['rsprint1'];	$facultyone = $rsprint1['Faculty']; 
+$chot = $rsprint1['rsprint1'];	$facultyone = $rsprint1['Faculty']; 
 if($chot > 1){   $adep = $rsprint1['fact_2'];   }else{ $adep = $rsprint1['fact_2'];}					
 ?>	
 
@@ -263,38 +264,7 @@ echo "Approved";}else{echo "Not Approved";} ;?></p>
 
 
 
-//function statusUser2()
-//{$userId = $_GET['userId'];	
-//	$nst 	= $_GET['nst'];
-	//$status = $nst == 'Approve' ? '1' : '0';
-	//$sql   = "UPDATE payment_tb SET pay_status  = '$status' WHERE pay_id = '$userId'";
 
-	//mysqli_query(Database::$conn,$sql);
-	//redirect('View_Payment.php');
-//	header('Location: new_apply.php');	
-
-//}
         ?>
-        <script>  /* function changePayStatus2(userId, status)
-{
-	var st = status == '0' ? 'Approve' : 'Decline'
-	if (confirm('Your About to ' + st+' this Student Payment Make Sure All Information are Correct?')) {
-	//window.location.href = 'Student_Record.php?details&userId=' + userId + '&nst=' + st;
-	window.location.href = '?userId=' + userId + '&nst=' + st;}}*/
-/*function zoomIn(event) {
-  var element = document.getElementById("overlay");
-  element.style.display = "inline-block";
-  var img = document.getElementById("imgZoom");
-  var posX = event.offsetX ? (event.offsetX) : event.pageX - img.offsetLeft;
-  var posY = event.offsetY ? (event.offsetY) : event.pageY - img.offsetTop;
-  element.style.backgroundPosition=(-posX*2)+"px "+(-posY*4)+"px";
-
-
-}
-
-function zoomOut() {
-  var element = document.getElementById("overlay");
-  element.style.display = "none";
-}*/
-</script>
+      
          <?php include('footer.php'); ?>

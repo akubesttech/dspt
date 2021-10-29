@@ -6,6 +6,7 @@
 $gprog =  isset($_GET['xpo']) ? $_GET['xpo'] : '';
   $gsec =  isset($_GET['xsec']) ? $_GET['xsec'] : '';
    $gdop =  isset($_GET['xdop']) ? $_GET['xdop'] : '';
+   $gdop2= isset($_GET['xd2']) ? $_GET['xd2'] : '';
 				$serial=1;			?>
  <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -50,10 +51,16 @@ $gprog =  isset($_GET['xpo']) ? $_GET['xpo'] : '';
 										<h1> <center> <?php echo $schoolNe ; ?></center></h1>
 <div class="panel-heading" style="color:blue;font-size:15px;padding: 9px 6px 9px 0px;" id="ccc3"><b> <center>
 <?php 
-//echo $gprog;
+$origDate = $gdop;
+$origDate2 = $gdop2; 
+$date = str_replace('/', '-', $origDate );
+$newDate = date("Y-m-d", strtotime($date));
+$date2 = str_replace('/', '-', $origDate2 );
+$newDate2 = date("Y-m-d", strtotime($date2));
 if(empty($gdop) and empty($gsec) and empty($gprog) ){ echo "Form Order Transaction Details For the past One Week.";}
-if(!empty($gdop)){ echo "Form Order Transaction Details On ".$gdop." For ".$gsec." Session .";}
-if(empty($gdop) and !empty($gsec) and !empty($gprog)){ echo" Form Order Transaction Details For ". getprog($gprog)." ".$gsec." Session .";}
+//if(!empty($gdop)){ echo "Form Order Transaction Details On ".$gdop." For ".$gsec." Session .";}
+if(!empty($gsec) and !empty($gprog)){ echo" Form Order Transaction Details For ". getprog($gprog)." ".$gsec." Session .";}
+if(empty($gdop) && empty($gdop2)){ echo $secd = "";}else{ echo $secd = " <br>From ".$date." To ".$date2;}
 ?>
  </center></b></div>
                       <thead >
@@ -79,28 +86,23 @@ if(empty($gdop) and !empty($gsec) and !empty($gprog)){ echo" Form Order Transact
  <tbody>
                  <?php
 
+//session ='".safee($condb,$default_secadmin)."'  AND ftype = '".safee($condb,$class_ID)."' AND DATE(fdate_paid) > (CURDATE() - INTERVAL 7 DAY) 
+$vquery = "select * FROM fshop_tb where 1 ";
+if(!empty($gprog)){$vquery .= " AND ftype = '".safee($condb,$gprog)."'";}else{$vquery .= " AND ftype = '".safee($condb,$class_ID)."'";}
+if(!empty($gsec)){$vquery .= " AND session ='".safee($condb,$gsec)."'";}else{$vquery .= " AND session ='".safee($condb,$default_secadmin)."'";}
+if(!empty($gdop) && !empty($gdop2)){$vquery .= " AND fdate_paid BETWEEN '".safee($condb,$newDate)."' AND '".safee($condb,$newDate2)."'";
+}else{$vquery .= " AND DATE(fdate_paid) > (CURDATE() - INTERVAL 7 DAY)";}
+$vquery .= " ORDER By form_id DESC limit 0,1000";
+$viewutme_query = mysqli_query($condb,$vquery)or die(mysqli_error($condb));
 
-$origDate = $gdop;
- 
-$date = str_replace('/', '-', $origDate );
-$newDate = date("Y-m-d", strtotime($date));
-
-/*
-if($gdop == Null){
-$viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '".safee($condb,$gprog)."' and session = '".safee($condb,$gsec)."'  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); echo "no";
-}else{ 
-$viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '".safee($condb,$gprog)."' and session = '".safee($condb,$gsec)."'  and fdate_paid = '".safee($condb,$newDate)."' order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); echo "yex";
-//$viewutme_query = mysqli_query($condb,"select * from fshop_tb where md5(ftype) = '".safee($condb,$class_ID)."' and session = '".safee($condb,$default_session)."' and DATE(fdate_paid) > (CURDATE() - INTERVAL 5 DAY) order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); 
-} */
-if($gprog=="" || $gsec == "" ){
-$viewutme_query = mysqli_query($condb,"select * from fshop_tb where ftype = '".safee($condb,$class_ID)."' and session = '".safee($condb,$default_session)."' and  DATE(fdate_paid) > (CURDATE() - INTERVAL 7 DAY)  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb));
+/*if($gprog=="" || $gsec == "" ){
+$viewutme_query = mysqli_query($condb,"select * from fshop_tb where ftype = '".safee($condb,$class_ID)."' and session = '".safee($condb,$default_secadmin)."' and  DATE(fdate_paid) > (CURDATE() - INTERVAL 7 DAY)  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb));
 }elseif($gdop == Null){
 $viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '".safee($condb,$gprog)."' and session = '".safee($condb,$gsec)."'  order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); 
 }else{ 
 $viewutme_query = mysqli_query($condb,"select * from fshop_tb where (ftype) = '".safee($condb,$gprog)."' and session = '".safee($condb,$gsec)."'  and fdate_paid = '".safee($condb,$newDate)."' order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb));
 //$viewutme_query = mysqli_query($condb,"select * from fshop_tb where md5(ftype) = '".safee($condb,$class_ID)."' and session = '".safee($condb,$default_session)."' and DATE(fdate_paid) > (CURDATE() - INTERVAL 5 DAY) order by form_id DESC limit 0,1000 ")or die(mysqli_error($condb)); 
-}
-
+}*/
 while($row_utme = mysqli_fetch_array($viewutme_query)){
 $id = $row_utme['form_id'];
 $new_a_id = $row_utme['form_id']; $i = 0;

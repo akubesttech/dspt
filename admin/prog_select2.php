@@ -14,11 +14,11 @@ unset($_SESSION["select_pro"]);
 	$selectclass_ID 	= filter_var($_POST["sel_id"], FILTER_SANITIZE_STRING); //product code
 	//$return_url 	= base64_decode($_POST["return_url"]); //return url
 	//MySqli query - get details of item from db using product code
-	$results = mysqli_query($condb,"SELECT pro_id,Pro_name,pro_dura FROM prog_tb WHERE pro_id ='$selectclass_ID' LIMIT 1");
+	$results = mysqli_query($condb,"SELECT pro_id,Pro_name,pro_dura,assmax,exammax FROM prog_tb WHERE pro_id ='$selectclass_ID' LIMIT 1");
 	$obj = mysqli_fetch_object($results); 
 	if ($results) { //we have the product info 
 		//prepare array for the session variable
-$new_selectlist = array(array('pg_id'=>$selectclass_ID , 'pro_name'=>$obj->Pro_name, 'p_dura'=>$obj->pro_dura ));
+$new_selectlist = array(array('pg_id'=>$selectclass_ID , 'pro_name'=>$obj->Pro_name, 'p_dura'=>$obj->pro_dura, 'amax'=>$obj->assmax,'emax'=>$obj->exammax ));
 		
 		if(isset($_SESSION["select_pro"])) //if we have the session
 		{
@@ -28,11 +28,11 @@ $new_selectlist = array(array('pg_id'=>$selectclass_ID , 'pro_name'=>$obj->Pro_n
 			{
 				if($cart_itm["pg_id"] == $selectclass_ID){ //the item exist in array
 
-			$product[] = array('pg_id'=>$cart_itm["pg_id"], 'pro_name'=>$cart_itm["pro_name"] , 'p_dura'=>$cart_itm["p_dura"]);
+			$product[] = array('pg_id'=>$cart_itm["pg_id"], 'pro_name'=>$cart_itm["pro_name"] , 'p_dura'=>$cart_itm["p_dura"],'amax'=>$cart_itm["amax"],'emax'=>$cart_itm["emax"]);
 					$found = true;
 				}else{
 					//item doesn't exist in the list, just retrive old info and prepare array for session var
-					$product[] = array('pg_id'=>$cart_itm["pg_id"], 'pro_name'=>$cart_itm["pro_name"] , 'p_dura'=>$cart_itm["p_dura"]);
+					$product[] = array('pg_id'=>$cart_itm["pg_id"], 'pro_name'=>$cart_itm["pro_name"] , 'p_dura'=>$cart_itm["p_dura"],'amax'=>$cart_itm["amax"],'emax'=>$cart_itm["emax"]);
 				}
 			}
 			

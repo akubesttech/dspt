@@ -37,6 +37,8 @@
               </div>
 
               <ul class="nav navbar-nav navbar-right">
+              
+                  
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <img src="<?php  
@@ -106,6 +108,12 @@ $num2=mysqli_num_rows($getusersonline24);
                     <i class="fa fa-envelope-o"></i>
                     <span class="badge bg-green"><?php echo $newpms; ?></span>
                   </a>
+                  <li  class="dropdown pull-right">
+                  <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-briefcase"></i>
+                    <?php echo getprog($user_row['app_type']) ;?>
+                  </a></li>
+                
                    <?php
   
   

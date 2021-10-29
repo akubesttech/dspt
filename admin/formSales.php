@@ -18,7 +18,6 @@ authorize($_SESSION["access3"]["fIn"]["forms"]["delete"]) ) {
 if(empty($sprog2)){ $links = "formSales.php?view=fDetails";}else{ $links = "formSales.php?view=fDetails&xpo=".$sprog2."&xsec=".$sec1."&xdop=".$daten;}
  ?>
 
-	
 <script type="text/javascript">
 
 $(document).ready(function() {   
@@ -37,6 +36,7 @@ $('#enable3').hide(); $('#enable4').hide(); $('#enable1').show(); $('#enable2').
 message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 }
+	$view = (isset($_GET['view']) && $_GET['view'] != '') ? $_GET['view'] : '';
 	 ?>
   <?php $get_RegNo= isset($_GET['id']) ? $_GET['id'] : ''; ?>
     <!-- page content -->
@@ -44,8 +44,8 @@ message("You don't have the permission to access this page", "error");
           <div class="">
           <div class="page-title">
 <div class="title_left">
-<h3><?php  if($_GET['view'] == "formOrder"){ echo "Forms Panel" ;}if($_GET['view'] == "fDetails"){
-echo "Forms Panel";}if($_GET['view'] == "sledger"){echo "Student Ledger";}if($_GET['view'] == "Reportmain"){echo "Payment Report (s)";} ?>
+<h3><?php  if($view== "formOrder"){ echo "Forms Panel" ;}if($view == "fDetails"){
+echo "Forms Panel";}if($view == "sledger"){echo "Student Ledger";}if($view == "Reportmain"){echo "Payment Report (s)";} ?>
 </h3>
 </div>
 </div><div class="clearfix"></div>
@@ -77,7 +77,7 @@ echo "Forms Panel";}if($_GET['view'] == "sledger"){echo "Student Ledger";}if($_G
              <div class="col-md-12 col-sm-12 col-xs-12">
              
                 <?php 
-						$view = (isset($_GET['view']) && $_GET['view'] != '') ? $_GET['view'] : '';
+					
 					switch ($view) {
                 	case 'formOrder' :
 		            $content    = 'sforder.php';	
@@ -96,6 +96,12 @@ echo "Forms Panel";}if($_GET['view'] == "sledger"){echo "Student Ledger";}if($_G
 		          	break;
 		          	case 'Greport' :
 		            $content    = 'Greport.php';		
+		          	break;
+                    case 'Greport2' :
+		            $content    = 'Greport2.php';		
+		          	break;
+                    case 'Greport3' :
+		            $content    = 'Greport3.php';		
 		          	break;
 		          	case 'Report' :
 		            $content    = 'reporttime.php';		
@@ -144,8 +150,7 @@ if(isset($_GET['details'])){
 $get_userid= isset($_GET['userId']) ? $_GET['userId'] : '';
 $user_query = mysqli_query($condb,"select * from fshop_tb  where  form_id ='".safee($condb,$get_userid)."'")or die(mysqli_error($condb));
 													$row_b = mysqli_fetch_array($user_query);
-												    $student_num = $row_b['stud_reg'];
-												    $app_number = $row_b['app_no'];
+												    
 $forderquery = mysqli_query($condb,"select fpay_status,fpamount from fshop_tb where fpay_status > 0 and fpamount > 0 and form_id ='$get_userid' ")or die(mysqli_error($condb));
 $countpay = mysqli_num_rows($forderquery);
 													?>	
@@ -166,7 +171,8 @@ $countpay = mysqli_num_rows($forderquery);
 	<center></center>
 	<h4 class="brief" style="text-shadow:-1px 1px 1px #000;"> <font color='darkblue'><?php
 	echo "Reference No : " .ucfirst($row_b['ftrans_id']);?>  </font></h4>
-	 <h2 style="text-shadow:-1px 1px 1px #000; color:blue;">Full Name: <b><?php echo ucwords($row_b['fsname']." ".$row_b['foname']); ?></b> </h2>
+	 
+     <h2 style="text-shadow:-1px 1px 1px #000; color:blue;">Full Name: <b><?php echo ucwords($row_b['fsname']." ".$row_b['foname']); ?></b> </h2>
 <p><strong>Email Address: </strong> <?php echo ($row_b['femail']);?> <strong>&nbsp;&nbsp;&nbsp;Mobile Number: </strong> <?php echo ($row_b['fphone']) ;?>  </p>
 <p><strong>Programme: </strong>  <?php echo getprog($row_b['ftype']) ;?> <strong>&nbsp;&nbsp;&nbsp;Order Type: </strong> <?php echo getftype($row_b['feen']);?><strong>&nbsp;&nbsp;&nbsp;Session: </strong> <?php echo ($row_b['session']);?>  </p>
 <h2 style="text-shadow:-1px 1px 1px #000;">Payment Details:  </h2>
@@ -177,6 +183,7 @@ if($countpay > 0){ echo getpaystatus($row_b['fpay_status']);}else{echo getpaysta
 <p><strong>Pin No: </strong> <?php echo $row_b['pin'] ;?><strong>&nbsp;&nbsp;&nbsp;Serial No: </strong> <?php echo $row_b['serial'] ;?></p><?php }else{ ?>
 <p><strong> <font color="red"> Pin not available because of incomplete payment </font> </strong></p>
 <?php } ?>
+
 </div>
 
 </div>

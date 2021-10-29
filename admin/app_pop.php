@@ -52,7 +52,7 @@ $appst  =$row_b['reg_status'];
 
 </center>
    
-<table border="0" style="margin:2px; font-size:14px; font-family: Verdana;  width:880px;" class="tble"  >
+<table border="1" style="margin:2px; font-size:14px; font-family: Verdana;  width:900px;" class="tble"  >
 <tr  style="display: none;">  <td  colspan="4" style="text-align: center;">
 <div >
 <img src="<?php if ($exists30 > 0 ){ print "../Student/".$row_b['images']; }else{ print "../Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
@@ -65,7 +65,7 @@ $appst  =$row_b['reg_status'];
           
           <tr style="border: 1px solid #98C1D1;"> <td height="30" style="font-weight: bold;" >Gender :</td> <td style="font-color:gray;  font-weight:normal;"><?php echo $row_b['Gender'] ;?> 
           </td>
-          <td style="font-weight: bold;width:150px;">Hobbies</td><td  style="font-color:gray;  font-weight:normal; height: 34px;width: 350p;">
+          <td style="font-weight: bold;width:150px;">Hobbies</td><td  style="font-color:gray;  font-weight:normal; height: 34px;width: 350px;">
            <?php echo ucwords($row_b['hobbies']); ?></td>
           <td rowspan="3"><div >
 <img src="<?php if ($exists30 > 0 ){ print "../Student/".$row_b['images']; }else{ print "../Student/uploads/NO-IMAGE-AVAILABLE.jpg";}
@@ -107,29 +107,34 @@ $appst  =$row_b['reg_status'];
           <td height="36" colspan="5" style="color: #000080; font-size:20px;  font-family:  vandana;text-shadow: 1px 1px gray;"><strong> Post Primary School Qualification ('O' Level Record)</strong></td></tr>
 
 <?php $orow_01 = mysqli_fetch_array($sql_oresult10); $orow_1 = mysqli_fetch_array($sql_oresult20);
-if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col =2;}else{ $subcont = $orow_01['oNo_re']; $col = 5; } 
+if($countnosub > 0){$subcont = $orow_1['oNo_re']; $col ="5";}else{ $subcont = $orow_01['oNo_re']; $col = "5"; } 
  if($count_olresult1 > 0 ){ ?>
         <tr class="row2">
   <td width="50%" colspan="<?php echo $col; ?>" ><div class="pull-left">
-  <table border="1" style="margin:4px;  font-family: Verdana;  max-width:390px; min-width:440px; " >
+  <table border="1" style="margin:4px;  font-family: Verdana;  max-width:390px; min-width:435px; " >
   <tr style="font-weight: bold;"><td colspan="2"> First Certificate Used</td> </tr>
-  <tr><td>Exam Type</td><td><?php echo getexamtype($orow_01['oExam_t1']);?></td></tr>
+  <tr><td>Exam Type</td><td><?php echo getexamtype($orow_01['oExam_t1']);?><?php echo $col; ?></td></tr>
   <tr><td>Exam Number</td><td><?php echo $orow_01['oExam_no1'] ;?></td></tr>
   <tr><td>Exam Year</td><td><?php echo ($orow_01['oExam_y1']); ?></td></tr>
    <tr style="font-weight: bold;"><td>Subject</td><td>Grade</td></tr>
    <?php while($orow1 = mysqli_fetch_array($sql_oresult1)){ ?> <tr><td><?php echo  getf_sub($orow1['oSub1']);?></td><td><?php echo  getfgrade($orow1['oGrade_1']);?></td></tr> <?php } ?>
    </table>
-   </div></td>
-   <?php if($count_olresult2 > 0){ ?> <td width="50%" colspan="<?php echo $col; ?>"><div class="pull-right"> 
-   <table border="1" style="margin:3px;  font-family: Verdana;  max-width:390px; min-width:440px;">
+   </div>
+   <?php if($count_olresult2 > 0){ ?>
+   <div class="pull-right"> 
+   <table border="1" style="margin:3px;  font-family: Verdana;  max-width:390px; min-width:435px;">
     <tr style="font-weight: bold;"><td colspan="2"> Second Certificate Used</td> </tr>
-     <tr><td>Exam Type</td><td><?php echo getexamtype($orow_1['oExam_t1']);?></td></tr>
+     <tr><td>Exam Type</td><td><?php echo getexamtype($orow_1['oExam_t1']);?> <?php echo $col; ?></td></tr>
   <tr><td>Exam Number</td><td><?php echo $orow_1['oExam_no1'] ;?></td></tr>
   <tr><td>Exam Year</td><td><?php echo ($orow_1['oExam_y1']); ?></td></tr>
   <tr style="font-weight: bold;"><td>Subject</td><td>Grade</td></tr>
   <?php while($orow12 = mysqli_fetch_array($sql_oresult2)){ ?>
    <tr><td><?php echo getf_sub($orow12['oSub1']);?></td><td><?php echo  getfgrade($orow12['oGrade_1']);?></td></tr> <?php } ?>
-     </table></div></td> <?php } ?>
+     </table></div>  <?php } ?>
+     
+   </td>
+   
+     
      </tr>
     <?php }else{ ?>
    <tr class="row2">

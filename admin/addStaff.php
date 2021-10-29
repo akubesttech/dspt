@@ -94,7 +94,7 @@ message("Invalid sign file type. Only  JPG, GIF and PNG types are accepted", "er
 		        redirect('add_Staff.php?view=addStaff');
 }else{
 //@mail($eaddress, $subject, $msg, $headers);
-$mail_data = array('to' => $eaddress, 'sub' => $subject, 'msg' => 'Notify','body' => $msg2, 'srname' => $comn);
+$mail_data = array('to' => $eaddress, 'sub' => $subject, 'msg' => 'Notify','body' => $msg, 'srname' => $comn);
 	send_email($mail_data);
 mysqli_query($condb,"insert into staff_details (title,sname,mname,oname,mstatus,Gender,dob,hobbies,height,phone,email,paddress,caddress,town,lga,state,nation,job_desc,heq,cos,s_fac,s_dept,doe,e_mode,b_name,b_acct_name,b_acct_num,b_sort,usern_id,image,sign_img,r_status) values('".safee($condb,$title)."','".safee($condb,$sname)."','".safee($condb,$mname)."','".safee($condb,$oname)."','".safee($condb,$Mstatus)."','".safee($condb,$sex)."','".safee($condb,$dob)."','".safee($condb,$hobbies)."','".safee($condb,$sheight)."','".safee($condb,$phone)."','".safee($condb,$eaddress)."','".safee($condb,$paddress)."','".safee($condb,$caddress)."','".safee($condb,$stown)."','".safee($condb,$lga)."','".safee($condb,$state)."','".safee($condb,$nation)."','".safee($condb,$jobn)."','".safee($condb,$heq)."','".safee($condb,$Cstudy)."','".safee($condb,$fac1)."','".safee($condb,$dept1)."','".safee($condb,$doe)."','".safee($condb,$moe)."','".safee($condb,$bname)."','".safee($condb,$acctname)."','".safee($condb,$acctnum)."','".safee($condb,$scode)."','".safee($condb,$sid)."','".safee($condb,$thumbnail)."','".safee($condb,$thumbnail2)."','".safee($condb,$Cverify)."')")or die(mysqli_error($condb));
 	message("New Staff [$sname $oname $oname] was Successfully Added", "success");

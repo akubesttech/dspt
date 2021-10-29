@@ -23,8 +23,9 @@ $b_name= ucwords($_POST['b_name']);
 $acc_name = $_POST['acc_name'];
 $acc_num = $_POST['acc_num'];
 $b_sort = $_POST['b_sort'];
-
-$query_bank = mysqli_query($condb,"select * from bank where b_name = '$b_name' ")or die(mysqli_error($condb));
+$b_code = $_POST['b_code'];
+$f_cat = $_POST['fcate'];
+$query_bank = mysqli_query($condb,"select * from bank where b_name = '$b_name' AND f_cate = '$f_cat' ")or die(mysqli_error($condb));
 //$row = mysql_fetch_array($query);
 $row_bank = mysqli_num_rows($query_bank);
 if ($row_bank>0){
@@ -40,7 +41,7 @@ message("ERROR:The Bank Entered  Already Exist Try Again!", "error");
 	
 }else{
 //if($level=="Others"){
-mysqli_query($condb,"insert into bank (b_name,acc_name,acc_num,b_sort) values('$b_name','$acc_name','$acc_num','$b_sort')")or die(mysqli_error($condb));
+mysqli_query($condb,"insert into bank (b_name,acc_name,acc_num,b_sort,b_code,f_cate) values('$b_name','$acc_name','$acc_num','$b_sort','$b_code',$f_cat)")or die(mysqli_error($condb));
 
 mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(),'$admin_username','Bank Titled $b_name was Add')")or die(mysql_error()); 
  ob_start();
@@ -60,16 +61,7 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
 <input type="hidden" name="insidd" value="<?php echo $_SESSION['insidd'];?> " />
                       
                       <span class="section">Add New Bank <?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
+//if($resi == 1){echo " <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>";}
 ?> </span>
 
 
@@ -83,18 +75,28 @@ mysqli_query($condb,"insert into activity_log (date,username,action) values(NOW(
                             	  <input type="text" class="form-control " name='acc_name' id="acc_name"  required="required">
                       </div>
                       
-                     <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                     <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Account Number </label>
                             	  <input type="text" class="form-control " name='acc_num' id="acc_num" onkeypress="return isNumber(event);"  >
                       </div>
  
- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+ <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
 						  	  <label for="heard">Bank Sort Code </label>
                             	  <input type="text" class="form-control " name='b_sort' id="b_sort" onkeypress="return isNumber(event);"  >
                       </div>
                       
                       
-                      
+ <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+						  	  <label for="heard">Bank Code </label>
+                            	  <input type="text" class="form-control " name='b_code' id="b_code"   >
+                      </div>
+                      <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+					    <label for="heard">Fee Category</label>
+						  	  <select  name="fcate" id="fcate" class="form-control" ><?php if ($fID > 0) { ?>
+<option value="<?php echo $row_ft['f_category']; ?>"><?php echo getfeecat($row_ft['f_category']); ?></option><?php }else{ ?> <option value="">Select Category</option><?php } ?>
+		<?php echo getfeecat("",1); ?>
+            </select>
+                      </div>
                       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
 					  
                            </div>

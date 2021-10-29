@@ -13,16 +13,7 @@
                     <input type="hidden" name="insidf" value="<?php echo $_SESSION['insidf'];?> " />
                       
                       <span class="section">Final Result Process<?php
-                                          if($resi == 1)
-{
-
-
-					echo " 
-		
-			    <center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>
-			 
-			  ";
-}
+//if($resi == 1){ echo "<center><label class=\"control-label\" for=\"inputEmail\"><font color=\"red\">$res</font></label></center>";}
 ?></span>
 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
@@ -36,7 +27,7 @@ Result Processing Transaction Report.
 	echo "<div style='font-size:25px;color:green;'>";
 	$success_msg=$_GET['s2_msg'];
 	//$success_msg=$_GET['success_msg'];
-	$coursecode=$_GET['co'];
+if($success_msg == '107'){$coursecode=$_GET['co'];}else{ $coursecode= "";}
 	switch($success_msg)
 	{
 		case 104: echo "Post UTME Result Successful Processed.";

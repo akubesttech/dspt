@@ -16,8 +16,8 @@ unset($_SESSION['tempserial']);
 
 
 if(isset($_POST['Login_Continue'])){
- $Pin = $_POST["pin"];
-$serial = $_POST["serial"];
+ //$Pin = $_POST["pin"];
+//$serial = $_POST["serial"];
 $nappNo20 = $_POST["nappNo20"];
 	//$_SESSION['temppin']=$Pin;
 $passwordn = $_POST['pword'];

@@ -21,6 +21,7 @@ message("You don't have the permission to access this page", "error");
   $dep1 = isset($_GET['Schd']) ? $_GET['Schd'] : '';
   $sec1 = isset($_GET['sec']) ? $_GET['sec'] : '';
   $los = isset($_GET['slos']) ? $_GET['slos'] : '';
+  $sumcreditunit = 0;
   //$dep1 = $_GET['Schd']; $sec1 = $_GET['sec']; $los = $_GET['slos'];
  if(empty($dep1)){ $links = "Result_am.php?view=caprove";}else{ $links = "Result_am.php?view=caprove&dlist&userId=".($get_RegNo)."&Schd=".$dep1."&sec=".$sec1."&slos=".$los;}
 $links2 = "Result_am.php?view=caprove&userId=".($get_RegNo)."&Schd=".$dep1."&sec=".$sec1."&slos=".$los;
@@ -33,7 +34,8 @@ $links2 = "Result_am.php?view=caprove&userId=".($get_RegNo)."&Schd=".$dep1."&sec
           <div class="">
           <div class="page-title">
 <div class="title_left">
-<h3>Admin Result  Management
+<h3><?php  if($Rorder == "10"){ echo getstatus($checkstatus)." Result  Management";}else{ echo "Admin Result  Management";}   ?>
+ 
 </h3>
 </div>
 </div><div class="clearfix"></div>
@@ -112,20 +114,43 @@ if (isset($_POST['Courseapprove'])){
 				message("Select at least one Course Registration to proceed !", "error");
 		        redirect($links);
 				}else{ $id=$_POST['selector03'];  $N = count($id);$deptcp = $_POST['deptcp'];
-          $sessions = $_POST['sessions'];
+          $sessions = $_POST['sessions']; $apr = 0;
              $cosd = $_POST['los'];
+             $cosidd = $_POST['cosidd'];
 for($i=0; $i < $N; $i++){
 $sql2="select * from coursereg_tb where creg_id ='".$id[$i]."' and session = '".$sessions[$i]."' and dept = '".$deptcp[$i]."' and level = '".$cosd[$i]."'";
 				$result2=mysqli_query($condb,$sql2) or die(mysqli_error($condb));
 				$row=mysqli_fetch_array($result2);
-	extract($row);
-				//if(mysqli_num_rows($result2)>0){
+                extract($row);
+                //if(mysqli_num_rows($result2)>0){
+                    if(empty($lect_approve)){ $apr = "1";}else{$apr = "0";} //,course_id = '".$cosidd[$i]."'
 mysqli_query($condb,"UPDATE coursereg_tb  SET lect_approve = '1' where creg_id ='".$id[$i]."' ")or die(mysqli_error($condb));
-				//}else{
-			//mysqli_query($condb,"UPDATE coursereg_tb  SET lect_approve = '0' where creg_id ='".$id[$i]."'  ")or die(mysqli_error($condb));
+//}else{mysqli_query($condb,"UPDATE coursereg_tb  SET lect_approve = '0' where creg_id ='".$id[$i]."'  ")or die(mysqli_error($condb));
 				}//}
 	message(" Selected Student Course Registration Successfully Approved.", "success");
 	redirect($links2); }}
+	
+	if (isset($_POST['CCapprove'])){
+	if(empty($_POST['selector03'])){
+				message("Select at least one Course Registration to proceed !", "error");
+		        redirect($links);
+				}else{ $id=$_POST['selector03'];  $N = count($id);$deptcp = $_POST['deptcp'];
+          $sessions = $_POST['sessions']; $apr = 0;
+             $cosd = $_POST['los'];
+             $cosidd = $_POST['cosidd'];
+for($i=0; $i < $N; $i++){
+$sql2="select * from coursereg_tb where creg_id ='".$id[$i]."' and session = '".$sessions[$i]."' and dept = '".$deptcp[$i]."' and level = '".$cosd[$i]."'";
+				$result2=mysqli_query($condb,$sql2) or die(mysqli_error($condb));
+				$row=mysqli_fetch_array($result2);
+                extract($row);
+                //if(mysqli_num_rows($result2)>0){
+                    if(empty($lect_approve)){ $apr = "1";}else{$apr = "0";} //,course_id = '".$cosidd[$i]."'
+mysqli_query($condb,"UPDATE coursereg_tb  SET lect_approve = '0' where creg_id ='".$id[$i]."' ")or die(mysqli_error($condb));
+//}else{mysqli_query($condb,"UPDATE coursereg_tb  SET lect_approve = '0' where creg_id ='".$id[$i]."'  ")or die(mysqli_error($condb));
+				}//}
+	message(" Selected Student Course Registration Successfully Canceled.", "success");
+	redirect($links2); }}
+    
 if (isset($_POST['removeCourses'])){
 	if(empty($_POST['selector03'])){
 				message("Select at least one Course Registration to proceed !", "error");
@@ -164,7 +189,7 @@ if(isset($_GET['dlist'])){?>
 		<!-- <td>Search: <input type="text" name="filter" value="" id="filter" /></td>	--!>				  
 			 <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" >
 			 
-<thead><tr> <th><input type="checkbox" name="checkall"  id="checkall" class="checkall" onClick="check_uncheck_checkbox(this.checked);" > </th>
+<thead><tr > <th><input type="checkbox" name="checkall"  id="checkall" class="checkall" onClick="check_uncheck_checkbox(this.checked);" > </th>
                          <th>S/N</th>
                          <th>Course Code</th>
                          <th>Course Title</th>
@@ -172,27 +197,31 @@ if(isset($_GET['dlist'])){?>
                          <th>Status</th>
                          <th>Action</th>
 				   </thead>
-<tbody> <?php $user_query = mysqli_query($condb,"select ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title from coursereg_tb ctb LEFT JOIN courses cn ON ctb.course_id = cn.C_id
+<tbody> <?php $user_query = mysqli_query($condb,"select ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title,cn.C_id from coursereg_tb ctb LEFT JOIN courses cn ON ctb.course_id = cn.C_id
  WHERE sregno = '".$_GET['userId']."' and level ='". safee($condb,$los) ."' and session ='". safee($condb,$sec1) ."' and dept='". safee($condb,$dep1)."' GROUP BY ctb.c_code,ctb.semester,ctb.c_unit,ctb.lect_approve,ctb.creg_id,ctb.course_id,cn.c_cat,cn.C_title ORDER BY ctb.semester ,ctb.c_code  ASC")or die(mysqli_error($condb)); $serial=1;
 													while($row_b = mysqli_fetch_array($user_query)){
-													$id = $row_b['creg_id']; $cosname = $row_b['course_id']; 
+													$id = $row_b['creg_id']; $cosname = $row_b['C_id']; 
 $user_query2 = mysqli_query($condb,"select * from coursereg_tb WHERE creg_id = '".$id."' and level ='". safee($condb,$los) ."' and session ='". safee($condb,$sec1) ."' and dept='". safee($condb,$dep1)."' and course_id = '".safee($condb,$cosname)."' GROUP BY c_code,semester ORDER BY semester ASC")or die(mysqli_error($condb));
 	$row_b2 = mysqli_fetch_array($user_query2);	 $course_approve = 	$row_b2['lect_approve'];										
-$coursstatus = $row_b['c_cat']; if($coursstatus > 0){  $cstat = "Compulsory";}else{  $cstat = "Elective";}
-if($row_b2['lect_approve'] > 0){ $astatus = "disabled";}else{$astatus = "";}		?>
-			   <tr><td >
-<input    id="selector03<?php echo $id; ?>" class="uniform_on1" name="selector03[]" type="checkbox" value="<?php echo $id; ?>" <?php echo $astatus; ?>  ></td>
-<td><?php echo $serial++ ; ?></td>
-                          <td><?php echo $row_b["c_code"]; ?></td>
+$coursstatus = $row_b['c_cat']; if($coursstatus > 0){  $cstat = "C";}else{  $cstat = "E";}
+if($row_b2['lect_approve'] > 0){ $astatus = "color:green;";}else{$astatus = "";} //disabled		?>
+			   <tr style="<?php echo $astatus; ?>"><td ><?php //echo $astatus; ?> 
+<input    id="selector03<?php echo $id; ?>" class="uniform_on1" name="selector03[]" type="checkbox" value="<?php echo $id; ?>"  ></td>
+<td><?php echo $serial++ ; ?>  <input type="hidden" name="cosidd[]" value="<?php echo $cosname; ?>"></td>
+                          <td><?php echo $row_b["c_code"]; ?><i class="<?php echo $course_approve == '1'? 'fa fa-check' : ''; ?>"></i></td>
                           <td><?php echo $row_b["C_title"]; ?></td>
                           <td><?php echo $row_b['c_unit']; ?></td>
                 <td> <?php echo $cstat ;?></td>
                            <td>
-<a rel="tooltip"  title="Check Course Approval Status <?php echo $row_allot['course']; ?>" id="delete1" href="javascript:changeUserStatus60('<?php echo $id; ?>','<?php echo $los; ?>','<?php echo $depart; ?>','<?php echo $session; ?>','<?php echo $course_approve; ?>');" class="btn btn-info" ><i class="fa fa-check  <?php echo $course_approve == '0'? 'fa fa-check' : 'fa fa-remove'; ?>"></i>&nbsp;<?php echo $course_approve == '0'? 'Approve' : 'Decline'; ?></a>
+<a rel="tooltip"  title="Check Course Approval Status <?php echo $row_allot['course']; ?>" id="delete1" href="javascript:changeUserStatus60('<?php echo $id; ?>','<?php echo $los; ?>','<?php echo $depart; ?>','<?php echo $session; ?>','<?php echo $course_approve; ?>');" class="btn btn-info" >
+<i class="fa fa-check  <?php echo $course_approve == '0'? 'fa fa-check' : 'fa fa-remove'; ?>"></i>&nbsp;<?php echo $course_approve == '0'? 'Approve' : 'Decline'; ?></a>
 						  </td>
 <script type="text/javascript"> $(document).ready(function(){
-									 $('#com').tooltip('show');
-									 $('#com').tooltip('hide'); });
+									 $('#com').tooltip('show');	 $('#com3').tooltip('show');
+									 $('#com').tooltip('hide');$('#com3').tooltip('hide');
+                                     $('#com2').tooltip('show');
+									 $('#com2').tooltip('hide');$('#com4').tooltip('show');
+									 $('#com4').tooltip('hide'); });
 									</script> 
                         </tr><?php $sumcreditunit += $row_b['c_unit'];  } ?>
 						 <tr><td colspan="4"><strong>Total Credit Unit:</strong></td ><td colspan="1"><?php if($sumcreditunit > 0){ echo $sumcreditunit;}else{ echo "0"; } ?></td><td colspan="2"> </td> </tr>	    					
@@ -202,7 +231,9 @@ if($row_b2['lect_approve'] > 0){ $astatus = "disabled";}else{$astatus = "";}		?>
 			
 					<div class="modal-footer">
 <button class="btn btn-info" name="Courseapprove" title="Click to Approve course Registration" type="submit" id="com"><i class="icon-save icon-large"></i> Approve Courses </button>
-<button class="btn btn-info" name="removeCourses" title="Click to Remove course (s) " type="submit" id="com"><i class="icon-trash icon-large"></i> Remove Courses </button>
+<button class="btn btn-info" name="CCapprove" title="Click to Cancel course Registration" type="submit" id="com4"><i class="icon-save icon-large"></i> Cancel Courses Approval </button>
+
+<button class="btn btn-info" name="removeCourses" title="Click to Remove course (s) " type="submit" id="com3"><i class="icon-trash icon-large"></i> Remove Courses </button>
 <a href="javascript:void(0);" 	onclick="window.open('<?php echo $links2; ?>','_self')" class="btn btn-info" ><i class="fa fa-remove"></i>&nbsp;Close</a>
                         </div>
 					

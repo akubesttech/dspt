@@ -4,7 +4,7 @@
                   <div class="x_title">
                   <?php 
                   $sql_gradeset = mysqli_query($condb,"select * from grade_tb where prog ='".safee($condb,$student_prog)."' and grade_group ='01' Order by b_max ASC limit 1 ")or die(mysqli_error($condb)); $getmg = mysqli_fetch_array($sql_gradeset);  $getpass = $getmg['b_max'];
-                  
+                  function geteout($valueg){if($valueg < 2){return " - ";}}
 //$que_warning23=mysqli_query($condb,"select * from payment_tb where stud_reg ='$student_RegNo' and session ='$default_session' and level='".safee($condb,$student_level)."' OR app_no = '$student_appNo' and session ='$default_session'  and level='".safee($condb,$student_level)."'")or die(mysqli_error($condb));
 	//$warning_count2=mysqli_num_rows($que_warning23);
 //$warning_data=mysqli_fetch_array($que_warning23);
@@ -16,6 +16,7 @@
 $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($condb));
 							  $row_C = mysqli_fetch_array($query);
 							  $s_utme = $row_C['p_utme'];
+                             $sshow = $stud_row['istatus'];   $semailo = $stud_row['e_address'];
 						?>
                     <h2>Outstanding / Carryover Course (s):</h2>
                     <ul class="nav navbar-right panel_toolbox">
@@ -52,8 +53,8 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                          
                           <address>
                                           <strong>Student Name:</strong> <?php echo $stud_row['FirstName']." ".$stud_row['SecondName']." ".$stud_row['Othername'];?>
-                                          <br><b>Registration No:</b> <?php echo $stud_row['RegNo'];?>
-                                          <br><b>Year of Study:</b> <?php echo $default_session;?>
+                                         <br><?php if(!empty($smato)){ if(empty($sshow)){ ?><b>Username: </b><?php echo $semailo; }else{ ?><b>Matric No:</b> <?php echo $stud_row['RegNo'];} }else{?><b>Matric No:</b> <?php echo $stud_row['RegNo'];}?>
+                                           <br><b>Year of Study:</b> <?php echo $default_session;?>
                                           <br><b><?php echo $SCategory; ?>:</b><?php echo getfacultyc($stud_row['Faculty']);?>
                                           <br><b>Department:</b> <?php echo getdeptc($stud_row['Department']);?>
                                       </address>
@@ -82,7 +83,7 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                       <!-- /.row -->
                     	 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     
-          <strong> Listed Below are Your Carryover Course (s).</strong>
+          <strong> Listed Below are Your Outstanding / Carryover Course (s).</strong>
                   </div>
                     
                     <table  class="table table-striped jambo_table bulk_action" border="1">
@@ -104,10 +105,10 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
                           <th>Credit Unit</th>
                           <th>Semester</th>
                           <th>Level</th>
-                         <th>Session</th>
+                         <th>Session</th><?php if($resultview == "yes"){?>
                          <th>C A Score <?php //echo " ".getamax($student_prog)." %"; ?></th>
                           <th>Exam Score <?php //echo " ".getemax($student_prog)." %"; ?></th>
-                         <th>Total</th>
+                         <th>Total</th> <?php } ?>
                          <th>Grade</th>
                         </tr>
                       </thead>
@@ -121,7 +122,7 @@ $query= mysqli_query($condb,"select * from schoolsetuptd ")or die(mysqli_error($
 
 
 //$mado = mysqli_query($condb,"SELECT * FROM details  INNER JOIN payment ON details.regno = payment.regno  and details.level  = payment.level where details.regno like '%$typein%'   AND payment.regno like '%$typein%'  ");
-
+if($resultview == "yes"){ $cell = 5; $cell2 = 4; }else{ $cell = 2; $cell2 = 1;}
 $viewutme_query = mysqli_query($condb,"select * from results where student_id='".safee($condb,$student_RegNo)."' and total <= '".safee($condb,$getpass)."'  order by session DESC ")or die(mysqli_error($condb)); ?><tr>
 <?php if(mysqli_num_rows($viewutme_query)<1){ echo "<td colspan='12' style='text-align:centre;'><strong>No Outstanding course (s) Found.</strong></td>"; }?>
  						
@@ -130,7 +131,7 @@ $viewutme_query = mysqli_query($condb,"select * from results where student_id='"
 $serial=1;
 while($row_utme = mysqli_fetch_array($viewutme_query)){
 //$id = $row_utme['appNo'];
-$new_a_id = $row_utme['stud_id'];
+//$new_a_id = $row_utme['stud_id'];
 $stprogram = getstudentpro($row_utme['student_id']);
 $viewreg_query = mysqli_query($condb,"select DISTINCT creg_status  from coursereg_tb WHERE sregno = '".safee($condb,$student_RegNo)."' AND c_code = '".safee($condb,$row_utme['course_code'])."' AND creg_status = '1'")or die(mysqli_error($condb));
 ?>     
@@ -159,10 +160,11 @@ if(mysqli_num_rows($viewreg_query)>0){echo "<font color='green'>$row_utme[course
                           <td><?php echo $row_utme['semester']; ?></td>
                           <td><?php echo getlevel($row_utme['level'],$student_prog); ?></td>
                          <td width="120">
-<?php echo $row_utme['session']; ?>	</td> 
-<td style="text-align:justify;"><?php echo $row_utme['assessment']; ?></td>
-							<td style="text-align:justify;"><?php echo $row_utme['exam']; ?></td>	
-							<td style="text-align:justify;"><?php echo $row_utme['total']; ?></td>	
+<?php echo $row_utme['session']; ?>	</td>
+<?php if($resultview == "yes"){ ?>
+<td style="text-align:justify;"><?php echo geteout($row_utme['assessment']); ?></td>
+							<td style="text-align:justify;"><?php echo geteout($row_utme['exam']); ?></td>	
+							<td style="text-align:justify;"><?php echo geteout($row_utme['total']); ?></td>	<?php }?>
 							<td style="text-align:justify;"><?php echo grading($row_utme['total'],$stprogram); ?></td> 		
 											
 												

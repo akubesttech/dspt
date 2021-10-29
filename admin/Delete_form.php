@@ -8,6 +8,7 @@ for($i=0; $i < $N; $i++)
 {
 	$result = mysqli_query($condb,"DELETE FROM form_db where id='$id[$i]'");
 }
-header("location: add_form.php");
+//header("location: add_form.php");
+redirect("add_form.php");
 }
 ?>

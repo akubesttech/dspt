@@ -135,11 +135,11 @@ redirect("add_Staff.php?view=Employeelist");
 function statuscapp2()
 {$userId = $_GET['userId'];	
 	$nst 	= $_GET['nst'];
-	$cosn 	= getccode2($_GET['cos']);
-		//$status = $nst == 'Verified' ? 'TRUE' : 'FALSE';
-	$status = $nst == 'Approve' ? '1' : '0';
-	$sql   = "UPDATE coursereg_tb SET lect_approve = '$status' WHERE sregno = '$userId'";
-mysqli_query(Database::$conn,$sql); redirect("Course_m.php?view=clist&userId=".$cosn);
+	$cosn 	=$_GET['cos']; $Rod = $_GET['oid']; $usr = $_GET['usr'];
+$status = $nst == 'Approve' ? '1' : '0';
+$sql   = "UPDATE coursereg_tb SET lect_approve = '$status',appby = '$usr' WHERE creg_id = '$userId'"; 
+mysqli_query(Database::$conn,$sql);if($Rod == "10"){
+redirect("Course_m.php?view=clist&userId=".$cosn);}else{redirect("allot_Courses.php?view=clist&userId=".$cosn);}
 //redirect("Course_m.php?view=v_allot");
 }
 function statuscapp20()
@@ -176,26 +176,30 @@ mysqli_query(Database::$conn,$sql);
 redirect("election.php?view=velection");
 }
 function statuspay(){
-$userId = $_GET['userId'];	
-$nst 	= $_GET['nst']; $dop 	= $_GET['dop']; $sess = ($_GET['ses']);$sdp = ($_GET['dep']);
-$status = $nst == 'Approve' ? '1' : '0';
-$getsup=mysqli_query(Database ::$conn,"SELECT * FROM payment_tb WHERE  pay_id ='".safee(Database::$conn,$userId)."' AND paid_amount > 0 ");
-$stfound = mysqli_fetch_array($getsup); $feetype = $stfound['fee_type']; 
+$userId = $_GET['userId'];	$admin_username = getstaff($_SESSION['id'],1);
+$nst 	= $_GET['nst']; $dop 	= $_GET['dop']; $dop2 	= $_GET['dop2']; $sess = ($_GET['ses']);$sdp = ($_GET['dep']);
+$status = $nst == 'Approve' ? '1' : '0'; if($status == "1"){ $stn = "Approved"; }else{ $stn = "Declined";}
+$getsup=mysqli_query(Database ::$conn,"SELECT * FROM payment_tb WHERE  pay_id ='".safee(Database::$conn,$userId)."' ");
+$stfound = mysqli_fetch_array($getsup); $feetype = $stfound['fee_type']; $amt = number_format($stfound['paid_amount'],2); $matno = $stfound['stud_reg']; $appno = $stfound['app_no'];
+if(substr($feetype,0,1) == "B"){ $feet = getfeecat($stfound['ft_cat']);}else{ $feet = getftype($stfound['fee_type']);} $sec = $stfound['session'];
+if(empty($matno)){ $user = "App no ".$appno;}else{ $user = "Mat no ".$matno; }
 $sql   = mysqli_query(Database ::$conn,"UPDATE payment_tb SET pay_status = '".safee(Database::$conn,$status)."' WHERE pay_id ='".safee(Database::$conn,$userId)."'");
 $sql2 = mysqli_query(Database ::$conn,"UPDATE feecomp_tb SET pstatus ='".safee(Database::$conn,$status)."' WHERE Batchno ='".safee(Database::$conn,$feetype)."' ")or die(mysqli_error(Database::$conn));
-redirect("View_Payment.php?dept1_find=".$sess."&session2=".$sdp."&dop=".$dop);
+mysqli_query(Database ::$conn,"insert into activity_log (date,username,action) values(NOW(),'".$admin_username."','$feet($amt) payment with $user in $sec was $stn by $admin_username ')")or die(mysqli_error(Database::$conn));
+redirect("View_Payment.php?dept1_find=".$sess."&session2=".$sdp."&dop=".$dop."&dop2=".$dop2);
 	}
  function statusappresult() 
 { $con = new Database(); $nst 	= $_GET['nst']; $dept = $_GET['Schd']; $sems = $_GET['sem']; $sess= $_GET['sec']; $lev = $_GET['lev']; $pro = $_GET['pro']; $fac = $_SESSION['bfac'];
-$status = $nst == 'Approve' ? '1' : '0';
+$status = $nst == 'Approve' ? '1' : '0'; $instidr = 0; $instidr = getinstitution($pro);
 $queryresultapp2 = mysqli_query(Database::$conn,"select * from resultapproval_tb WHERE prog = '".safee($con,$pro)."' AND dept = '".safee($con,$dept)."' AND session = '".safee($con,$sess)."' AND level = '".safee($con,$lev)."' AND semester = '".safee($con,$sems)."' ");
  $aptatus = mysqli_num_rows($queryresultapp2); if($aptatus > 0){
  mysqli_query(Database::$conn,"UPDATE resultapproval_tb SET prog ='".safee($con,$pro)."' ,fac ='".safee($con,$fac)."' ,dept ='".safee($con,$dept)."' ,session ='".safee($con,$sess)."',level ='".safee($con,$lev)."',semester = '".safee($con,$sems)."',approveby ='".safee($con,$_SESSION['id'])."',apstatus ='".safee($con,$status)."',dateapproved = NOW() WHERE prog = '".safee($con,$pro)."' AND dept = '".safee($con,$dept)."' AND session = '".safee($con,$sess)."' AND level = '".safee($con,$lev)."' AND semester = '".safee($con,$sems)."'")or die(mysqli_error(Database::$conn));
 }else{
 mysqli_query(Database::$conn,"insert into resultapproval_tb (prog,fac,dept,session,level,semester,approveby,apstatus,dateapproved) values('".safee($con,$pro)."','".safee($con,$fac)."','".safee($con,$dept)."','".safee($con,$sess)."','".safee($con,$lev)."','".safee($con,$sems)."','".safee($con,$_SESSION['id'])."','".safee($con,$status)."',NOW())")or die(mysqli_error(Database::$conn));
 } 
-redirect("resultsheet_p.php?Schd=".$dept."&sec=".$sess."&lev=".$lev."&sem=".$sems);
-
+if($instidr == "2"){ 
+redirect("resultsheet_p.php?Schd=".$dept."&sec=".$sess."&lev=".$lev."&sem=".$sems);}else{
+redirect("resultsheet.php?Schd=".$dept."&sec=".$sess."&lev=".$lev."&sem=".$sems);}
 }
  function statusappresult2() 
 { $con = new Database(); $nst 	= $_GET['nst']; $dept = $_GET['Schd']; $sems = $_GET['sem']; $sess= $_GET['sec']; $lev = $_GET['lev']; $pro = $_GET['pro']; $fm = $_GET['rform']; $fac = $_SESSION['bfac'];
@@ -210,7 +214,7 @@ redirect("resultsheet_c.php?Schd=".$dept."&sec=".$sess."&lev=".$lev."&sem=".$sem
 
 }
 function statussignoff(){
-$userId = $_GET['userId'];	
+$userId = $_GET['userId'];	$admin_username = getstaff($_SESSION['id'],1);
 $nst 	= $_GET['nst']; $dept 	= $_GET['dep']; $staff = getstaff($_GET['stf']); $std = getsnameid($userId);
 $status = $nst == 'Signoff' ? '1' : '0'; $depn = getdeptc($_GET['dep']);
  $sql   = mysqli_query(Database ::$conn,"UPDATE coc_tb SET chod_app = '".safee(Database::$conn,$status)."' WHERE sid ='".safee(Database::$conn,$userId)."'");
@@ -218,7 +222,7 @@ mysqli_query(Database ::$conn,"insert into activity_log (date,username,action) v
 redirect("Student_Record.php?view=coc");
 	}
     function statusaccept(){
-$userId = $_GET['userId'];	
+$userId = $_GET['userId'];	$admin_username = getstaff($_SESSION['id'],1);
 $nst 	= $_GET['nst']; $dept 	= $_GET['dep']; $staff = getstaff($_GET['stf']); $std = getsnameid($userId);
 $status = $nst == 'Accept' ? '1' : '0'; $depn = getdeptc($_GET['dep']);
  $sql   = mysqli_query(Database ::$conn,"UPDATE coc_tb SET nhod_app = '".safee(Database::$conn,$status)."' WHERE sid ='".safee(Database::$conn,$userId)."'");

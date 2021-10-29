@@ -26,7 +26,8 @@ $payemail  = $payrecordv['email']; $fee_cat  = $payrecordv['ft_cat'];
              <input type='hidden' name='fail_url' value='http://www.ucnettechnologies.net/failed.php' />--!>
             <input type='hidden' name='emailx' value='<?php echo $payemail;?>' /> 
 			<input type='hidden' name='total' value='<?php echo $amountdue ;?>' />
-                    
+              <input type='hidden' name='matno' value='<?php echo $payregno;?>' />
+            <input type='hidden' name='sec' value='<?php echo $transession;?>' />      
                       
                       <span class="section">Payment Transaction Summary</span>
 

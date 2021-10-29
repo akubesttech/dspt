@@ -32,7 +32,7 @@ message("You don't have the permission to access this page", "error");
                   <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span>
                     </button>
-        This page will Enable you to Delete Wrongly uploaded Result. <?php //echo $admin_valid ; ?>
+        This page will Enable you to Delete Wrongly uploaded Result. <?php //echo $admin_valid ; datatable-buttons ?>
                   </div>
                   
                     <form action="Delete_adminupresult.php" method="post">
@@ -66,23 +66,21 @@ message("You don't have the permission to access this page", "error");
  <tbody>
                  <?php
 
-$depart = $_GET['dept1_find'];
-$session=$_GET['session2'];
-$entry_mode= $_GET['moe2'];
+//$depart = $_GET['dept1_find'];
+//$session=$_GET['session2'];
+//$entry_mode= $_GET['moe2'];
 //and session ='".$default_session."'  and semester='".$default_semester."'
-if (authorize($_SESSION["access3"]["rMan"]["vure"]["delete"])){
-$viewupco=mysqli_query($condb,"select * from uploadrecord ORDER BY up_id desc ");
-}else{
-$viewupco=mysqli_query($condb,"select * from uploadrecord where staff_id ='".safee($condb,$session_id)."'   ORDER BY up_id desc ");
-}
-
-		while($row_upfile = mysqli_fetch_array($viewupco)){
+$queryup = "select * from uploadrecord where prog = '".safee($condb,$class_ID)."' ";
+if ($Rorder > 2 ){$queryup .= " and staff_id = '".safee($condb,$session_id)."'"; }
+$queryup .= "ORDER BY up_id desc limit 0,500";
+$viewupco=mysqli_query($condb,$queryup);
+while($row_upfile = mysqli_fetch_array($viewupco)){
 		$id = $row_upfile['up_id']; $scat = $row_upfile['scat'];
 		$course_id = $row_upfile['course'];
 ?>     
-                        <tr>
+<tr>
                         	<td width="30" >
-												<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
+<input id="optionsCheckbox" class="uniform_on1" name="selector[]" type="checkbox" value="<?php echo $id; ?>">
 												</td>
 						<td><?php  echo $row_upfile['course']; ?></td>
                           <td><?php echo getcourse($row_upfile['course']); ?></td>

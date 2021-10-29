@@ -3,6 +3,7 @@
 if(isset($_POST['viewpedger'])){
 $slevel = $_POST['level'];
 $paydate = $_POST['pdate'];
+$pdate2 = $_POST['pdate2'];
 $sregno = $_POST['regno'];
 $salot_session = $_POST['session'];
 $sql_alldept="SELECT * FROM payment_tb WHERE stud_reg ='".safee($condb,$sregno)."'";
@@ -16,8 +17,7 @@ if($num_alldept < 1){
       
 }else{
 	//$_SESSION['vsession']=$salot_session;
-
-echo "<script>window.location.assign('formSales.php?view=ledger&sreg=".($sregno)."&xsec=".($salot_session)."&xdop=".$paydate."&xlev=".$slevel."');</script>";}
+echo "<script>window.location.assign('formSales.php?view=ledger&sreg=".($sregno)."&xsec=".($salot_session)."&xdop=".$paydate."&xd2=".$pdate2."&xlev=".$slevel."');</script>";}
 
 }
 ?>
@@ -30,33 +30,28 @@ echo "<script>window.location.assign('formSales.php?view=ledger&sreg=".($sregno)
                     		<form name="user" method="post" enctype="multipart/form-data" id="user">
 <input type="hidden" name="insidtime" value="<?php echo $_SESSION['insidtime'];?> " />
                       
-                      <span class="section">Search Record </span>
-                      <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"  >
-						  	  <label for="heard"   id="other2" >Matric/Reg Number </label>
-                            	  <input type="text" class="form-control "    name='regno' id="regno" required >
-                      </div>
+<span class="section">Search Record </span>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"  >
+<label for="heard"   id="other2" >Matric/Reg Number </label>
+<input type="text" class="form-control "    name='regno' id="regno" required ></div>
 
-   
-  <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Academic Session </label>
-							   <select class="form-control"   name="session" id="session"  >
-  <option value="">Select Session</option>
-<?php echo fill_sec(); ?></select></div>
-       <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Level </label>
-                            	  <select name='level' id="status" class="form-control" >
-                            <option value="">Select Level</option>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+<label for="heard">Academic Session </label> <select class="form-control"   name="session" id="session"  >
+  <option value="">Select Session</option><?php echo fill_sec(); ?></select></div>
+  
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback"><label for="heard">Level </label>
+<select name='level' id="status" class="form-control" ><option value="">Select Level</option>
                       <?php $resultsec2 = mysqli_query($condb,"SELECT * FROM level_db where prog = '$class_ID'  ORDER BY level_order ASC");
-while($rssec2 = mysqli_fetch_array($resultsec2)){ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	}
-?></select></div>
- <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-						  	  <label for="heard">Payment Date</label>
+while($rssec2 = mysqli_fetch_array($resultsec2)){ echo "<option value='$rssec2[level_order]'>$rssec2[level_name]</option>";	} ?></select></div>
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+						  	  <label for="heard">From </label>
 <input  type="text" name="pdate" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed1"   readonly="readonly" style="height:32px;"></div>
-                    
+<div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback" >
+						  	  <label for="heard">To</label>
+<input  type="text" name="pdate2" size="29"   class="w8em format-d-m-y highlight-days-67 range-middle-today" id="ed"   readonly="readonly" style="height:32px;"></div>
                       
-                  <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-					  
-                           </div>
+<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+</div>
                     
                      
                

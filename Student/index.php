@@ -12,7 +12,11 @@
           <div class="">
           <div class="page-title">
 <div class="title_left">
-<h3>Student Dashboard</h3>
+<h3>Student Dashboard <?php  //$scom =  getcomm("2","0","SAS/20/21/42069","2020/2021"); 
+ //$scom2 = getcomm("2","2","SAS/20/21/42069","2020/2021");
+ //$work = getsplit(18500,1.5,1.5,15,$scom,$scom2,3);
+//echo $bassamount = getsplit($work,1.5,1.5,15,$scom,$scom2,0);
+ ?></h3>
 </div>
 
 </div>
@@ -99,11 +103,11 @@ $que_checkpay=mysqli_query($condb,"select SUM(paid_amount) as samount from payme
 //$que_warning2=mysqli_query($condb,"select * from payment_tb where reg_id='$regNo' and session ='$default_session'");
 	//$warning_count2=mysqli_num_rows($que_warning2);
 	if($Snoti == 1)  
-	{
+	{if(empty($epenable)){  }else{
 	//if ($pay_status < 1 ){
-	if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){ }else{
+	if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){  }else{
 		//$warning_data=mysqli_fetch_array($que_warning);
-		$warning_txt=$warning_data[0];
+		$warning_txt = $warning_data[0];
 		
 	
 ?>
@@ -116,7 +120,7 @@ $('#myModalat3').modal('show');
     });
          
 </script>
- <?php	}}//else{}}  ?> </div>
+ <?php	}}}//else{}}  ?> </div>
                    
                   
             <div class="row top_tiles">
@@ -275,11 +279,11 @@ if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){ ?>
                                     <div class="clearfix"></div>
                                 </div>							  
                             </a>
-			<?php  }else{ ?>
+			<?php  }else{  //$amtpaid ." ".$getDuepay;  ?>
 			<div class="icon"><i class="fa fa-money"></i>
                           </div>
-                          <div class="count"><strong> &#8358; <?php	echo number_format($com_payamt,2); ?></div>
-						  <h3>School Fee For The Session</h3>
+                          <div class="count"><strong> &#8358; <?php $fin = 0.00;	if(empty($amtpaid)){ echo number_format($com_payamt,2) + $penaltyamt; }else{ $fin = ($getDuepay + $penaltyamt) - $amtpaid; echo number_format($fin,2);}   ?></div>
+						  <h3><?php if(empty($penaltyamt)){ ?>School Fee For The Session<?php }else{echo " Late Payment Panalty Added"; } ?></h3>
 						  <a href="Spay_manage.php?view=a_p">							  
                                 <div class="modal-footer">
                                     <span class="pull-left">Make Payment</span>
@@ -401,7 +405,7 @@ return round($diff / 86400);
 
                           <h3>Courses Registered
 
-</h3>  <?php if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){  //if ($pay_status < 1 ){ ?>
+</h3>  <?php if(!empty($epenable)){  if($sumpay >= $com_amount and $sumpay > 0 and $nocomp >= $nocompm){  //if ($pay_status < 1 ){ ?>
 <a href="course_manage.php?view=S_CO">							  
                                 <div class="modal-footer">
                                     <span class="pull-left">Course Registration</span>
@@ -416,8 +420,15 @@ return round($diff / 86400);
                                     <div class="clearfix"></div>
                                 </div>							  
                             </a>
+                            <?php  }}else{ ?>
+                            <a href="course_manage.php?view=S_CO">							  
+                                <div class="modal-footer">
+                                    <span class="pull-left">Course Registration</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>							  
+                            </a>
                             <?php  } ?>
-                            
                         </div>
                       </div>
                        <?php 

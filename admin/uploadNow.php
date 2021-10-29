@@ -28,7 +28,8 @@ echo "<br/>";
 echo $excel->sheets[0]['numCols']."<br/>";
 // insert into database
 for($x=2;$x<=$excel->sheets[0]['numRows'];$x++)
-{ echo $excel->sheets[0]['cells'][$x][1]." ";
+{ $record3 = 0; $record3 = 0;$candpro = 0;
+    echo $excel->sheets[0]['cells'][$x][1]." ";
 echo $excel->sheets[0]['cells'][$x][6]." ";
 
 	///Now time to assign grades and gradepoints and quanlity points

@@ -20,7 +20,7 @@ message("You don't have the permission to access this page", "error");
 		        redirect('./'); 
 }
 	?>
-  <?php $get_RegNo= $_GET['id']; ?>
+  <?php $get_RegNo = isset($_GET['id']) ? $_GET['id'] : ''; ?>
     <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -38,12 +38,9 @@ message("You don't have the permission to access this page", "error");
 				 <!-- /Organization Setup Form -->
 				
 					<?php 
-					$num=$get_RegNo;
-				if ($num!==null){
+			if (!empty($get_RegNo)){
 			include('editFee.php');
-			}else{
-			
-				include('addFee.php'); }?>
+			}else{ include('addFee.php'); }?>
 				
                    <!-- /Organization Setup Form End -->
                  
@@ -74,7 +71,7 @@ message("You don't have the permission to access this page", "error");
                   
                     </p>
                     <form action="Delete_fee.php" method="post">
-                    <table id="datatable-buttons" class="table table-striped table-bordered">
+                    <table id="datatable-responsive" class="table table-striped table-bordered">
                     	<a data-placement="right" title="Click to Delete check item"   data-toggle="modal" href="#fee_delete" id="delete"  class="btn btn-danger" name=""  ><i class="fa fa-trash icon-large"> Delete</i></a>
 									<script type="text/javascript">
 									 $(document).ready(function(){
@@ -92,19 +89,22 @@ message("You don't have the permission to access this page", "error");
                           <th>Ing/None</th> 
                           <th>Level</th>
                           <th>Amount</th>
-                          <th>penalty start date</th>
+                          <th>penalty Period</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                        <tbody>
  <?php
 $user_query = mysqli_query($condb,"select * from fee_db WHERE program = '".safee($condb,$class_ID)."' Order by fee_id DESC")or die(mysqli_error($condb)); while($row_f = mysqli_fetch_array($user_query)){ $id = $row_f['fee_id'];  $dperc = $row_f['pper']; 
-$psdate = $row_f['psdate']; $famount =$row_f['f_amount'];
+$psdate = $row_f['psdate']; $famount =$row_f['f_amount'];  $setend2 = $row_f['edate'];
 $date20 = str_replace('/', '-', $psdate );  $newDate20 = date("Y-m-d", strtotime($date20));  $date_now =  date("Y-m-d");
 $penaltysum = FeesCalc($famount,$dperc,$newDate20); $difp = $penaltysum - $famount ;
 if($dperc > 0){ $noteo = number_format($famount,2) ." + ". number_format($difp,2) ." = <span class='badge bg-green'>".number_format($penaltysum,2)."</span> (".$dperc."% penalty inclusive )"; }else{ $noteo = "<span class='badge bg-green'>". number_format($famount,2)."</span>";} 
-$timestamp = strtotime($newDate20);
-$datetime	= date('l, jS F Y', $timestamp);
+$timestamp = strtotime($newDate20); $edate20 = str_replace('/', '-', $setend2 );
+ $datetime	= date('l, jS F Y', $timestamp);  $nedate = date("Y-m-d", strtotime($edate20)); $timestamp2 = strtotime($nedate);
+$date_now2 = new DateTime($date_now); $enddate    = new DateTime($nedate);
+
+
 ?>
 
                     
@@ -119,8 +119,8 @@ $datetime	= date('l, jS F Y', $timestamp);
                           <td><?php echo getlevel($row_f['level'],$class_ID); ?></td>
                          <!-- <td><?php //echo $row_f['f_fac']; ?></td> --!>
                          
-<td><?php if($date_now >= $newDate20){ echo  $noteo ; }else{ echo number_format($famount,2) ;} ?></td>
-<td><?php if(empty($psdate)){ echo "-----";}else{ echo $datetime;} ?></td>
+<td><?php if(($date_now2 <= $enddate)){ echo  $noteo ; }else{ echo number_format($famount,2) ;} ?></td>
+<td><?php if(empty($psdate)){ echo "-----";}else{ echo date('jS M Y',$timestamp)." - ". date(' jS M Y',$timestamp2);} ?></td>
                           <td width="120"> <?php   if (authorize($_SESSION["access3"]["fIn"]["afee"]["edit"])){ ?> 
 												<a rel="tooltip"  title="Add fee Details" id="<?php echo $id; ?>" href="add_Fees.php<?php echo '?id='.$id; ?>"  data-toggle="modal" class="btn btn-success"><i class="fa fa-pencil icon-large"> Edit Record</i></a> <?php } ?>
 												</td>
@@ -139,6 +139,7 @@ $datetime	= date('l, jS F Y', $timestamp);
           </div>
         </div>
         <!-- /page content -->
-        
+      
   
          <?php include('footer.php'); ?>
+          

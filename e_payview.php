@@ -4,11 +4,11 @@
 if(empty($_GET['id'])){$nvalue = $_SESSION['transide'];  }else{ $nvalue = $_GET['id'];}
 $paystatus1=mysqli_query($condb,"SELECT * FROM payment_tb LEFT JOIN new_apply1 ON appNo = app_no WHERE md5(trans_id) ='".safee($condb,$nvalue)."'");
 $paystatus12=mysqli_num_rows($paystatus1);
-if($paystatus12 < 1){ message("The page you are trying to access is not Available.", "error");
-redirect('apply_b.php?view=opay'); }
+//if($paystatus12 < 1){ message("The page you are trying to access is not Available.", "error");
+//redirect('apply_b.php?view=opay'); }
 $dform_get2 = mysqli_fetch_assoc($paystatus1); $ftranid = $dform_get2['trans_id']; $sname = $dform_get2['FirstName'];$fname = $dform_get2['SecondName']; $oname = $dform_get2['Othername']; $fullname = $sname." ".$fname." ".$oname; $appNo = $dform_get2['appNo']; $feename = $dform_get2['ft_cat'];
 $femail = $dform_get2['email']; $fphone = $dform_get2['phone']; $fprog = $dform_get2['prog'];$fsession = $dform_get2['session']; $pamount = $dform_get2['paid_amount']; $matno = $dform_get2['stud_reg'];
-$feetp = $dform_get2['fee_type']; $famount  = $dform_get2['dueamount']; $dategen  = $dform_get2['dategen']; $Pmode  = $dform_get2['pay_mode'];
+$feetp = $dform_get2['fee_type']; $famount  = $dform_get2['dueamount'];  $Pmode  = $dform_get2['pay_mode'];
 $date20 = str_replace('/', '-', $dform_get2['pay_date'] );  $newDate20 = date("Y-m-d", strtotime($date20));
    $timestamp = strtotime($newDate20); $datetime	= date('l, jS F Y', $timestamp);
 $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".safee($condb,$feetp)."' "); $serial=1;
@@ -41,8 +41,12 @@ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".s
                 <div class="col-xs-12">
             <h3><font size="4"><?php if(empty($_GET['id'])){ ?> Payment Information Preview <?php }else{ ?>
 		<?php if(substr($dform_get2['fee_type'],0,1) == "B"){echo strtoupper($ptitle); }else{  echo strtoupper($ptitle2); } }
-		if(strlen($matno) > 0){ //$smartcharge = 4000 ;
-		$note = " Your Matric No : <strong>$matno</strong>  <br>also Note that your Matric No Has been Mailed to you. "; }else{ $note = ""; //$smartcharge = 500 ;
+        $smato = $row['smat'];//$smartcharge = 4000 ;
+		if(!empty($matno)){ 
+        if(!empty($smato)){ $note = " Username : <strong>$femail</strong>   "; $payuse = $matno; $mt = "Username :"; $vatype = $femail; }else{
+		$note = " Your Matric No : <strong>$matno</strong>  <br>also Note that your Matric No Has been Mailed to you. "; $payuse = $matno;
+        $mt = "Matric Number:"; $vatype = $matno; }
+        }else{ $note = ""; $payuse = $appNo; $mt = ""; $vatype = "";//$smartcharge = 500 ;
         }
 		?>
 			</font> </h3>
@@ -82,11 +86,13 @@ $paycomponent=mysqli_query($condb,"SELECT * FROM feecomp_tb  WHERE Batchno ='".s
             <input type='hidden' name='emailx' value='<?php echo $femail;?>' /> 
 			<input type='hidden' name='total' value='<?php echo $famount ;?>' />
             <input type='hidden' name='ft_cat' value='<?php echo $feename;?>' />
+            <input type='hidden' name='matno' value='<?php echo $payuse;?>' />
+            <input type='hidden' name='sec' value='<?php echo $fsession;?>' />
 			<div class="form_box">
 			 <div class="clear" style="overflow: auto;">
-        <table  border="1"><?php if(strlen($matno) > 0){ ?>
-       <tr class="row1"><td width="20%" colspan="1" height="15"><strong> Matric Number:</strong></td>
-    <td width="31%" colspan="4"><?php echo $matno; ?></td></tr><?php }else{ ?>
+        <table  border="1"><?php if(!empty($matno)){ ?>
+       <tr class="row1"><td width="20%" colspan="1" height="15"><strong> <?php echo $mt; ?> </strong></td>
+    <td width="31%" colspan="4"><?php echo $vatype; ?></td></tr><?php }else{ ?>
     <tr class="row1"><td width="20%" colspan="1" height="15"><strong> Application Number:</strong></td>
     <td width="31%" colspan="4"><?php echo $appNo; ?></td></tr><?php } ?>
   <tr class="row2">

@@ -13,24 +13,25 @@ $reg_no = $_POST["reg_no"];
 $result_pinn = mysqli_query($condb,$sql_pinn);
 $num_pinn = mysqli_num_rows($result_pinn);
 $num_serial = mysqli_fetch_array($result_pinn);
-$studentpics8 = $num_serial['images'];
-//$find_record = mysqli_fetch_array($result_pin1);
-//$studentpics = $find_record['images'];
+$studentpics8 = imgExists("Student/".$num_serial['images']); $astatus = $num_serial['reg_status'];
+//$studentpics8 = $num_serial['images'];
 
-$sql_pinn2="SELECT images FROM student_tb WHERE RegNo ='".safee($condb,$reg_no)."' AND appNo ='".safee($condb,$num_appNo)."' AND reg_status = '0'";
-$result_pinn2 = mysqli_query($condb,$sql_pinn2);
-$num_pinn2 = mysqli_num_rows($result_pinn2);
+
+//$sql_pinn2="SELECT images FROM student_tb WHERE RegNo ='".safee($condb,$reg_no)."' AND appNo ='".safee($condb,$num_appNo)."' AND reg_status = '0'";
+//$result_pinn2 = mysqli_query($condb,$sql_pinn2);
+//$num_pinn2 = mysqli_num_rows($result_pinn2);
 
 	if(strpos($reg_no," ")){
 		message("Please! Registration Number can not Contain a Space.", "error");
 				redirect("apply_b.php?view=Old");
-					}elseif($num_pinn > 0 and $studentpics8!=Null){
+					//}elseif($num_pinn > 0 and $studentpics8!=Null){
+					   }elseif($num_pinn > 0 and $studentpics8 > 0 and $astatus > 0){
 echo "<script>alert('Your Details have been Submited!');</script>";
 		echo "<script>window.location.assign('studregprint.php?stid=".md5($_POST['reg_no'])."');</script>";
 		
 				}else{
-				if($num_pinn > 0 and $studentpics8==Null){
-				//header("location:apply_b.php?view=O_C");
+				//if($num_pinn > 0 and $studentpics8==Null){
+				if($num_pinn > 0 and $studentpics8 < 1){
 				redirect("apply_b.php?view=O_C");
 					//echo "<script>window.location.assign('apply_b.php?view=O_C');</script>";
 			}else{
@@ -51,7 +52,7 @@ echo "<script>alert('Your Details have been Submited!');</script>";
         <div id="breadcrumbs-share">
             <section id="breadcrumbs">
                 <ul class="breadcrumb">
-                                <li><a href="<?php echo  host(); ?>">Home</a> </li>
+                                <li><a href="<?php echo host(); ?>">Home</a> </li>
 
                 </ul>
             </section>
@@ -81,7 +82,7 @@ echo "<script>alert('Your Details have been Submited!');</script>";
         	<div class="panel panel-default">
         		<div class="panel-heading">
 			    		<!-- <h3 class="panel-title">Please sign up for Bootsnipp <small>It's free!</small></h3> --!>
-			    		<h4 class="panel-title"> Matric/Registration Number:  </h4>
+			    		<h4 class="panel-title"> Matric Number:  </h4>
 			 			</div>
 			 			
 			 			<div class="panel-body">
@@ -92,7 +93,7 @@ echo "<script>alert('Your Details have been Submited!');</script>";
 			    				<div class="col-xs-6 col-sm-6 col-md-6">
 			    					
 			    					<div class="form-group">
-			<input type="text"   class="form-control input-sm"   name="reg_no" id="reg_no" placeholder="Enter your Matric/Registration Number" required="required" >
+			<input type="text"   class="form-control input-sm"   name="reg_no" id="reg_no" placeholder="Enter your Matric Number" required="required" >
 			             </div>
 			    				</div>
 			    				</div>
